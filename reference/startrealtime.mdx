@@ -1,0 +1,21 @@
+---
+title: "startRealtime"
+---
+```kotlin
+fun startRealtime(type: Connections, token: String, dataTypes: Set<DataTypes>, connectionCallback: (Boolean) -> Unit)
+
+fun startRealtime(type: Connections, dataTypes: Set<DataTypes>, updateHandler: (Update) -> Unit)
+
+fun startRealtime(type: Connections, dataTypes: Set<DataTypes>, token: String, updateHandler: (Update) -> Unit, connectionCallback: (Boolean) -> Unit)
+
+```
+
+*   connection: Connections - This argument takes a Connections enum, indicating the connection you wish to stream from
+*   token: String - This argument is a token for verification of the user to connect to Terra's websocket API. You may generate one from the [Generate User Token endpoint](/reference/generate-user-token)
+    . There is a required `user_id` field of the API call. This can be obtained by running `getUserId()`.
+*   dataTypes: DataTypes - This argument takes a DataTypes enum indicating the datatype you wish to stream for.
+*   connectionCallback: (Boolean) -> Unit: If a websocket connection is requested, this callback will be called when the connection is either successful or not.
+*   updateHandler: (Update) -> Unit: This callback is called whenever new updates are available from the device
+
+
+
