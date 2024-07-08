@@ -1,0 +1,231 @@
+---
+title: "RT Streaming - iOS"
+---
+# TerraRTiOS
+
+This packages uses Bluetooth Low Energy (BLE) and Bluetooth services. These will be requested as permissions upon initialisation of the package.
+
+The package streams real time data to your backend through **WebSockets**. You can learn more about it at the [Terra WebSocket API guide](/reference/using-the-websocket-api)
+.
+
+The data streamed to your WebSocket connection will follow the following format:
+
+```json
+{
+  "op":5,
+  "d":
+    {
+      "ts": <String> (In ISOFormat Date Form)
+       "val": <Double>
+       "d" <Array<Double>>
+    },
+    "uid": <String> (user ID)
+    "seq": <Int>,
+    "t": <String> (Datatype name: Exactly the same as the name of `DataTypes` enum)
+}
+
+```
+
+`ts` is the timestamp of the record. For each datatype, either `val` or `d` is populated. See the [Terra Streaming Protocol Reference](/reference/terra-streaming-reference)
+ for full details about the payload format.
+
+## Installation
+
+You can use Swift Package Manager and add this github repo as a dependency to your project! Add the SDK to your app as a dependency by following these steps:
+
+1.  **Enrol in the Apple Developer Programme:**  
+    [https://developer.apple.com/programs/enroll/](https://developer.apple.com/programs/enroll/)
+    
+2.  **Download our SDK:**  
+    [https://github.com/tryterra/TerraRTiOS.git](https://github.com/tryterra/TerraiOS.git)
+    
+3.  Open your project in Xcode.
+    
+4.  **Add SDK to Package Dependencies:**  
+    Go to main app folder > click on icon below PROJECT on sidebar > click on `Package Dependencies` on menu bar > click on `+` button under Packages table > click on `+` button at bottom left of pop up > click on `Add Local...` > select TerraRTiOS folder and click `Add Package`
+    
+5.  **Add Privacy Keys:**  
+    The SDK requires Bluetooth to function, and the user will need to give explicit permission for your app to access the Bluetooth functionality on their device. To facilitate this:
+    
+    Go to main app folder > click on the icon below TARGETS on the sidebar > click on `Info` on menu bar > go to Custom iOS Target Properties > hover over any key and click `+` button > add `Privacy - Bluetooth Always Usage Description`. If you wish to use `Connections.APPLE` connection, also add `Privacy - Motion Usage Description`.
+    
+    Your app will now request the user to give all the correct permissions (only happens once, on the first time launching the app after install).
+    
+
+## Usage
+
+The package is controlled mainly by a class called `TerraRT`
+
+You may initialise as such:
+
+```swift
+import TerraRTiOS
+
+terraRT = TerraRT()
+
+```
+
+After the initialisation, you may now start initialising different connections! This can be done as:
+
+```swift
+terraRT.initConnection(token: String, type: Connections)
+
+```
+
+**Arguments**
+
+*   `token`: String -> A Mobile SDK token generated from the [Mobile SDK Token endpoint](/reference/generate-authentication-token)
+    .
+*   `completion`: (Bool) -> Void -> A completion function that is called when the initialisation is complete.
+
+### Connecting Bluetooth
+
+Certain types of connection will require a Bluetooth Connection (`Connections.BLE`). To initialise a bluetooth connection, you can run:
+
+```swift
+let terraBLEWidget: TerraBLEWidget = terraRT.startBluetoothScan(type: Connections, callback: @escaping (Bool) -> Void)
+
+```
+
+**Arguments**
+
+*   `type`: Connections -> An Enum signifying the connection to make.
+*   `callback`: @escaping (Bool) -> Void -> A callback that will be called with `true` if the connection is successful and `false` if the connection is unsuccessful.
+
+This will return a SwiftUI View! You can then display this to your user, and have them scan, and connect to a BLE Device!
+
+### Data Streaming 🔥🔥
+
+Each streaming session requires a token for authentication to Websocket API. This can be generated from the [Streaming User Token endpoint](/reference/generate-user-token)
+. **Note: this is a different token from the Mobile SDK token used earlier.** The request requires the following fields:
+
+*   dev\_id - found at your Terra Dashboard
+*   x\_api\_key - found at your Terra Dashboard
+*   user\_id - the user\_id of the connection you wish to stream
+
+Get the `user_id` of the current connection as such:
+
+```kotlin
+terraRT.getUserId()
+
+```
+
+You can now start streaming! This is done using:
+
+```swift
+terraRT.startRealtime(type: Connections, token: String, dataType: Set<DataTypes>)
+
+```
+
+**Arguments**
+
+*   `type`: Connections -> An Enum signifying the connection to make.
+*   `token`: String -> A Streaming User Token for authentication to Websocket API. This can be generated from the [Streaming User Token endpoint](/reference/generate-user-token)
+    
+*   `dataType`: Set -> A set of Enums signifying the datatypes you wish to stream. Note if the data type is not supported by the `type` Connections, then it will simply return!
+
+You may stop the streaming as follows:
+
+```swift
+terraRT.stopRealtime(type: Connections) 
+
+```
+
+And also disconnect from the connection as follows:
+
+```swift
+terraRT.disconnect(type: Connections)
+
+```
+
+## WatchOS \[New Feature! From TerraRTiOS 0.1.1\]
+
+TerraRTiOS Framework supports streaming from Apple Watch as well!
+
+Your iOS app will have to be coupled with the Watch App. This means within your iOS project, you will need to create a target to WatchOS App:
+
+File -> New -> Target -> Watch App for iOS App.
+
+This will generate a new app for Watch OS within the same project.
+
+Within this app, you can add TerraRTiOS as a framework and build the app with it.
+
+### Setup
+
+The WatchOS will require HealthKit and Background Modes Capabilities with background delivery and workout processing enabled.
+
+You will also need to add 3 Keys to the Info.plist file with descriptions on how you will use Health Kit's data:
+
+*   Privacy - Health Share Usage Description
+*   Privacy - Health Update Usage Description
+*   Privacy - Health Records Usage Description
+
+### Get Started
+
+This half of the SDK contains functions that can only be imported from WatchOS apps. You can access these by having `import TerraRTiOS` on top of your file within the WatchOS App.
+
+The `Terra` class here manages everything. Always Initialise one:
+
+```swift
+let terra: Terra = try? Terra()
+
+```
+
+This function can throw: `TerraWatchOSErrors.WatchOSConnectioNotSupported`, `TerraWatchOSErrors.HealthKitNotSupported`. Please catch and handle appropriately.
+
+Upon start of the app, make sure the watch is paired to the phone.
+
+From the phone app, run the following to initiate a connection to the paired watch:
+
+```swift
+// Where terraRT is the TerraRT(..) class from iOS App
+try? terraRT.connectWithWatchOS()
+
+```
+
+This function will throw an error `TerraError.FeatureNotSupported` if watch connectivity is not supported on the current device.
+
+When the companion app is installed on the Watch, this call will create a connection with the Watch.
+
+If the watch failed to connect to the device or you wish to connect to a separate watch, on the watch you may also try to activate a session by:
+
+```swift
+terra.connect()
+
+```
+
+### Streaming
+
+**N.B: For WatchOS Streaming, the datatypes being streamed are controlled entirely by the Watch App. On the iOS app, you will simply have to accept data through `terraRT.startRealtime(...)`**
+
+On the Watch App, you can start streaming data straight away to your iOS App from the sensors as:
+
+```swift
+terra.startStream( forDataTypes dTypes: Set<ReadTypes>, completion: @escaping(Bool) -> Void)
+
+```
+
+### Workouts
+
+The Watch App can stream workout details to your iOS app!
+
+Simply start by
+
+```swift
+startExercise(forType workoutType: WorkoutTypes, completion: @escaping (Bool) -> Void)
+
+```
+
+You may also, stop, resume, and pause as such:
+
+```swift
+stopExercise(completion: @escaping (Bool) -> Void)
+
+``````swift
+resumeExercise()
+
+``````swift
+pauseExercise()
+
+```
+
