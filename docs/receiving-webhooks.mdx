@@ -1,0 +1,203 @@
+---
+title: "Receiving Data (Webhooks)"
+---
+Getting Started  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_getting_started.png" alt="" />
+
+Setting up  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_install_on_backend.png" alt="" />
+
+Authenticate Users  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_authenticate_users.png" alt="" />
+
+Getting Data  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_receive_data.png" alt="" />
+
+Parsing Data  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_understand_our_data.png" alt="" />
+
+API Settings  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_customise_terra.png" alt="" />
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_manage_integrations.png" alt="" />  
+  
+Mobile Setup
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_api_data_models.png" alt="" />  
+  
+API
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_widget.png" alt="" />  
+  
+Widget
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_historical_data.png" alt="" />  
+  
+Request
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_new_data.png" alt="" />  
+  
+Receive
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_event_types.png" alt="" />  
+  
+Events
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_api_data_models.png" alt="" />  
+  
+Data Models
+
+Terra allows you to receive and handle data asynchronously using webhooks.
+
+## What Are Webhooks?
+
+They are automated messages sent from apps when something happens.
+
+Terra uses webhooks to notify you whenever new data is made available for any of your users. New data, such as activity, sleep, etc will be normalised and sent to your webhook endpoint URL where you can process it however you see fit.
+
+After a user authenticates with your service through Terra, you will automatically begin receiving webhook messages containing data from their wearable.
+
+Furthermore, when [requesting data](/docs/historical-data)
+, by default, the response will not include the requested data, rather Terra will send the data to your webhook.
+
+In the following sections you will:
+
+*   set up a webhook endpoint URL
+*   configure Terra to send messages to the endpoint from the [Terra dashboard](https://dashboard.tryterra.co/terraapi/customise)
+    
+*   receive some sample data at your webhook
+
+## Setting up a Webhook Endpoint URL
+
+For testing purposes, the easiest way to set up a webhook endpoint is using an online provider (for example [webhook.site](https://webhook.site)
+).
+
+**Note: you cannot use a localhost as a webhook for testing purposes as this is only accessible locally. Consider using a tool like ngrok or the above example.**
+
+Alternatively, you can also setup a POST endpoint on your server and expose it to the internet, allowing Terra  
+to push webhooks to that endpoint. Ensure that you acknowledge receipt of the data with a `2xx` response or else Terra will [keep on trying to send the same message!](/reference/webhook-settings#retries)
+
+Once you receive a webhook from Terra, you can verify its authenticity using your signature secret, which can be found on your [Terra dashboard](https://dashboard.tryterra.co)
+ under **Connections > Destinations > Webhook > Edit > Signing secret**. Further details about signing [here](/reference/signing)
+.
+
+Here are some examples which include setting up a POST endpoint and verifying the payload:
+
+```python
+import logging
+import flask
+from flask import request
+from terra.base_client import Terra
+
+logging.basicConfig(level=logging.INFO)
+_LOGGER = logging.getLogger("app")
+
+terra = Terra(api_key='API-KEY', dev_id='DEV-ID', secret="SIGNING-SECRET")
+
+app = flask.Flask(__name__)
+
+@app.route("/consumeTerraWebhook", methods=["POST"])
+def consume_terra_webhook() -> flask.Response:
+    # body_str = str(request.get_data(), 'utf-8')
+    body = request.get_json()
+    _LOGGER.info(
+        "Received webhook for user %s of type %s",
+        body.get("user", {}).get("user_id"),
+        body["type"])
+    verified = terra.check_terra_signature(request.get_data().decode("utf-8"), request.headers['terra-signature'])
+    if verified:
+      return flask.Response(status=200)
+    else:
+      return flask.Response(status=403)
+    
+    
+if __name__ == "__main__":
+    app.run(host="localhost", port=8080)
+
+``````python
+const express = require("express");
+const bodyParser = require("body-parser");
+const { default: Terra } = require("terra-api");
+
+
+const terra = new Terra("API-KEY", "DEV-ID", "SIGNING-SECRET");
+
+
+const app = express();
+var options = {
+  inflate: true,
+  limit: "4000kb",
+  type: "application/json",
+};
+
+
+app.use(bodyParser.raw(options));
+
+
+app.post("/consumeTerraWebhook", function (req, res) {
+  res.sendStatus(200);
+  const data = JSON.parse(req.body);
+  console.log(JSON.stringify(data));
+  try {
+    const verified = terra.checkTerraSignature(req.headers['terra-signature'], req.body);
+  } catch(err) {
+    const verified = false;
+  };
+});
+
+
+const port = 3000;
+app.listen(port);
+console.log("Server started on port " + port);
+
+``````python
+// See https://github.com/tryterra/sample-webhook-endpoint-java
+
+```
+
+You can then expose your server to the internet with a tool such as [ngrok](https://ngrok.com/)
+ and start receiving payloads. If you are using ngrok, running
+
+`ngrok http {PORT_NUMBER}`
+
+will expose your server to the internet and return its URL.
+
+## Configuring Webhook Settings
+
+After setting up a webhook endpoint URL, head to [Terra dashboard](https://dashboard.tryterra.co/terraapi/customise)
+.
+
+Under **API > Connections > Destinations > Add New > Webhook**, copy your URL into the **Host** field. Terra will now send all webhook messages to that URL.
+
+<img className="block" src="images/files_readme_io/_a3f1dc8_Screenshot_2023_12_05_at_10.01.02.png" alt="" />
+
+## Testing your Webhook
+
+You should have now successfully set up a webhook endpoint. To verify that your webhook works, let's generate and send some dummy data to it.
+
+From the dashboard, head to **Tools > Generate**, select a data source and data type and press the **Generate test data** button. Once you're happy with the generated data, click the **Send to Webhook** button.
+
+<img className="block" src="images/files_readme_io/_74fc189_Screenshot_2023_12_05_at_10.11.42.png" alt="" />
+
+You should now see the generated sample data appear at your webhook endpoint.
+
+Congratulations! You have successfully set up a webhook endpoint to receive data from a provider through Terra! In the next step, you will learn what kinds of data you can expect to receive and how to parse them.
+
+## Advanced Topics
+
+**Signing**
+
+Each webhook message that you receive from Terra will include a `terra-signature` in the header to allow you to verify that the message was sent by Terra and not by a third party. Further details of how to verify the signature can be found in the the [Webhook Reference](/reference/webhook-settings)
+.
+
+**Customisation**
+
+You may wish to further customise aspects of your webhook, such how often Terra sends updates to it. Further details of how Terra sends data to your webhook can be found in the [Webhook Reference](/reference/webhook-settings)
+.
+
