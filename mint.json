@@ -1,91 +1,455 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "name": "Starter Kit",
+  "name": "docs-tryterra",
   "logo": {
-    "dark": "/logo/dark.svg",
-    "light": "/logo/light.svg"
+    "dark": "/logo/inverted.png",
+    "light": "/logo/regular.png"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/favicon.png",
   "colors": {
-    "primary": "#0D9373",
-    "light": "#07C983",
-    "dark": "#0D9373",
+    "primary": "#0088ff",
+    "light": "#007ae6",
+    "dark": "#0088ff",
     "anchors": {
-      "from": "#0D9373",
-      "to": "#07C983"
+      "from": "#0088ff",
+      "to": "#007ae6"
     }
   },
   "topbarLinks": [
     {
-      "name": "Support",
-      "url": "mailto:hi@mintlify.com"
+      "name": "Request a Demo",
+      "url": "/request-demo"
     }
   ],
   "topbarCtaButton": {
-    "name": "Dashboard",
-    "url": "https://dashboard.mintlify.com"
+    "name": "Get Started",
+    "url": "/signup"
+  },
+  "primaryTab": {
+    "name": "Home"
   },
   "tabs": [
     {
+      "name": "Home",
+      "url": "/"
+    },
+    {
+      "name": "Guides",
+      "url": "/docs"
+    },
+    {
+      "name": "Recipes",
+      "url": "/recipes"
+    },
+    {
       "name": "API Reference",
-      "url": "api-reference"
+      "url": "/reference"
+    },
+    {
+      "name": "Changelog",
+      "url": "/changelog"
     }
   ],
   "anchors": [
     {
-      "name": "Documentation",
-      "icon": "book-open-cover",
-      "url": "https://mintlify.com/docs"
-    },
-    {
       "name": "Community",
-      "icon": "slack",
-      "url": "https://mintlify.com/community"
+      "icon": "users",
+      "url": "https://tryterra.co/community"
     },
     {
       "name": "Blog",
       "icon": "newspaper",
-      "url": "https://mintlify.com/blog"
+      "url": "https://tryterra.co/blog"
     }
   ],
+  "modeToggle": {
+    "default": "dark"
+  },
   "navigation": [
     {
-      "group": "Get Started",
+      "group": "Connect with Unified API",
       "pages": [
-        "introduction",
-        "quickstart",
-        "development"
+        "docs/quickstart-1",
+        "docs/getting-started",
+        {
+          "group": "1. Setting up",
+          "pages": [
+            "docs/api-setup",
+            "docs/api-setup",
+            "docs/set-up-javascript",
+            "docs/unified-api-install-on-backend-java",
+            "docs/ruby-client",
+            "docs/postman"
+          ]
+        },
+        {
+          "group": "2. Authenticating Users",
+          "pages": [
+            "docs/authenticate-users",
+            {
+              "group": "Manual connection via the API",
+              "pages": [
+                "docs/authenticate-api",
+                "docs/building-your-own-ui"
+              ]
+            },
+            "docs/authenticate-widget"
+          ]
+        },
+        {
+          "group": "3. Getting Data",
+          "pages": [
+            "docs/getting-data",
+            "docs/historical-data",
+            "docs/receiving-webhooks"
+          ]
+        },
+        {
+          "group": "4. Parsing Data",
+          "pages": [
+            "docs/parsing-data",
+            "docs/event-types",
+            "docs/data-models"
+          ]
+        },
+        {
+          "group": "5. Mobile Setup",
+          "pages": [
+            "docs/mobile-setup",
+            "docs/unified-api-manage-integrations-ios",
+            "docs/unified-api-manage-integrations-android",
+            "docs/react-native-project",
+            "docs/unified-api-manage-integrations-flutter"
+          ]
+        },
+        {
+          "group": "6. Using the Terra Dashboard",
+          "pages": [
+            "docs/dashboard-settings",
+            "docs/add-your-team-members-1",
+            "docs/usage-statistics-1",
+            "docs/widget-customisation"
+          ]
+        },
+        "docs/integration-fun-facts",
+        "docs/self-debugging"
       ]
     },
     {
-      "group": "Essentials",
+      "group": "Generate a graph",
       "pages": [
-        "essentials/markdown",
-        "essentials/code",
-        "essentials/images",
-        "essentials/settings",
-        "essentials/navigation",
-        "essentials/reusable-snippets"
+        {
+          "group": "Using the Dashboard",
+          "pages": [
+            "docs/using-the-dashboard",
+            "docs/using-the-chatbot"
+          ]
+        }
       ]
     },
     {
-      "group": "API Documentation",
+      "group": "Stream Data",
       "pages": [
-        "api-reference/introduction"
+        "docs/using-the-websocket-api",
+        {
+          "group": "Read Data Stream",
+          "pages": [
+            "docs/terra-streaming-protocol",
+            "docs/setup-websocket-server"
+          ]
+        },
+        {
+          "group": "Streaming Mobile SDKs",
+          "pages": [
+            "docs/connect-stream",
+            "docs/stream-heart-rate-ios-sdk",
+            "docs/stream-heart-rate-android-sdk",
+            "docs/flutter-sdk",
+            "docs/wearos-sdk"
+          ]
+        }
       ]
     },
     {
-      "group": "Endpoint Examples",
+      "group": "More Information",
       "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/delete"
+        "reference/v2",
+        "reference/integrations-1"
+      ]
+    },
+    {
+      "group": "rest api",
+      "pages": [
+        {
+          "group": "API Endpoints",
+          "pages": [
+            "reference/using-the-api",
+            "reference/generate-widget-session",
+            "reference/authenticate-user",
+            "reference/deauthenticate-user",
+            "reference/get-activity-data",
+            "reference/get-athlete-data",
+            "reference/get-body-data",
+            "reference/get-daily-data",
+            "reference/get-menstruation-data",
+            "reference/get-nutrition-data",
+            "reference/get-sleep-data",
+            "reference/user-info",
+            "reference/bulk-user-info",
+            "reference/list-subscribed-users",
+            "reference/list-integrations",
+            "reference/list-integrations-detailed",
+            "reference/post-nutrition-data",
+            "reference/get-planned-workout-data",
+            "reference/post-planned-workout-data",
+            "reference/delete-planned-workout-data",
+            "reference/generate-authentication-token",
+            "reference/generate-developer-token",
+            "reference/generate-user-token"
+          ]
+        },
+        {
+          "group": "Python Client",
+          "pages": [
+            "reference/reference-python-client",
+            "reference/get_activity_for_user",
+            "reference/secret-1",
+            "reference/get_body_for_user",
+            "reference/get_daily_for_user",
+            "reference/get_menstruation_for_user",
+            "reference/get_nutrition_for_user",
+            "reference/get_sleep_for_user",
+            "reference/get_user_info",
+            "reference/list_users",
+            "reference/list_providers",
+            "reference/check_terra_signature",
+            "reference/handle_flask_webhook",
+            "reference/handle_webhook",
+            "reference/deauthenticate_user",
+            "reference/generate_authentication_url",
+            "reference/generate_widget_session",
+            "reference/from_user_id-1"
+          ]
+        },
+        {
+          "group": "JavaScript Client",
+          "pages": [
+            "reference/reference-javascript-client",
+            "reference/getactivity",
+            "reference/getactivity-1",
+            "reference/getbody",
+            "reference/getbody-1",
+            "reference/getbody-2",
+            "reference/getbody-3",
+            "reference/getbody-4",
+            "reference/getuser-2",
+            "reference/getproviders",
+            "reference/getusers",
+            "reference/deauthuser",
+            "reference/generatewidgetsession"
+          ]
+        },
+        {
+          "group": "Java Client",
+          "pages": [
+            "reference/reference-java-client",
+            "reference/getactivityforuser",
+            "reference/get_activity_for_user-1",
+            "reference/getactivityforuser-1",
+            "reference/getactivityforuser-2",
+            "reference/getactivityforuser-3",
+            "reference/getactivityforuser-4",
+            "reference/getactivityforuser-5",
+            "reference/getuser",
+            "reference/getuser-1",
+            "reference/getactivityforuser-6"
+          ]
+        },
+        "reference/openapi-specification"
+      ]
+    },
+    {
+      "group": "webhook events",
+      "pages": [
+        "reference/webhook-settings",
+        "reference/signing",
+        "reference/events"
+      ]
+    },
+    {
+      "group": "Mobile SDKs",
+      "pages": [
+        "reference/backend-clients-reference-1",
+        {
+          "group": "iOS SDK",
+          "pages": [
+            "reference/reference-ios-sdk",
+            "reference/terramanager",
+            "reference/initconnection",
+            "reference/getdaily",
+            "reference/getbody-5",
+            "reference/getactivity-2",
+            "reference/getsleep",
+            "reference/getmenstruation",
+            "reference/getathlete",
+            "reference/getuserid",
+            "reference/terraclient",
+            "reference/setupbackgrounddelivery-1",
+            "reference/setupbackgrounddelivery"
+          ]
+        },
+        {
+          "group": "Android SDK",
+          "pages": [
+            "reference/reference-android-sdk",
+            "reference/terramanager-1",
+            "reference/initconnection-1",
+            "reference/getsleep-1",
+            "reference/getdaily-1",
+            "reference/getactivity-3",
+            "reference/getbody-6",
+            "reference/getnutrition",
+            "reference/allgivenpermissions",
+            "reference/getuserid-1",
+            "reference/terraclient-1",
+            "reference/ishealthconnectavailable",
+            "reference/openhealthconnect"
+          ]
+        },
+        {
+          "group": "React Native SDK",
+          "pages": [
+            "reference/reference-react-native-sdk",
+            "reference/initterra",
+            "reference/checkauth",
+            "reference/init",
+            "reference/getdaily-2",
+            "reference/getactivity-4",
+            "reference/getsleep-2",
+            "reference/getnutrition-1",
+            "reference/getbody-7",
+            "reference/getmenstruation-1",
+            "reference/getathlete-1",
+            "reference/getuserid-3",
+            "reference/getuserid-copy",
+            "reference/grantedpermissions-android-only-copy",
+            "reference/grantedpermissions-android-only-copy-copy"
+          ]
+        },
+        {
+          "group": "Flutter SDK",
+          "pages": [
+            "reference/reference-flutter-sdk",
+            "reference/initterra-1",
+            "reference/initconnection-4",
+            "reference/getuserid-2",
+            "reference/getactivity-5",
+            "reference/getdaily-3",
+            "reference/getsleep-3",
+            "reference/getbody-8",
+            "reference/getnutrition-2",
+            "reference/getmenstruation-2",
+            "reference/getathlete-2"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Terra Streaming",
+      "pages": [
+        "reference/terra-streaming-reference",
+        {
+          "group": "iOS Realtime SDK",
+          "pages": [
+            "reference/reference-stream-heart-rate-ios-sdk",
+            "reference/terrart",
+            "reference/initconnection-6",
+            "reference/start",
+            "reference/startrealtime-1",
+            "reference/stoprealtime-1",
+            "reference/disconnect-1",
+            "reference/connectdevice",
+            "reference/connectwithwatchos",
+            "reference/connectwithwatchos-copy",
+            "reference/pausewatchosworkout",
+            "reference/pausewatchosworkout-copy",
+            "reference/resumewatchosworkout-copy",
+            "reference/sendmessage-watchos-copy",
+            "reference/setmessagehandler",
+            "reference/terra-watchos",
+            "reference/connect-watchos",
+            "reference/connect-watchos-copy",
+            "reference/startstream-watchos",
+            "reference/stopstream-watchos",
+            "reference/stopexercise",
+            "reference/startexercise-watchos",
+            "reference/resumeexercise-watchos",
+            "reference/pauseexercise-watchos",
+            "reference/setmessagehandler-copy",
+            "reference/sendmessage-watchos",
+            "reference/setupdatehandler-watchos",
+            "reference/setupdatehandler-watchos-copy",
+            "reference/setwatchstatechangelisteners"
+          ]
+        },
+        {
+          "group": "Android Realtime SDK",
+          "pages": [
+            "reference/reference-stream-heart-rate-android-sdk",
+            "reference/initconnection-5",
+            "reference/startdevicescan",
+            "reference/startrealtime",
+            "reference/stoprealtime",
+            "reference/disconnect",
+            "reference/getuserid-4"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Graphs API",
+      "pages": [
+        "reference/generate-live-graph",
+        "reference/view-live-graph"
+      ]
+    },
+    {
+      "group": "Data Models",
+      "pages": [
+        {
+          "group": "V2",
+          "pages": [
+            "reference/v2",
+            "reference/v2-samples",
+            "reference/planned-workouts",
+            "reference/data-formats"
+          ]
+        },
+        "reference/enums",
+        {
+          "group": "V1",
+          "pages": [
+            "reference/v1",
+            "reference/v1-samples"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "more information",
+      "pages": [
+        "reference/integrations-1"
       ]
     }
   ],
   "footerSocials": {
-    "x": "https://x.com/mintlify",
-    "github": "https://github.com/mintlify",
-    "linkedin": "https://www.linkedin.com/company/mintsearch"
-  }
+    "linkedin": "https://www.linkedin.com/company/terraapi",
+    "twitter": "https://twitter.com/TerraAPI",
+    "github": "https://github.com/tryterra"
+  },
+  "openapi": [
+    "/openapi-0.json",
+    "/openapi-1.json",
+    "/openapi-2.json"
+  ]
 }
