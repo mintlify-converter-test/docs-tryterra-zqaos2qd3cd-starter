@@ -1,0 +1,20 @@
+---
+title: "TerraManager"
+description: "Class that manages the connection and data retrieval between your app, Terra, and Apple Health/Freestylelibre"
+---
+**Initialisation**
+
+```swift
+Terra.instance(devId: String, 
+               referenceId: String?, 
+               completion: @escaping (TerraManager?, TerraError?) -> Void)
+
+```
+
+*   `devId: String` ➡ The developer identifier given to your after you signed up on [Terra](https://dashboard.tryterra.co)
+    
+*   `referenceId: String?` ➡ This is used by you to identify a user from your server to a terra user
+*   `completion: @escaping (TerraManager?, TerraError?) -> Void` ➡ A callback function that is called when the TerraManager class is initialised. If an error has occurred in creation, then the completion will return a `TerraError` class. **Highly recommended to wait for this callback before proceeding**
+
+
+
