@@ -1,0 +1,250 @@
+---
+title: "iOS Realtime SDK"
+---
+# class TerraRT
+
+An object that manages connecting to devices and streaming data from them.
+
+# class Terra
+
+An object (only available in WatchOS) that manages connecting and streaming to the iOS Companion app
+
+# Device
+
+```swift
+public struct Device: Identifiable  {
+    public let deviceName: String
+    public let deviceUUID: String
+    let peripheral: CBPeripheral?
+    public var id: String 
+}
+
+```
+
+# Update
+
+```swift
+public struct Update: Codable{
+    public var ts: String?
+    public var val: Double?
+    public var type: String?
+    public var d: [Double]?
+}
+
+```
+
+# Connections
+
+```swift
+public enum Connections: String{
+    case BLE = "Bluetooth Low Energy"
+    case APPLE = "iOS Sensors"
+    case WATCH_OS = "Watch OS"
+}
+
+```
+
+# TerraError
+
+```swift
+public enum TerraError: Error{
+    case UnknownOpcode
+    case FeatureNotSupported
+    case DataTypeNotSupportedForDevice
+    case DeviceNotConnected
+    case UnknownDevice
+}
+
+```
+
+# DataTypes
+
+```swift
+public enum DataTypes: String, Codable{
+    case HEART_RATE = "HEART_RATE"
+    case ECG = "ECG"
+    case STEPS = "STEPS"
+    case HRV = "HRV"
+    case CALORIES = "CALORIES"
+    case LOCATION = "LOCATION"
+    case SPEED = "SPEED"
+    case DISTANCE = "DISTANCE"
+    case STEPS_CADENCE = "STEPS_CADENCE"
+    case FLOORS_CLIMBED = "FLOORS_CLIMBED"
+    case GYROSCOPE = "GYROSCOPE"
+    case ACCELERATION = "ACCELERATION"
+}
+
+```
+
+# WorkoutStates (WatchOS)
+
+```swift
+enum WorkoutStateEnum: Int{
+    case PREPARING = 15
+    case USER_STARTING = 1
+    case ACTIVE = 2
+    case USER_PAUSING = 3
+    case USER_PAUSED = 4
+    case AUTO_PAUSING = 5
+    case AUTO_PAUSED = 6
+    case USER_RESUMING = 7
+    case AUTO_RESUMING = 8
+    case USER_ENDING = 9
+    case USER_ENDED = 10
+    case AUTO_ENDING = 11
+    case AUTO_ENDED = 12
+    case AUTO_ENDING_PERMISSION_LOST = 16
+    case AUTO_ENDED_PERMISSION_LOST = 17
+    case TERMINATING = 13
+    case TERMINATED = 14
+}
+
+```
+
+# WorkoutTypes (WatchOS)
+
+```swift
+public enum WorkoutTypes: String{
+    case BADMINTON = "BADMINTON"
+    case BARBELL_SHOULDER_PRESS = "BARBELL_SHOULDER_PRESS"
+    case BASEBALL = "BASEBALL"
+    case BASKETBALL = "BASKETBALL"
+    case BENCH_PRESS = "BENCH_PRESS"
+    case BENCH_SIT_UP = "BENCH_SIT_UP"
+    case BIKING = "BIKING"
+    case BIKING_STATIONARY = "BIKING_STATIONARY"
+    case BOOT_CAMP = "BOOT_CAMP"
+    case BOXING = "BOXING"
+    case BURPEE = "BURPEE"
+    case CALISTHENICS = "CALISTHENICS"
+    case CRICKET = "CRICKET"
+    case CRUNCH = "CRUNCH"
+    case DANCING = "DANCING"
+    case DEADLIFT = "DEADLIFT"
+    case DUMBBELL_CURL_RIGHT_ARM = "DUMBBELL_CURL_RIGHT_ARM"
+    case DUMBBELL_CURL_LEFT_ARM = "DUMBBELL_CURL_LEFT_ARM"
+    case DUMBBELL_FRONT_RAISE = "DUMBBELL_FRONT_RAISE"
+    case DUMBBELL_LATERAL_RAISE = "DUMBBELL_LATERAL_RAISE"
+    case DUMBBELL_TRICEPS_EXTENSION_LEFT_ARM = "DUMBBELL_TRICEPS_EXTENSION_LEFT_ARM"
+    case DUMBBELL_TRICEPS_EXTENSION_RIGHT_ARM = "DUMBBELL_TRICEPS_EXTENSION_RIGHT_ARM"
+    case DUMBBELL_TRICEPS_EXTENSION_TWO_ARM = "DUMBBELL_TRICEPS_EXTENSION_TWO_ARM"
+    case ELLIPTICAL = "ELLIPTICAL"
+    case EXERCISE_CLASS = "EXERCISE_CLASS"
+    case FENCING = "FENCING"
+    case FRISBEE_DISC = "FRISBEE_DISC"
+    case FOOTBALL_AMERICAN = "FOOTBALL_AMERICAN"
+    case FOOTBALL_AUSTRALIAN = "FOOTBALL_AUSTRALIAN"
+    case FORWARD_TWIST = "FORWARD_TWIST"
+    case GOLF = "GOLF"
+    case GUIDED_BREATHING = "GUIDED_BREATHING"
+    case GYMNASTICS = "GYMNASTICS"
+    case HANDBALL = "HANDBALL"
+    case HIGH_INTENSITY_INTERVAL_TRAINING = "HIGH_INTENSITY_INTERVAL_TRAINING"
+    case HIKING = "HIKING"
+    case ICE_HOCKEY = "ICE_HOCKEY"
+    case ICE_SKATING = "ICE_SKATING"
+    case JUMP_ROPE = "JUMP_ROPE"
+    case JUMPING_JACK = "JUMPING_JACK"
+    case LAT_PULL_DOWN = "LAT_PULL_DOWN"
+    case LUNGE = "LUNGE"
+    case MARTIAL_ARTS = "MARTIAL_ARTS"
+    case MEDITATION = "MEDITATION"
+    case OTHER = "OTHER"
+    case PADDLING = "PADDLING"
+    case PILATES = "PILATES"
+    case PLANK = "PLANK"
+    case RACQUETBALL = "RACQUETBALL"
+    case ROCK_CLIMBING = "ROCK_CLIMBING"
+    case ROLLER_HOCKEY = "ROLLER_HOCKEY"
+    case ROWING = "ROWING"
+    case ROWING_MACHINE = "ROWING_MACHINE"
+    case RUNNING = "RUNNING"
+    case RUNNING_TREADMILL = "RUNNING_TREADMILL"
+    case RUGBY = "RUGBY"
+    case SAILING = "SAILING"
+    case SKATING = "SKATING"
+    case SKIING = "SKIING"
+    case SNOWBOARDING = "SNOWBOARDING"
+    case SNOWSHOEING = "SNOWSHOEING"
+    case SOCCER = "SOCCER"
+    case SOFTBALL = "SOFTBALL"
+    case SQUASH = "SQUASH"
+    case SQUAT = "SQUAT"
+    case STAIR_CLIMBING = "STAIR_CLIMBING"
+    case STAIR_CLIMBING_MACHINE = "STAIR_CLIMBING_MACHINE"
+    case STRENGTH_TRAINING = "STRENGTH_TRAINING"
+    case STRETCHING = "STRETCHING"
+    case SURFING = "SURFING"
+    case SWIMMING_OPEN_WATER = "SWIMMING_OPEN_WATER"
+    case SWIMMING_POOL = "SWIMMING_POOL"
+    case TABLE_TENNIS = "TABLE_TENNIS"
+    case TENNIS = "TENNIS"
+    case UPPER_TWIST = "UPPER_TWIST"
+    case VOLLEYBALL = "VOLLEYBALL"
+    case WALKING = "WALKING"
+    case WATER_POLO = "WATER_POLO"
+    case WEIGHTLIFTING = "WEIGHTLIFTING"
+    case WORKOUT = "WORKOUT"
+    case YOGA = "YOGA"
+}
+
+```
+
+# ReadTypes (WatchOS)
+
+```swift
+public enum ReadTypes: String{
+    case WORKOUT = "WORKOUT"
+    case STEPS = "STEPS"
+    case DISTANCE = "DISTANCE"
+    case LOCATION = "LOCATION"
+    case CALORIES = "CALORIES"
+    case HEART_RATE = "HEART_RATE"
+    case HEART_RATE_VARIABILITY = "HEART_RATE_VARIABILITY"
+}
+
+```
+
+# TerraWatchOSErrors (WatchOS)
+
+```swift
+enum TerraWatchOSErrors: Error{
+    case WatchOSConnectioNotSupported
+    case HealthKitNotSupported
+    case CannotConnectToCompanionApp
+}
+
+```
+
+# ConnectionState (WatchOS)
+
+```swift
+public enum ConnectionState: Int, Codable{
+    case CONNECTING = 1
+    case CONNECTED = 2
+    case DISCONNECTED = 3
+    case INACTIVE = 4
+}
+
+```
+
+# TerraWatchOSerrors (WatchOS)
+
+```swift
+public enum TerraWatchOSErrors: Error{
+    case WatchOSConnectioNotSupported
+    case HealthKitNotSupported
+    case CannotConnectToCompanionApp
+    case NotInitialised
+    case WorkoutAlreadyStarted
+    case HealthKitAuthorizationFailed
+    case StartWorkoutError
+    case StopWorkoutError
+    case InvalidWorkoutSessionCreation
+}
+
+```
+
+
+
