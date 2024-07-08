@@ -1,0 +1,21 @@
+---
+title: "getActivity"
+description: "Request for Activity data for a specific connection"
+---
+```dart
+static Future<DataMessage?> getActivity(
+      Connection connection, DateTime startDate, DateTime endDate, {bool toWebhook = true}) async
+
+```
+
+*   `Connection connection` ➡ An ENUM from the Connections class signifying the connection you wish to initiate for.
+*   `DateTime startDate` ➡ The beginning of the request in either Date or Unix Timestamp
+*   `DateTime endDate` ➡ The end of the request in either Date or Unix Timestamp
+*   (Optional) `bool toWebhook` ➡ Whether or not to send data to your webhook. If false, `DataMessage` on the returned `Future` will contain the data in the `data` field.
+
+**returns**
+
+*   `Future<DataMessage?>`
+
+
+
