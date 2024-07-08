@@ -1,0 +1,21 @@
+---
+title: "generate_authentication_url"
+---
+```python
+def generate_authentication_url(
+	resource: str,
+	auth_success_redirect_url: Optional[str] = None,
+	auth_failure_redirect_url: Optional[str] = None,
+	reference_id: Optional[str] = None,
+)
+
+```
+
+Generates an authentication URL to allow an end user to authenticate through the API. Users should be redirected to the given URL in order to complete authentication. User ID will be provided in the response for convenience (note that at this stage, said user will have yet to complete the auth flow)
+
+Args: resource (str): Provider to authenticate user with auth\_success\_redirect\_url (Optional\[str\]): URL to redirect to upon successful authentication auth\_failure\_redirect\_url (Optional\[str\]): URL to redirect to upon unsuccessful authentication reference\_id (Optional\[str\]): ID of a user in your app, which will be returned at the end of a successful auth \*\*kwargs: Optional additional arguments to be passed in to the body of the request
+
+Returns: models.api\_responses.TerraApiResponse: API response object containing UserAuthUrl parsed response object if no error has occured
+
+
+
