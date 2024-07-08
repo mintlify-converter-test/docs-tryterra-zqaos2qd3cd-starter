@@ -1,0 +1,26 @@
+---
+title: "Choosing Data Formats"
+---
+Through the dashboard you can select the data format that you want to receive by clicking on the “Processes” button.
+
+<img className="block" src="images/files_readme_io/_8190150_image.png" alt="" />
+
+The 3 data formats are:
+
+1.  Terra Standard (Normalised)
+2.  FHIR Format
+3.  Fit File
+
+## When should you use each data format?
+
+For anyone building an app we recommend using the Terra standard.
+
+1.  Terra Standard makes it as easy as possible to parse through the data that you want. It lets you receive all data payloads (sleep, nutrition, activity, etc.). The standard preserves the raw data from the wearable, it just standardizes the units and the json format. It doesn’t augment/change the raw data in any way.
+    
+2.  FHIR stands for Fast Healthcare Interoperability Resources which is a file standard used in the health care system. It’s not traditionally used for app building but applications in the health care system. It supports all payloads. It’s a standard JSON schema so you can use parsers online to extract wearable data from it.
+    
+3.  Fit File is the file format created by Garmin for storing Activity data. But because of this it only works for activity payloads so you wouldn’t be able to receive your sleep data in this format. It’s a binary file so you need to post process it afterwards to access the data you want.
+    
+
+
+
