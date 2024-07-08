@@ -1,0 +1,46 @@
+---
+title: "Terra WebSocket API"
+---
+> ## 📘API Base URLs
+> 
+> **REST Endpoints:** `https://ws.tryterra.co`  
+> **Websocket connection endpoint:** `wss://ws.tryterra.co/connect`
+
+## Overview
+
+The Terra WebSocket API provides a method of sending to and receiving from real-time data streams to allow almost instant access to wearable data as it is being recorded. Many of the various Terra SDKs have out-of-the-box support for the streaming of data to the websocket service.
+
+<img className="block" src="images/files_readme_io/_51e8eaf_image.png" alt="Data flow in a real time streaming connection" />
+
+Data flow in a real time streaming connection
+
+See [Integrations](/reference/integrations-1)
+ for a full list of SDK-based integrations which support websockets.
+
+## How it works
+
+Real-time streaming of wearable data is achieved using the **Terra Streaming Protocol**.
+
+Four components participate in the protocol:
+
+1.  Wearable Device
+2.  Terra Streaming Producer (your mobile app)
+3.  The Terra WebSocket Service (Terra's server backend)
+4.  Terra Streaming Consumer (your server backend)
+
+The Terra Streaming Protocol describes the way data is streamed in real time from a wearable device to a Terra Streaming Consumer.
+
+First, a user connects their wearable device to your mobile app over Bluetooth Low Energy or ANT+, using one of the [real-time streaming SDKs](/docs/connect-stream)
+. Your mobile app then sets up a Terra ST producer connection with the Terra WebSocket Service, again using the real-time streaming SDK.
+
+Finally, for your server backend to read the data stream from the wearable, you will need to set up a Terra ST consumer connection with the Terra over WebSockets. Data from the wearable will then start arriving at connection!
+
+## Next steps
+
+*   Find out how to start receiving real-time data by [opening a connection to Terra's WebSockets service](/docs/terra-streaming-protocol)
+    .
+*   Find out how to start transmitting real-time data using a [real-time streaming mobile SDK](/docs/connect-stream)
+    .
+*   Find out more about the types and format of data transmitted over the protocol in the [Terra Streaming Protocol Reference](/reference/terra-streaming-reference)
+    .
+
