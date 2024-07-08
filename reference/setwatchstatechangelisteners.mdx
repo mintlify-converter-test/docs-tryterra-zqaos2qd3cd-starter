@@ -1,0 +1,15 @@
+---
+title: "setWatchStateChangeListeners"
+description: "Set watch state changed listeners (for isPaired, isWatchAppInstalled, and isComplicationEnabled fields)"
+---
+```swift
+public func setWatchStateChangeListeners(isPairedListener: ((Bool) -> Void)?, isAppInstalledListener: ((Bool) -> Void)?, isComplicationEnabledListener: ((Bool) -> Void)?)
+
+```
+
+*   isPairedListener: callback function executed when `isPaired` state changes
+*   isAppInstalledListener: callback function executed when `isWatchAppInstalled` state changes
+*   isComplicationEnabledListener: callback function executed when `isComplicationEnabled` state changes
+
+
+
