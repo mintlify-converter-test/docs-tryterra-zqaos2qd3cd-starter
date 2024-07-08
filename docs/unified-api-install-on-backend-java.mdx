@@ -1,0 +1,95 @@
+---
+title: "Java client"
+---
+> ## 🚧Work In Progress
+> 
+> The information in this page is up-to-date and accurate, but it will soon be standardised to fit the style of the rest of the documentation. If you have any feedback about the documentation or require support, please contact us on Discord or send an email to [bryan@tryterra.co](mailto:bryan@tryterra.co)
+
+## Installation
+
+`terra-client` is available for download from Maven Central.
+
+### Requirements:
+
+*   Java 11 or later
+
+### Gradle users
+
+Add this dependency to your project's build file:
+
+```build.gradle
+implementation "co.tryterra:terra-client:<version>"
+
+```
+
+### Maven users
+
+Add this dependency to your project's pom:
+
+```pom.xml
+<dependency>
+    <groupId>co.tryterra</groupId>
+    <artifactId>terra-client</artifactId>
+    <version>${terra-client.version}</version>
+</dependency>
+
+```
+
+* * *
+
+## Usage
+
+### Setup
+
+In order to interact with the Terra API using this library, you need an instance of [`TerraClientV2`](https://tryterra.github.io/terra-client-java/co.tryterra.terraclient/co/tryterra/terraclient/api/TerraClientV2.html)
+. This is created using [`TerraClientFactory`](https://tryterra.github.io/terra-client-java/co.tryterra.terraclient/co/tryterra/terraclient/TerraClientFactory.html)
+:
+
+```java
+TerraClientV2 client = TerraClientFactory.getClientV2("API KEY", "DEV ID");
+
+```
+
+In order to parse and handle webhook requests from Terra, you instead need an instance of [`WebhookHandlerUtility`](https://tryterra.github.io/terra-client-java/co.tryterra.terraclient/co/tryterra/terraclient/WebhookHandlerUtility.html)
+:
+
+```java
+WebhookHandlerUtility webhookUtility = new WebhookHandlerUtility("WEBHOOK SECRET");
+
+```
+
+### Authentication & User Management
+
+This library does not provide the facilities for directly authenticating a user - you can currently only interact with users that have been authenticated previously.
+
+#### Creating a User object
+
+API request methods of your `TerraClientV2` instance accept both `User` and `PartialUser` objects - this allows you not to make a web request to fetch a full `User` object if you are certain that a user with the given ID exists.
+
+When any API request is made, a new `User` object will be returned with the response. (See [`TerraApiResponse#getUser()`](https://tryterra.github.io/terra-client-java/co.tryterra.terraclient/co/tryterra/terraclient/api/TerraApiResponse.html#getUser())
+)
+
+**With API request**
+
+```java
+User user = client.getUser("USER ID");
+
+```
+
+**Without API request**
+
+```java
+PartialUser user = client.userFromId("USER ID");
+
+```
+
+#### Deauthentication
+
+```java
+Future<TerraApiResponse<Void>> resp = client.deauthenticateUser(user);
+if (resp.get().isSuccessful()) {
+  System.out.println("User deauthenticated");
+}
+
+```
+
