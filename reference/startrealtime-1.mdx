@@ -1,0 +1,31 @@
+---
+title: "startRealtime"
+description: "Starts streaming data for a given Connection type"
+---
+```swift
+public func startRealtime(type: Connections, 
+                          dataType: Set<DataTypes>, 
+                          token: String, 
+                          callback: @escaping(Update) -> Void,
+                          connectionCallback: @escaping(Bool) -> Void)
+
+public func startRealtime(type: Connections, 
+                          dataType: Set<DataTypes>, 
+                          token: String,
+                          connectionCallback: @escaping(Bool) -> Void)
+
+public func startRealtime(type: Connections, dataType:
+                          Set<DataTypes>, 
+                          callback: @escaping (Update) -> Void){
+
+```
+
+*   `type`: Connections -> An Enum signifying the connection to make.
+*   `callback`: (Update) -> Void -> A callback that calls with a `Update` object containing a message from the wearable. (**If provided, data will be called in this function**)
+*   `token`: String -> A user token for authentication to Websocket API. This can be generated [here](/reference/generate-user-token)
+     (**If provided, data will be sent to your developer websocket connection**)
+*   `dataType`: Set -> An set of Enum signifying the datatypes you wish to stream. Note if the data type is not supported by the `type` Connections, then it will simply return!
+*   `connectionCallback`: @escaping(Bool) -> Void -> A callback executed if a websocket connection was initiated. Argument represents if the connection was successful or not
+
+
+
