@@ -1,0 +1,122 @@
+---
+title: "Python Client"
+---
+Source code: [https://github.com/tryterra/terra-client-python](https://github.com/tryterra/terra-client-python)
+
+# class Terra
+
+An object that manages getting data, verifying signatures and authenticating users
+
+## Initialisation
+
+```python
+from terra.base_client import Terra
+
+terra = Terra(api_key: str, dev_id: str, secret: str)
+
+```
+
+## Instance Variables
+
+| Instance Variable Name | Returns | Explanation |
+| --- | --- | --- |
+| api\_key | `str` | returns the api\_kay the class was initiated with |
+| dev\_id | `str` | returns the dev\_id the class was initiated with |
+| secret | `str` | returns the secret the class was initiated with |
+
+## Methods
+
+| Method Name | Returns | Explanation |
+| --- | --- | --- |
+| get\_activity\_for\_user | `TerraApiResponse` | returns an api response that when parsed contains activity data |
+| get\_athlete\_for\_user | `TerraApiResponse` | returns an api response that when parsed contains athlete data |
+| get\_body\_for\_user | `TerraApiResponse` | returns an api response that when parsed contains body data |
+| get\_daily\_for\_user | `TerraApiResponse` | returns an api response that when parsed contains daily data |
+| get\_menstruation\_for\_user | `TerraApiResponse` | returns an api response that when parsed contains menstruation data |
+| get\_nutrition\_for\_user | `TerraApiResponse` | returns an api response that when parsed contains nutrition data |
+| get\_sleep\_for\_user | `TerraApiResponse` | returns an api response that when parsed contains sleep data |
+| get\_user\_info | `TerraApiResponse` | returns an api response that when parsed contains user data |
+| list\_providers | `TerraApiResponse` | returns an api response that when parsed contains one list for web providers and another for sdk providers |
+| list\_users | `TerraApiResponse` | returns an api response that when parsed contains a list of all users |
+| check\_terra\_signature | `bool` | returns whether the body was sent from Terra |
+| handle\_flask\_webhook | `TerraWebhookResponse` | returns either data or None type if check\_terra\_signature failed, specifically for flask |
+| handle\_webhook | `TerraWebhookResponse` returns a webhook response object | returns either data or None type if check\_terra\_signature failed |
+| deauthenticate\_user | `TerraApiResponse` | returns an api response object that when parsed returns a |
+| generate\_authentication\_url | `TerraApiResponse` | returns an api response that when parsed contains details about an authentication session with one provider |
+| generate\_widget\_session | `TerraApiResponse` | returns an api response that when parsed contains details about an authentication session with one of the inputted providers |
+| from\_user\_id | `User` | returns a User object from user\_id |
+
+## Parsed Webhook Response Types
+
+### DataReturned
+
+```python
+DataReturned(user: User, type: str, data: List[TerraDataModel])
+
+```
+
+### NoDataReturned
+
+```python
+NoDataReturned(user: User, status: str, message: str)
+
+```
+
+### AccessRevokedHookResponse
+
+```python
+AccessRevokedHookResponse(user: User, message: str)
+
+```
+
+### AuthHookResponse
+
+```python
+AuthHookResponse(reference_id: str, user: User, widget_session_id: str)
+
+```
+
+### UserReauthHookResponse
+
+```python
+UserReauthHookResponse(old_user: User, new_user: User, message: str)
+
+```
+
+### UserDeauthHookResponse
+
+```python
+UserDeauthHookResponse(user: User, message: str)
+
+```
+
+### ConnectionErrorHookResponse
+
+```python
+ConnectionErrorHookResponse(user: User, message: str)
+
+```
+
+### GoogleNoDataSourceHookResponse
+
+```python
+GoogleNoDataSourceHookResponse(user: User, message: str)
+
+```
+
+### RequestProcessingHookResponse
+
+```python
+RequestProcessingHookResponse(user: User, message: str)
+
+```
+
+### RequestCompletedHookResponse
+
+```python
+RequestCompletedHookResponse(user: User, message: str)
+
+```
+
+
+
