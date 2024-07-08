@@ -1,0 +1,173 @@
+---
+title: "RT Streaming - Android"
+---
+# TerraRTAndroid
+
+This packages uses Bluetooth Low Energy (BLE) and Bluetooth services. These will be requested as permissions upon initialisation of the package.
+
+The package streams real time data to your backend through **WebSockets**. You can learn more about it at the [Terra WebSocket API guide](/reference/using-the-websocket-api)
+.
+
+The data streamed to your WebSocket connection will follow the following format:
+
+```json
+{
+  "op":5,
+  "d":
+    {
+      "ts": <String> (In ISOFormat Date Form)
+       "val": <Double>
+       "d" <Array<Double>>
+    },
+    "uid": <String> (user ID)
+    "seq": <Int>,
+    "t": <String> (Datatype name: Exactly the same as the name of `DataTypes` enum)
+}
+
+```
+
+`ts` is the timestamp of the record. For each datatype, either `val` or `d` is populated. See the [Terra Streaming Protocol Reference](/reference/terra-streaming-reference)
+ for full details about the payload format.
+
+## Installation
+
+The library is part of mavenCentral! Follow the steps to install:
+
+1.  Open your project in Android Studio.
+2.  Navigate to your project's `build.gradle` file located in the root directory of your project.
+3.  Inside the dependencies section of the `build.gradle` file, add the following line of code. This will add the TerraAndroid SDK as a dependency to your project.
+
+```gradle
+implementation 'co.tryterra:terra-rtandroid:0.4.1'
+
+```
+
+## Usage
+
+The package revolves mainly around a single class: `TerraRT`.
+
+First, import it into your code:
+
+```kotlin
+import co.tryterra.terrartandroid.TerraRT
+
+```
+
+Then, initialise an instance of the class:
+
+```kotlin
+terraRT = TerraRT(
+  context: Context = this,
+)
+
+```
+
+**Arguments**:
+
+*   `context: Context` => The app context for which you call this function from (usually from a class that extends from `Activity` types)
+
+### Initialising Connections
+
+After initialisation of this class, you can initialise different connections. You can do this as follows:
+
+```kotlin
+terraRT.initConnection(token: String, callback: (Boolean) -> Unit)
+
+```
+
+**Arguments**:
+
+*   `token` => an authentication token that should be generated in your backend from the Mobile SDK Token endpoint
+*   `callback` => a function that is called when the initialisation is complete with a boolean depicting if it's successful or not
+
+Upon running this `initConnection` function, any necessary permission request will be requested.
+
+You may now scan for a device to con
+
+```kotlin
+terraRT.startDeviceScan(type: Connections,  useCache: Boolean = false, callback: (Boolean) -> Unit)
+
+```
+
+**Arguments**:
+
+*   `connection: Connections` => This argument takes a `Connections` enum, indicating the connection you wish to make. This includes BLE, Wear OS (Bluetooth) **(Please check out our [WearOS SDK](https://github.com/tryterra/TerraWearOS)
+     for this!)**, etc. See the Connections Enum reference for a full list
+*   `useCache` parameter can be used if you wish to let the user simply connect the previous connected device.
+
+This will pull a widget up to allow the user to scan and connect to a device.
+
+**N.B You will have to download 2 plugins from ANT+ services to use this function, otherwise the connections will return false in the callback (Error logs will be printed). You can find the 2 plugins here: [Ant+ Plugins Service](https://play.google.com/store/apps/details?id=com.dsi.ant.plugins.antplus&hl=en_GB&gl=US)
+ and [Ant Radio Service](https://play.google.com/store/apps/details?id=com.dsi.ant.service.socket&hl=en_GB&gl=US)
+**
+
+> ## 📘For 0.2.x versions and below you can start scans using the following:
+> 
+> *   For Bluetooth/BLE related connections, you will also be required to run
+> 
+> ```kotlin
+> terraRT.startBluetoothScan(type: Connections, callback: (Boolean) -> Unit)
+> 
+> ```
+> 
+> `type: Connections` => The same `Connections` enum as before! However this function will only take connections that uses Bluetooth: `Connections.BLE` and `Connections.WEAR_OS`
+> 
+> This will cause Bluetooth connection widget will pop up asking you to select the Bluetooth device you wish to connect to. **Connecting to any other devices will simply fail if not supported!**
+> 
+> The callback is to check whether the connection is successful or not. **Please wait for the callback before proceeding!**
+> 
+> *   For ANT+ related connections, you can do something similar to BLE connections by running
+> 
+> ```kotlin
+> terraRT.startAntPlusScan(callback: (Boolean) -> Unit)
+> 
+> ```
+
+### Streaming Data
+
+Each streaming session requires a token for authentication to Websocket API. This can be generated from the [Streaming User Token endpoint](/reference/generate-user-token)
+. **Note: this is a different token from the Mobile SDK token used earlier.** The request requires the following fields:
+
+*   dev\_id - found at your Terra Dashboard
+*   x\_api\_key - found at your Terra Dashboard
+*   user\_id - the user\_id of the connection you wish to stream
+
+Get the `user_id` of the current connection as such:
+
+```kotlin
+terraRT.getUserId()
+
+```
+
+Here comes the fun part. You can now start streaming data by running:
+
+```kotlin
+terraRT.startRealtime(type: Connections, token: String, dataTypes: DataTypes)
+
+```
+
+**Arguments**
+
+*   `connection: Connections` => This argument takes a `Connections` enum, indicating the connection you wish to start realtime for
+*   `token: String` => A Streaming User Token for authentication to Websocket API. This can be generated from the [Streaming User Token endpoint](/reference/generate-user-token)
+    .
+*   `dataTypes: DataTypes` => This argument takes a `DataTypes` enum indicating the datatype you wish to stream for.
+
+Similarly, to stop streaming, run the following function:
+
+```kotlin
+terraRT.stopRealtime(type: Connections)
+
+```
+
+**N.B Streaming from WEAR OS is handled on the Watch itself!!**
+
+### Disconnecting
+
+Finally, disconnecting a device is done as:
+
+```kotlin
+terraRT.disconnect(type: Connections)
+
+```
+
