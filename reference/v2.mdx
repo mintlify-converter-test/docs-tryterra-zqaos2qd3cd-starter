@@ -1,0 +1,595 @@
+---
+title: "V2"
+description: "Most recent version of the data models"
+---
+> ## 📘Note
+> 
+> All fields in all models are nullable unless explicitly stated otherwise.
+
+> ## 🚧Uniquely identifying payloads
+> 
+> ## Activity
+> 
+> Activity payloads can be uniquely identified by their `summary_id` field under `metadata`. If an activity comes in a second time, with the same summary ID, you should update the previous entries with the new data corresponding to that `summary_id`
+> 
+> ## Body, Daily, Sleep, Nutrition
+> 
+> Body, Daily, Sleep, Nutrition payloads can be uniquely identified by the combination of their `start_time` and `end_time` fields under `metadata`. If one of these payloads comes in again, with the same `start_time` and `end_time`, you should update the previous entries with the new data.
+> 
+> For example, the `Daily` payload can come in multiple times in one day, with updated `steps` field every time
+
+> ## 🚧Schema parser
+> 
+> When building a parser for the models below, please take into account that more fields may be added down the line (but no field name should ever change within a given version)
+> 
+> Also note that this version is equivalent to `2022_03_16`
+
+## TerraUser
+
+```schema
+{
+    "user_id": String,  // not nullable
+    "provider": String,  // not nullable
+    "last_webhook_update": String,
+    "scopes": String,
+    "reference_id": String
+}
+
+```
+
+## Activity
+
+```schema
+{
+    "movement_data": {
+        "normalized_speed_meters_per_second": Number,
+        "max_cadence_rpm": Number,
+        "avg_speed_meters_per_second": Number,
+        "avg_pace_minutes_per_kilometer": Number,
+        "max_velocity_meters_per_second": Number,
+        "max_pace_minutes_per_kilometer": Number,
+        "max_torque_newton_meters": Number,
+        "avg_cadence_rpm": Number,
+        "avg_velocity_meters_per_second": Number,
+        "avg_torque_newton_meters": Number,
+        "cadence_samples": Array<CadenceSample>,
+        "speed_samples": Array<SpeedSample>,
+        "max_speed_meters_per_second": Number
+    },
+  	"strain_data": {
+      "strain_level": Number
+    },
+    "power_data": {
+        "max_watts": Number,
+        "avg_watts": Number,
+        "power_samples": Array<PowerSample>
+    },
+    "position_data": {
+        "position_samples": Array<PositionSample>,
+        "center_pos_lat_lng_deg": [Number, Number],
+        "start_pos_lat_lng_deg": [Number, Number],
+        "end_pos_lat_lng_deg": [Number, Number]
+    },
+    "oxygen_data": {
+        "saturation_samples": Array<OxygenSaturationSample>,
+        "avg_saturation_percentage": Number,
+        "vo2_samples": Array<Vo2MaxSample>,
+        "vo2max_ml_per_min_per_kg": Number
+    },
+    "metadata": {
+        "name": String,
+        "summary_id": String,
+        "country": String,
+        "state": String,
+        "upload_type": UploadType,
+        "end_time": String,
+        "city": String,
+        "type": ActivityType,
+        "start_time": String
+    },
+    "TSS_data": {
+        "TSS_samples": Array<TSSSample>
+    },
+    "device_data": {
+        "name": String,
+        "other_devices": Array<OtherDeviceData>,
+        "hardware_version": String,
+        "manufacturer": String,
+        "software_version": String,
+        "activation_timestamp": String,
+        "serial_number": String,
+      	"data_provided": Array<DeviceDataType>,
+      	"last_upload_date": String
+    },
+    "distance_data": {
+        "summary": {
+            "swimming": {
+                "num_strokes": Number,
+                "num_laps": Number,
+                "pool_length_meters": Number
+            },
+            "floors_climbed": Number,
+            "elevation": {
+                "loss_actual_meters": Number,
+                "min_meters": Number,
+                "avg_meters": Number,
+                "gain_actual_meters": Number,
+                "max_meters": Number,
+                "gain_planned_meters": Number
+            },
+            "steps": Number,
+            "distance_meters": Number
+        },
+        "detailed": {
+          	"step_samples": Array<StepSample>,
+            "distance_samples": Array<DistanceSample>,
+            "elevation_samples": Array<ElevationSample>,
+            "floors_climbed_samples": Array<FloorsClimbedSample>,
+        }
+    },
+    "calories_data": {
+        "net_intake_calories": Number,
+        "BMR_calories": Number,
+        "total_burned_calories": Number,
+        "net_activity_calories": Number
+    },
+    "lap_data": {
+        "laps": Array<LapSample>
+    },
+    "MET_data": {
+        "MET_samples": Array<METSample>,
+        "num_low_intensity_minutes": Number,
+        "num_high_intensity_minutes": Number,
+        "num_inactive_minutes": Number,
+        "num_moderate_intensity_minutes": Number,
+        "avg_level": Number
+    },
+    "heart_rate_data": {
+        "summary": {
+            "max_hr_bpm": Number,
+            "resting_hr_bpm": Number,
+            "avg_hrv_rmssd": Number,
+            "min_hr_bpm": Number,
+            "user_max_hr_bpm": Number,
+            "avg_hrv_sdnn": Number,
+            "avg_hr_bpm": Number,
+            "hr_zone_data": Array<HeartRateZoneData>
+        },
+        "detailed": {
+            "hr_samples": Array<HeartRateDataSample>,
+            "hrv_samples_sdnn": Array<HeartRateVariabilityDataSampleSDNN>,
+            "hrv_samples_rmssd": Array<HeartRateVariabilityDataSampleRMSSD>
+        }
+    },
+    "active_durations_data": {
+        "activity_seconds": Number,
+        "rest_seconds": Number,
+        "low_intensity_seconds": Number,
+        "activity_levels_samples": Array<ActivityLevelSample>,
+        "vigorous_intensity_seconds": Number,
+        "num_continuous_inactive_periods": Number,
+        "inactivity_seconds": Number,
+        "moderate_intensity_seconds": Number,
+      	"standing_seconds": Number,
+      	"standing_hours_count": Number
+    },
+    "polyline_map_data": {
+        "summary_polyline": String
+    },
+    "strain_data": {
+        "strain_level": Number
+    },
+    "work_data": {
+        "work_kilojoules": Number
+    },
+    "energy_data": {
+        "energy_kilojoules": Number,
+        "energy_planned_kilojoules": Number
+    }
+}
+
+```
+
+## Athlete
+
+```schema
+{
+    "age": Number,
+    "country": String,
+    "bio": String,
+    "state": String,
+    "last_name": String,
+    "sex": String,
+    "city": String,
+    "email": String,
+    "date_of_birth": String,
+    "first_name": String,
+    "gender": String,
+    "joined_provider": String,
+    "devices": Array<device_data>
+}
+
+```
+
+## Body
+
+```schema
+{
+    "oxygen_data": {
+        "saturation_samples": Array<OxygenSaturationSample>,
+        "avg_saturation_percentage": Number,
+        "vo2_samples": Array<Vo2MaxSample>,
+        "vo2max_ml_per_min_per_kg": Number
+    },
+    "metadata": {
+        "end_time": String,
+        "start_time": String
+    },
+    "hydration_data": {
+        "hydration_amount_samples": Array<HydrationLevelSample>,
+        "hydration_level_samples": Array<HydrationMeasurementSample>,
+        "day_total_water_consumption_ml": Number
+    },
+    "device_data": {
+        "name": String,
+        "other_devices": Array<OtherDeviceData>,
+        "hardware_version": String,
+        "manufacturer": String,
+        "software_version": String,
+        "activation_timestamp": String,
+        "sensor_state": String,
+        "serial_number": String,
+      	"last_upload_date": String
+    },
+    "blood_pressure_data": {
+        "blood_pressure_samples": Array<BloodPressureSample>
+    },
+    "temperature_data": {
+        "body_temperature_samples": Array<TemperatureSample>,
+        "ambient_temperature_samples": Array<TemperatureSample>,
+        "skin_temperature_samples": Array<TemperatureSample>
+    },
+    "measurements_data": {
+        "measurements": Array<MeasurementDataSample>
+    },
+    "heart_data": {
+        "afib_classification_samples": Array<AFibClassificationSample>,
+        "ecg_signal": Array<ECGReading>,
+      	"rr_interval_samples": Array<RRInterval>,
+        "heart_rate_data": {
+            "summary": {
+                "max_hr_bpm": Number,
+                "resting_hr_bpm": Number,
+                "avg_hrv_rmssd": Number,
+                "min_hr_bpm": Number,
+                "user_max_hr_bpm": Number,
+                "avg_hrv_sdnn": Number,
+                "avg_hr_bpm": Number
+            },
+            "detailed": {
+                "hr_samples": Array<HeartRateDataSample>,
+                "hrv_samples_sdnn": Array<HeartRateVariabilityDataSampleSDNN>,
+                "hrv_samples_rmssd": Array<HeartRateVariabilityDataSampleRMSSD>
+            }
+        },
+        "pulse_wave_velocity_samples": Array<PulseVelocitySample>
+    },
+    "glucose_data": {
+        "blood_glucose_samples": Array<GlucoseDataSample>,
+        "detailed_blood_glucose_samples": Array<GlucoseDataSample>,
+        "day_avg_blood_glucose_mg_per_dL": Number,
+      	"gmi": Number,
+      	"time_in_range": Number,
+      	"sensor_usage": Number,
+      	"daily_patterns": Array<DailyPatternSample>,
+    }
+}
+
+```
+
+## Daily
+
+```schema
+{
+    "oxygen_data": {
+        "saturation_samples": Array<OxygenSaturationSample>,
+        "avg_saturation_percentage": Number,
+        "vo2_samples": Array<Vo2MaxSample>,
+        "vo2max_ml_per_min_per_kg": Number
+    },
+  	"stress_data": {
+      "stress_duration_seconds": Number,
+      "rest_stress_duration_seconds": Number,
+      "activity_stress_duration_seconds": Number,
+			"low_stress_duration_seconds": Number,
+			"medium_stress_duration_seconds": Number,
+			"high_stress_duration_seconds": Number,
+			"avg_stress_level": Number,
+			"max_stress_level": Number,
+			"stress_rating": Number,
+			"samples": Array<StressSample>,
+    },
+    "metadata": {
+        "end_time": String,
+        "start_time": String,
+        "upload_type": UploadType
+    },
+    "tag_data": {
+        "tags": Array<TagEntry>,
+    },
+    "device_data": {
+        "name": String,
+        "other_devices": Array<OtherDeviceData>,
+        "hardware_version": String,
+        "manufacturer": String,
+        "software_version": String,
+        "activation_timestamp": String,
+        "serial_number": String,
+      	"last_upload_date": String
+    },
+    "scores": {
+      "recovery": Number,
+      "activity": Number,
+      "sleep": Number,
+    }
+    "distance_data": {
+        "swimming": {
+            "num_strokes": Number,
+            "num_laps": Number,
+            "pool_length_meters": Number
+        },
+        "floors_climbed": Number,
+        "elevation": {
+            "loss_actual_meters": Number,
+            "min_meters": Number,
+            "avg_meters": Number,
+            "gain_actual_meters": Number,
+            "max_meters": Number,
+            "gain_planned_meters": Number
+        },
+        "steps": Number,
+        "detailed": {
+            "step_samples": Array<StepSample>,
+            "distance_samples": Array<DistanceSample>,
+            "elevation_samples": Array<ElevationSample>
+          	"floors_climbed_samples": Array<FloorsClimbedSample>
+        },
+        "distance_meters": Number
+    },
+    "MET_data": {
+        "MET_samples": Array<METSample>,
+        "num_low_intensity_minutes": Number,
+        "num_high_intensity_minutes": Number,
+        "num_inactive_minutes": Number,
+        "num_moderate_intensity_minutes": Number,
+        "avg_level": Number
+    },
+    "calories_data": {
+        "net_intake_calories": Number,
+        "BMR_calories": Number,
+        "total_burned_calories": Number,
+        "net_activity_calories": Number,
+        "calorie_samples": Array<CalorieSample>
+    },
+    "heart_rate_data": {
+        "summary": {
+            "max_hr_bpm": Number,
+            "resting_hr_bpm": Number,
+            "avg_hrv_rmssd": Number,
+            "min_hr_bpm": Number,
+            "user_max_hr_bpm": Number,
+            "avg_hrv_sdnn": Number,
+            "avg_hr_bpm": Number
+        },
+        "detailed": {
+            "hr_samples": Array<HeartRateDataSample>,
+            "hrv_samples_sdnn": Array<HeartRateVariabilityDataSampleSDNN>,
+            "hrv_samples_rmssd": Array<HeartRateVariabilityDataSampleRMSSD>
+    		}
+    },
+    "active_durations_data": {
+        "activity_seconds": Number,
+        "rest_seconds": Number,
+        "low_intensity_seconds": Number,
+        "activity_levels_samples": Array<ActivityLevelSample>,
+        "vigorous_intensity_seconds": Number,
+        "num_continuous_inactive_periods": Number,
+        "inactivity_seconds": Number,
+        "moderate_intensity_seconds": Number,
+      	"standing_seconds": Number,
+      	"standing_hours_count": Number
+    },
+    "stress_data": {
+        "rest_stress_duration_seconds": Number,
+        "stress_duration_seconds": Number,
+        "activity_stress_duration_seconds": Number,
+        "avg_stress_level": StressLevel,
+        "low_stress_duration_seconds": Number,
+        "medium_stress_duration_seconds": Number,
+        "samples": Array<StressSample>,
+        "high_stress_duration_seconds": Number,
+        "max_stress_level": StressLevel
+    }
+}
+
+```
+
+## Menstruation
+
+```schema
+{
+    "metadata": {
+        "end_time": String,
+        "start_time": String
+    },
+    "menstruation_data": {
+        "period_length_days": Number,
+        "current_phase": MenstruationFlow,
+        "length_of_current_phase_days": Number,
+        "days_until_next_phase": Number,
+        "period_start_date": String,
+        "predicted_cycle_length_days": Number,
+        "day_in_cycle": Number,
+        "last_updated_time": String,
+        "cycle_length_days": Number,
+        "is_predicted_cycle": String,
+				"menstruation_flow": Array<MenstruationFlow>
+    }
+}
+
+```
+
+## Nutrition
+
+```schema
+{
+    "metadata": {
+        "end_time": String,
+        "start_time": String
+    },
+    "summary": {
+        "macros": {
+            "fat_g": Number,
+            "trans_fat_g": Number,
+            "fiber_g": Number,
+            "carbohydrates_g": Number,
+            "protein_g": Number,
+            "cholesterol_mg": Number,
+            "sodium_mg": Number,
+            "calories": Number,
+            "sugar_g": Number,
+            "alcohol_g": Number
+        },
+        "micros": {
+            "selenium_mg": Number,
+            "niacin_mg": Number,
+            "magnesium_mg": Number,
+            "copper_mg": Number,
+            "vitamin_B12_mg": Number,
+            "vitamin_B6_mg": Number,
+            "vitamin_C_mg": Number,
+            "zinc_mg": Number,
+            "vitamin_E_mg": Number,
+            "manganese_mg": Number,
+            "vitamin_D_mg": Number,
+            "iodine_mg": Number,
+            "chloride_mg": Number,
+            "folate_mg": Number,
+            "calcium_mg": Number,
+            "molybdenum_mg": Number,
+            "vitamin_A_mg": Number,
+            "riboflavin_mg": Number,
+            "folic_acid_mg": Number,
+            "iron_mg": Number,
+            "thiamin_mg": Number,
+            "pantothenic_acid_mg": Number,
+            "caffeine_mg": Number,
+            "vitamin_K_mg": Number,
+            "chromium_mg": Number,
+            "potassium_mg": Number,
+            "biotin_mg": Number,
+            "phosphorus_mg": Number
+        },
+        "water_ml": Number
+    },
+    "meals": Array<Meal>
+}
+
+```
+
+## Sleep
+
+```schema
+{
+    "sleep_durations_data": {
+        "other": {
+            "duration_in_bed_seconds": Number,
+            "duration_unmeasurable_sleep_seconds": Number
+        },
+        "sleep_efficiency": Number,
+        "hypnogram_samples": Array<SleepHypnogramSample>,
+        "awake": {
+            "duration_short_interruption_seconds": Number,
+            "duration_awake_state_seconds": Number,
+            "duration_long_interruption_seconds": Number,
+            "num_wakeup_events": Number,
+            "wake_up_latency_seconds": Number,
+            "num_out_of_bed_events": Number,
+            "sleep_latency_seconds": Number
+        },
+        "asleep": {
+            "duration_light_sleep_state_seconds": Number,
+            "duration_asleep_state_seconds": Number,
+            "num_REM_events": Number,
+            "duration_REM_sleep_state_seconds": Number,
+            "duration_deep_sleep_state_seconds": Number
+        }
+    },
+    "device_data": {
+        "name": String,
+        "other_devices": Array<OtherDeviceData>,
+        "hardware_version": String,
+        "manufacturer": String,
+        "software_version": String,
+        "activation_timestamp": String,
+        "serial_number": String
+    },
+    "metadata": {
+        "end_time": String,
+        "start_time": String,
+        "upload_type": SleepUploadType,
+        "summary_id": String
+    },
+    "heart_rate_data": {
+        "summary": {
+            "max_hr_bpm": Number,
+            "avg_hrv_rmssd": Number,
+            "min_hr_bpm": Number,
+            "user_max_hr_bpm": Number,
+            "avg_hr_bpm": Number,
+            "avg_hrv_sdnn": Number,
+            "resting_hr_bpm": Number
+        },
+        "detailed": {
+            "hr_samples": Array<HeartRateDataSample>,
+            "hrv_samples_sdnn": Array<HeartRateVariabilityDataSampleSDNN>,
+            "hrv_samples_rmssd": Array<HeartRateVariabilityDataSampleRMSSD>
+        }
+    },
+    "temperature_data": {
+        "delta": Number
+    },
+    "readiness_data": {
+        "readiness": Number,
+        "recovery_level": RecoveryLevel
+    },
+    "respiration_data": {
+        "breaths_data": {
+            "min_breaths_per_min": Number,
+            "avg_breaths_per_min": Number,
+            "max_breaths_per_min": Number,
+            "on_demand_reading": Boolean,
+            "end_time": String,
+            "samples": Array<BreathSample>,
+            "start_time": String
+        },
+        "snoring_data": {
+            "num_snoring_events": Number,
+            "total_snoring_duration_seconds": Number,
+            "end_time": String,
+            "samples": Array<SnoringSample>,
+            "start_time": String
+        },
+        "oxygen_saturation_data": {
+            "start_time": String,
+            "end_time": String,
+            "avg_saturation_percentage": Number,
+            "samples": Array<OxygenSaturationSample>
+        }
+    }
+}
+
+```
+
+
+
