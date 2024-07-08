@@ -1,0 +1,16 @@
+---
+title: "initConnection"
+---
+```kotlin
+fun initConnection(token: String, callback: (Boolean) -> Unit)
+
+```
+
+Initialise a connection with Terra's backend for the device
+
+*   token - an authentication token that should be generated in your backend from [the Mobile SDK Token endpoint](/reference/generate-authentication-token)
+    
+*   callback - a function that is called when the initialisation is complete with a boolean depicting if it's successful or not
+
+
+
