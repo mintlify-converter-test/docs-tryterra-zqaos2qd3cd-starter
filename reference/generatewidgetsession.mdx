@@ -1,0 +1,47 @@
+---
+title: "generateWidgetSession"
+---
+```javascript
+generateWidgetSession(params: {
+        referenceID: string;
+        language: string;
+        providers?: string[];
+        authSuccessRedirectUrl?: string;
+        authFailureRedirectUrl?: string;
+        showDisconnect?: boolean;
+    }): Promise<TerraWidgetResponse>;
+
+```
+
+Generate a widget session
+
+Returns
+
+A promise of type Widget Response
+
+Parameters
+
+referenceID: string
+
+Terra user ID
+
+providers: string\[\]
+
+Array of strings for wearable providers
+
+language: string
+
+Language the widget page is showed in
+
+Optional auth\_success\_redirect\_url: string
+
+Redirect URL when the session succeeds
+
+Optional auth\_failure\_redirect\_url: string
+
+Redirect URL when the session fails
+
+Returns Promise
+
+
+
