@@ -1,0 +1,28 @@
+---
+title: "subscribe"
+---
+**Instance method of TerraManager**
+
+```swift
+subscribe(forDataTypes: Set<DataTypes>, 
+                completion: @escaping(Bool, TerraError?) -> Void)
+
+```
+
+You can subscribe for datatypes as follows (only needs to be done once).
+
+After you have confirmed a connection with Apple Health, you can pass us an update handler ideally in your app delegate's didFinishLaunchingWithOptions function, so it is set everytime the app launches. This can be done as such:
+
+```swift
+Terra.updateHandler = {type: DataTypes, update: Update -> Void in 
+  // process updates in here
+}
+
+```
+
+After the call, your update handler will be called with the corresponding datatypes whenever new ones are available. This includes the next time you open your app.
+
+Scenario: You subscribed for steps data. You close your app and do not go back for 5 days. The next time you open it, your update handler will be called with all 5 days worth of steps, without you needing to query for it and would execute a lot faster as it is only steps.
+
+
+
