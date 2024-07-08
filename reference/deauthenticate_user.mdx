@@ -1,0 +1,18 @@
+---
+title: "deauthenticate_user"
+---
+```python
+Terra.deauthenticate_user(
+	user: terra.models.user.User
+)
+
+```
+
+Deauthenticates the given User from the Api. If successful, this will trigger a deauth webhook event.
+
+Args: user (models.user.User): User to Deauthenticate from the API
+
+Returns: models.api\_responses.TerraApiResponse: API response object containing UserDeauthResp parsed response object if no error has occured
+
+
+
