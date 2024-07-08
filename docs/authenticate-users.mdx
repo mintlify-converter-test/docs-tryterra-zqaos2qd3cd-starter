@@ -1,0 +1,78 @@
+---
+title: "2. Authenticating Users"
+---
+Getting Started  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_getting_started.png" alt="" />
+
+Setting up  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_install_on_backend.png" alt="" />
+
+Authenticate Users  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_authenticate_users.png" alt="" />
+
+Getting Data  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_receive_data.png" alt="" />
+
+Parsing Data  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_understand_our_data.png" alt="" />
+
+API Settings  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_customise_terra.png" alt="" />
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_manage_integrations.png" alt="" />  
+  
+Mobile Setup
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_api_data_models.png" alt="" />  
+  
+API
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_widget.png" alt="" />  
+  
+Widget
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_historical_data.png" alt="" />  
+  
+Request
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_new_data.png" alt="" />  
+  
+Receive
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_event_types.png" alt="" />  
+  
+Events
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_api_data_models.png" alt="" />  
+  
+Data Models
+
+## Connecting a wearable
+
+To connect to a user's wearable using Terra, the user first needs to authorise Terra to read data from the wearable's platform. You have two options of facilitating this:
+
+*   [Using the Terra Connect widget](/docs/authenticate-widget)
+     (recommended): this is a pre-built frontend that shows your users a list of wearables to choose from and connect
+*   [Manual connection via the API](/docs/authenticate-api)
+     (advanced): this option allows you to create your own frontend to show your users and uses the API directly to connect a wearable
+
+Please note that staging & test environments are subject to a default user limit of 50 devices connected at once. Once the limit is reached, you will need to call [Deauthenticate User](/reference/deauthenticate-user)
+ to remove some connections, or will get errors upon trying to connect new ones
+
+## Managing users
+
+The API provides endpoints to manage your connections:
+
+*   [List Subscribed Users](/reference/list-subscribed-users)
+    : returns a list of all the wearables connected to your service
+*   [User Info](/reference/user-info)
+    : returns information about a particular wearable connection
+*   [Deauthenticate User](/reference/deauthenticate-user)
+    : deletes a particular wearable connection
+
