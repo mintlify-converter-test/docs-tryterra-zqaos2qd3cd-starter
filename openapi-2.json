@@ -1,0 +1,141 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Graph API",
+        "version": "2.0"
+    },
+    "servers": [
+        {
+            "url": "https://api.tryterra.co/v2/graphs"
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "sec0": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "x-api-key"
+            }
+        }
+    },
+    "security": [
+        {
+            "sec0": []
+        }
+    ],
+    "paths": {
+        "/": {
+            "post": {
+                "summary": "Initialise Session",
+                "description": "The first step to initialise a live graph is to initialise the session (this is done automatically in the dashboard).",
+                "operationId": "generate-live-graph",
+                "parameters": [
+                    {
+                        "name": "dev-id",
+                        "in": "header",
+                        "description": "Your Terra developer ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "x-api-key",
+                        "in": "header",
+                        "description": "Your Terra API Key",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "bgcolor": {
+                                        "type": "string",
+                                        "description": "A parameter option to modify background color",
+                                        "default": "#FFFFFF"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "description": "Enter the graph type that you want to create the session for",
+                                        "default": "SLEEP_HR_SUMMARY"
+                                    },
+                                    "linecolor": {
+                                        "type": "string",
+                                        "description": "A parameter option to modify line color",
+                                        "default": "#FFF000"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "200",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Result": {
+                                        "value": "{\n    \"token\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwYXlsb2FkIjp7ImRldi1pZCI6ImphYWZhciIsInVzZXJfaWQiOiI5YTg5OWQ4ZC1jNzA2LTRhZWItYTU3My1kNDdjNDk3YmFhZDYiLCJzdGFydF9kYXRlIjoxNjU3NjM1Mjg0LCJlbmRfZGF0ZSI6MTY1ODI0MDA4NH0sImV4cGlyZXMiOjE2NTgyNDA5ODQuNDczMTU4fQ.T4MfNv8RJv2LENRtp_5VtQpkfYaXWVeZe4xTvV-6ySE\"\n}"
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "token": {
+                                            "type": "string",
+                                            "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwYXlsb2FkIjp7ImRldi1pZCI6ImphYWZhciIsInVzZXJfaWQiOiI5YTg5OWQ4ZC1jNzA2LTRhZWItYTU3My1kNDdjNDk3YmFhZDYiLCJzdGFydF9kYXRlIjoxNjU3NjM1Mjg0LCJlbmRfZGF0ZSI6MTY1ODI0MDA4NH0sImV4cGlyZXMiOjE2NTgyNDA5ODQuNDczMTU4fQ.T4MfNv8RJv2LENRtp_5VtQpkfYaXWVeZe4xTvV-6ySE"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/{session_id}/{user_id}": {
+            "get": {
+                "summary": "Generate Graph",
+                "description": "Using the provided session ID visit the endpoint containing the generated graph.",
+                "operationId": "view-live-graph",
+                "parameters": [
+                    {
+                        "name": "timeframe",
+                        "in": "query",
+                        "description": "This timeframe is the amount of past days that you want the data to be visualised for",
+                        "schema": {
+                            "type": "string",
+                            "default": "7"
+                        }
+                    },
+                    {
+                        "name": "from",
+                        "in": "query",
+                        "description": "This is the start date that you want your data to be from",
+                        "schema": {
+                            "type": "string",
+                            "default": "2023-04-01"
+                        }
+                    },
+                    {
+                        "name": "to",
+                        "in": "query",
+                        "description": "This is the end date that you want to data to be until. If this is left blank the end date will default to the current day.",
+                        "schema": {
+                            "type": "string",
+                            "default": "2023-04-01"
+                        }
+                    }
+                ],
+                "deprecated": false
+            }
+        }
+    }
+}
