@@ -1,0 +1,23 @@
+---
+title: "getAthlete"
+description: "Getter function to retrieve athlete data from Apple Health"
+---
+**Instance method of TerraManager**
+
+```swift
+getAthlete(type: Connections, 
+         toWebhook: Bool, 
+         completion: @escaping (Bool, TerraAthleteDataPayloadModel?, TerraError?) -> Void)
+
+```
+
+*   `type: Connections` ➡ The Connection to get data from
+*   `toWebhook: Bool` ➡ Whether or not to send data to your webhook
+*   \`completion: (Bool, TerraAthleteDataPayloadModel?, TerraError?) -> Void ➡
+
+**Bool** -> If the request was successful or not. If not, a TerraError instance will also be called  
+**TerraAthleteDataPayloadModel?** -> A payload for each data type. If `toWebhook` is set to true, this returns a class with a property `reference` referring to the payload reference sent to your webhook. If `toWebhook` is set to false, then this returns the entire Terra normalised payload.  
+**TerraError?** -> Returned if any error occurred while retrieving data
+
+
+
