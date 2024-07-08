@@ -1,0 +1,231 @@
+---
+title: "Flutter"
+---
+## SDK Installation
+
+If you have a flutter application, you can use the terra\_flutter\_bridge package to access SDK integrations.
+
+## Simple Integration Steps
+
+### Installation
+
+Start off by installing the `terra_flutter_bridge` package:
+
+```bash
+flutter pub add terra_flutter_bridge
+
+```
+
+Then you can import the package in your code as such:
+
+```dart
+import 'package:terra_flutter_bridge/terra_flutter_bridge.dart';
+
+```
+
+## Apple Health Integration Setup for iOS
+
+If you want to connect to Apple Health, additional steps are required.
+
+1.  Using XCode, open the `.xcodeproj` project. This is typically found at `ios/<YOUR PROJECT NAME>.xcodeproj` from the root directory of your project.
+2.  **Add Privacy Keys:**  
+    Go to main app folder > Click on the icon below TARGETS on the sidebar > click on `Info` on menu bar > go to Custom iOS Target Properties > hover over any key and click `+` button > add `Privacy - Health Share Usage Description` and `Privacy - Health Records Usage Description` and set values for each > add key array `Permitted background task scheduler identifiers` and add item `co.tryterra.data.post.request`
+3.  Add HealthKit as a Capability to your project. Enable the `Clinical Health Records` and `Background Delivery` options. See [the Apple Developer Docs](https://developer.apple.com/documentation/xcode/adding-capabilities-to-your-app)
+     for a detailed walkthrough.
+
+> ## 📘Background Delivery for iOS
+> 
+> Enabling Background Delivery for your app will allow it to send new data to your server backend through Terra even when it is not running in the foreground.
+> 
+> To enable Background Delivery for your app:
+> 
+> *   Enable Background Delivery in HealthKit Entitlements
+> *   Add Background Modes as a Capability to your project and enable Background Fetch and Background Processing
+> *   Add the `Permitted background task scheduler identifiers` key to your `info.plist` with one item:
+>     *   `co.tryterra.data.post.request`
+> *   Run `Terra.setUpBackgroundDelivery()` in your AppDelegate's `didFinishLaunchingWithOptions` function:
+> 
+> ```appdelegate.swift
+> import UIKit
+> import Flutter
+> import TerraiOS
+> 
+> @UIApplicationMain
+> @objc class AppDelegate: FlutterAppDelegate {
+>   override func application(
+>     _ application: UIApplication,
+>     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+>   ) -> Bool {
+>     GeneratedPluginRegistrant.register(with: self)
+>     Terra.setUpBackgroundDelivery()
+>     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+>   }
+> }
+> 
+> ```
+> 
+> In the case it is in Objc-C, you can import the package as such:  
+> `#import <TerraiOS/TerraiOS-Swift.h>`  
+> And execute the function as such:  
+> `[Terra setUpBackgroundDelivery];`
+
+## Samsung/Google Fit Integration Setup for Android
+
+### Health Connect Setup
+
+1.  The SDK requires [Health Connect](https://play.google.com/store/apps/details?id=com.google.android.apps.healthdata&hl=en_GB&gl=US)
+     to function. Make sure it is installed on your user's devices.
+2.  In the Health Connect app, give all permissions between the app you wish to read from and Health Connect.
+3.  Navigate to your project's `AndroidManifest.xml` file. It is typically located at `android/app/src/main/AndroidManifest.xml` from the root directory of your project.
+4.  In your `AndroidManifest.xml` include the following under the Activity you wish to display to the user when user wants to see your app's privacy policy:
+
+```xml
+<intent-filter>
+    <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
+</intent-filter>
+<intent-filter>
+  <action android:name="android.intent.action.VIEW_PERMISSION_USAGE"/>
+  <category android:name="android.intent.category.HEALTH_PERMISSIONS"/>
+</intent-filter>
+
+```
+
+5.  In your `AndroidManifest.xml` include the following to the Activity you wish to request permissions for Health Connect from:
+
+```xml
+ <meta-data
+     android:name="health_permissions"
+     android:resource="@array/health_permissions" />
+
+```
+
+6.  For example, you could add them to the `MainActivity` activity so both will run when the user launches your app:
+
+```androidmanifest.xml
+<activity
+	android:name=".MainActivity"
+    android:exported="true"
+    android:label="@string/app_name"
+    android:theme="@style/Theme.<YOUR_APP_NAME>">
+    	<intent-filter>
+        	<action android:name="android.intent.action.MAIN" />
+        	<category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+  
+        <intent-filter>
+        	<action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
+        </intent-filter>
+  
+			  <intent-filter>
+			    <action android:name="android.intent.action.VIEW_PERMISSION_USAGE"/>
+			    <category android:name="android.intent.category.HEALTH_PERMISSIONS"/>
+        </intent-filter>
+        <meta-data
+        	android:name="health_permissions"
+            android:resource="@array/health_permissions" />
+</activity>
+
+```
+
+> ## 🚧Going LIVE
+> 
+> Before going LIVE (release), you will need to apply for permissions to access the Health Connect API with Google. Use this [application form](https://docs.google.com/forms/d/1LFjbq1MOCZySpP5eIVkoyzXTanpcGTYQH26lKcrQUJo/viewform?edit_requested=true)
+> .
+> 
+> In the form, you will need to specify which data types you intend to read from Health Connect.
+> 
+> For each permission which you are _not_ using, please add the following lines to your AndroidManifest.xml
+> 
+> `<uses-permission android:name="android.permission.health.READ_HEART_RATE" tools:node="remove"/>`
+
+## Initialise Terra
+
+The next step is to initialise Terra on the device. This allows the SDK to connect to the Terra service and handle any necessary setups on the device while the app is running. The following function should be called before usage of the SDK once when the app opens up
+
+```dart
+static Future<SuccessMessage?> initTerra(
+  String devID,
+  String referenceID) async
+
+```
+
+| Parameter | Description |
+| --- | --- |
+| devId | Your terra developer ID. You can find it in your terra dashboard (see [Customize API settings](/docs/customize-api-settings)) |
+| referenceId | An identifier that allows you to map the terra user id to one of your users |
+
+Where `SuccessMessage` is:
+
+```typescript
+class SuccessMessage{
+  final bool? success;
+  final String? error;
+}
+
+```
+
+### Connect an integration
+
+> ## 🚧Currently only Libre 1, Pro/H and Libre 2 (UK) are supported!
+> 
+> Libre 2 US and Libre14Days US are not supported currently.
+
+After initialising Terra, you can initialise a device connection. This function needs to be called once only.
+
+```dart
+static Future<SuccessMessage?> initConnection(
+      Connection connection,
+      String token,
+      bool schedulerOn,
+      List<CustomPermission> customPermissions) async
+
+```
+
+| Parameter | Description |
+| --- | --- |
+| type | Terra integration connection type. Supports `Connection.appleHealth` , `Connection.googleFit` , `Connection.samsung` , `Connection.freestyleLibre` |
+| token | Single-use authentication token generated from [Generate Authentication Token](/reference/generate-authentication-token). This ensures that terra credentials are not sitting on the client-side. \*_It is advised you securely generate the token from a backend._ |
+| customReadTypes (optional) | A more granular set to control which sub-scopes the application would like to access (using `HKObjectType` types). Default value is empty. |
+| schedulerOn (optional) | Wether to use or not the terra scheduler to automatically fetch data to webhook. Default value is `true`. |
+
+The function completes when the connection is done initiating!
+
+With these two functions, and the scheduler set to `true`, the application now automatically fetches data following the timers and sends it to your webhook!
+
+### Test Authentication
+
+To ensure a specific connection is still valid, use the `getUserid()` method. You should occasionally use this method to check the connection.
+
+```dart
+static Future<UserId?> getUserId(Connection connection) async
+
+class UserId{
+  final bool? success;
+  final String? userId;
+}
+
+```
+
+### Getting Data
+
+If you have initialised your connection to a provider with `schedulerOn` as `true`, you will automatically receive new data from the provider at your webhook when it becomes available. For more information, checkout the [Receiving Data](/docs/receiving-webhooks)
+ guide.
+
+To manually get historical data, you can use a getter function. See the [Flutter SDK reference](/reference/reference-flutter-sdk)
+ for the full list of possible functions.
+
+```javascript
+static Future<DataMessage?> getNutrition(
+      Connection connection, DateTime startDate, DateTime endDate, {bool toWebhook = true}) async
+    
+class DataMessage{
+  final bool? success;
+  final Map<String, dynamic>? data;
+  final String? error;
+}
+
+```
+
+The `data` field of the `data` will be an object in the form of one of the [V2 data models](/reference/v2)
+, depending on what data the request was made for.
+
