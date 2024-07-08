@@ -1,0 +1,30 @@
+---
+title: "getActivity"
+---
+```javascript
+getActivity: ((params: { endDate?: Date; startDate: Date; toWebhook?: boolean; userId: string }) 
+  => Promise<TerraDataResponse<Activity>>)
+
+```
+
+Gets activity data for current user
+
+Returns:  
+A promise of type Activity Data
+
+Parameters  
+userId: string
+
+startDate: Date  
+Start date for the date range limit
+
+Optional endDate: Date  
+End date for the date range limit
+
+Optional toWebhook: boolean  
+True for sending data to webhook and false for sending data in response body
+
+Returns Promise<TerraDataResponse\>
+
+
+
