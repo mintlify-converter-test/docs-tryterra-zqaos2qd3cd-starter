@@ -1,0 +1,21 @@
+---
+title: "get_daily_for_user"
+---
+```python
+Terra.get_daily_for_user(
+	user: terra.models.user.User,
+	start_date: datetime.datetime,
+	end_date: Optional[datetime.datetime] = None,
+	to_webhook: bool = True
+)
+
+```
+
+Retrieves daily summary data for a given User object. By default, data will be asynchronously sent to registered webhook URL.
+
+Args: user (models.user.User): User for whom to fetch data start\_date (datetime.datetime): Datetime object for which to fetch data end\_date:obj (:datetime.datetime): Optional end\_date for which to fetch data - if not set, will default to start\_date + 24h according to current API specifications to\_webhook (bool): Whether to send data to registered webhook URL or return as a response body
+
+Returns: models.api\_responses.TerraApiResponse: API response object containing DataReturned parsed response object if no error has occured
+
+
+
