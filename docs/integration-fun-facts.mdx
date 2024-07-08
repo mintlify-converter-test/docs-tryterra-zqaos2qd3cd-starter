@@ -1,0 +1,199 @@
+---
+title: "Integrations fun facts"
+---
+For available integrations, please refer to [the integrations page](/reference/integrations)
+
+# Detailed information on available integrations
+
+## Integrations with special processes
+
+### Google Fit (SDK), Samsung Health: Health Connect (HC)-based integrations
+
+Currently the integrations mentioned above go through the newly developed Health Connect platform, which is an on-device storage system developed by Google. This platform however is still in its infancy, and comes with a number of issues.
+
+> ## 🚧Health connect known issues
+> 
+> We have seen numerous cases of apps not being able to sync into Health Connect due to bugs in the HC platform itself. This could be, for example, Samsung Health not being able to send steps into HC.
+> 
+> We've also seen cases where HC data simply could not be accessed, for no apparent reason, leading to limited or no syncing of data possible.
+> 
+> Before going LIVE (release), you will ALSO need to apply for permissions to access the Health Connect API with Google. Use [this application form](https://docs.google.com/forms/d/1LFjbq1MOCZySpP5eIVkoyzXTanpcGTYQH26lKcrQUJo/viewform?edit_requested=true)
+> .
+> 
+> In the form, you will need to specify which data types you intend to read from Health Connect.
+
+For the reasons mentioned above, we _highly_ recommend using the Google Fit integration through the API instead (resource name/enum `GOOGLE`).
+
+### Samsung Health - Direct connection route
+
+As privileged partners of Samsung thanks to their investment in Terra, we have been granted access to their privileged SDK for accessing Samsung Health directly, without using Health Connect as an intermediary.
+
+This route is much preferred to the Health Connect route due to the reasons discussed above. For access to this route, please get in touch with us through our support channels.
+
+### Integrations requiring partnerships directly with the provider
+
+Some of our integration partners require us to have our customers establish direct partnerships with them. These integrations are:
+
+*   Virtuagym
+*   InBody
+*   Dexcom
+*   Huawei
+
+You may see guides below in the appropriate section, and for any ones which are not outlined at the bottom of this page, please contact us for a step-by-step walkthrough
+
+## Integrations subject to changes by data provider
+
+Some of the integrations provided are developed on agreements subject to be updated by the integration providers. their APIs can be modified without notifying Terra, which could cause disruption in the service beyond our control.
+
+Those integrations are:
+
+*   FreestyleLibre
+*   Aktiia
+*   Bryton Sport
+*   Clue app
+*   EatThisMuch
+*   FatSecret
+*   FinalSurge
+*   Hammerhead Karoo
+*   Lezyne
+*   Liverowing
+*   RideWithGPS
+*   Rouvy
+*   Somnofy
+*   Technogym
+*   Tempo Fit
+*   Train Xhale
+*   TrainAsOne
+*   TrainerRoad
+*   Tridot
+*   Velo Hero
+
+# Creating your own access keys
+
+For some providers such as Google Fit, you are advised to have your own application keys either because the provider requires it in there terms, or to simply avoid rate limits and separate your environment from the shared Terra keys.
+
+## Strava
+
+*   Log in to [https://strava.com/settings/api](https://strava.com/settings/api)
+    
+*   Create an application
+*   Set the Authorization callback domain to api.tryterra.co, and save the client ID and client secret obtained
+*   In your Terra dashboard, add Strava to your connections under API > Connections > Add more
+*   Fill in the obtained client\_id and client secret on that connection's settings
+
+## Virtuagym
+
+*   Request an API key from [https://virtuagym.com/public-api](https://virtuagym.com/public-api)
+    
+*   In you Terra dashboard, add Virtuagym to your connections under API > Connections > Add more
+*   After adding Virtuagym, go the Virtuagym options
+*   Fill your portal name in the client id, and your API Key in the client secret
+
+## Huawei
+
+### Create a Huawei ID
+
+This can be achieved by following the [Registration & Verification guide](https://developer.huawei.com/consumer/en/doc/start/registration-and-verification-0000001053628148)
+
+> ## 📘Identity verification
+> 
+> Through the Huawei ID Registration process, you will be asked to verify your identity.
+> 
+> *   If you own a business, please follow the guide for [DUNS number verification](https://developer.huawei.com/consumer/en/doc/start/atpopb-0000001062836624)
+>      or the guide [using a Business License](https://developer.huawei.com/consumer/en/doc/start/mracoei-0000001062678404)
+>     
+> *   If you are an individual developer, follow [this guide](https://developer.huawei.com/consumer/en/doc/start/ibca-0000001062388135)
+>      using your personal documents
+>     
+
+### Apply for the HUAWEI ID Service
+
+This is separate from the Huawei ID registration - the _service_ is what will allow you to then access various Huawei APIs). Follow the guide [here](https://developer.huawei.com/consumer/en/doc/development/HMSCore-Guides/apply-id-0000001050069756)
+ for a step-by-step explanation on how to achieve that
+
+> ## 📘Import parameters
+
+| Item |     |
+| --- | --- |
+| Redirect URL | This should be set to "[https://api.tryterra.co/v2/auth/huawei/oauth2](https://api.tryterra.co/v2/auth/huawei/oauth2)" |
+| App access URL | [https://api.tryterra.co/](https://api.tryterra.co/) |
+| Callback URL | This should be set to  "[https://api.tryterra.co/v2/hooks/huawei/healthkit/notifications](https://api.tryterra.co/v2/hooks/huawei/healthkit/notifications)" |
+
+### Apply for Huawei Health Kit access
+
+Please follow the guide Health Kit access [here](https://developer.huawei.com/consumer/en/doc/development/HMSCore-Guides/apply-kitservice-0000001050071707)
+ for an in-depth explanation of how to gain access to users' health data through Huawei Health Kit
+
+Make sure to register for notifications (webhooks) by following [these steps](https://developer.huawei.com/consumer/en/doc/development/HMSCore-Guides/subscription-0000001078496860#section38652513104)
+:
+
+<img className="block" src="images/files_readme_io/_c6f3b5d_image.png" alt="" />
+
+## Google Fit
+
+**Creating Google Fit keys is not necessary, but an optional step in order to display your own name & logo in the authentication page, and to have separate rate limits for your users.**
+
+Create keys on [https://developers.google.com/identity/protocols/oauth2#basicsteps](https://developers.google.com/identity/protocols/oauth2#basicsteps)
+ and fill the client id and client secret you get in the Terra dashboard.
+
+The default scopes Terra uses are:
+
+> ## ❗️Essential scopes
+> 
+> `calendar.settings.readonly` is used for getting time zone information from users in order to properly localize their daily payloads  
+> `userinfo.profile` is necessary in order to appropriately store Google user IDs on Terra's end
+
+> ## 📘Requesting fewer scopes
+> 
+> You may select a subset of the rest of the scopes according to your application's needs, and let us know which ones you have selected so we can make the necessary adjustments on our end.
+
+```text
+fitness.activity.read
+fitness.heart_rate.read
+fitness.location.read
+fitness.nutrition.read
+fitness.blood_pressure.read
+fitness.blood_glucose.read
+fitness.body.read
+fitness.oxygen_saturation.read
+fitness.body_temperature.read
+fitness.reproductive_health.read
+fitness.sleep.read
+user.birthday.read
+user.gender.read
+userinfo.email
+userinfo.profile
+calendar.settings.readonly
+
+```
+
+If any of the above do not show up when adding scopes to your application, make sure you have enabled the appropriate API in [https://console.cloud.google.com/apis/library](https://console.cloud.google.com/apis/library)
+
+Your app will need to be submitted for verification in order for these keys to be able to be used. The FAQs for this can be found [here](https://support.google.com/cloud/answer/9110914?hl=en)
+
+You will need to create a video explaining how your app will use each of the scopes requested, and fill in some description information for it.
+
+## FreestyleLibre
+
+In **Germany**, **Austria** and **France**, it is necessary to have a doctors license to be able to access Freestylelibre of users residing in said regions. This would mean having a registered practice. Once you have a practice id for a practice on the Libreview web app, you then would need to let us know the details and we will be able to proceed as per the normal procedure.
+
+## Dexcom
+
+Dexcom prefers to make partnerships directly with the end users of their API. You will need to set up your own Dexcom API account and let us know the credentials. Here are the steps you need to do to connect to Dexcom!
+
+1.  first step would be to make an account here: [https://developer.dexcom.com/user/login](https://developer.dexcom.com/user/login)
+    
+2.  you'd then create an app here: [https://developer.dexcom.com/account/apps](https://developer.dexcom.com/account/apps)
+    
+3.  set up a redirect rule on a URL of your choice on your server, having it it redirect to [https://api.tryterra.co/v2/auth/dexcom/oauth2](https://api.tryterra.co/v2/auth/dexcom/oauth2)
+     (make sure all query params are forwarded through as well). For example, if your domain for your server is [https://yourserver.com](https://yourserver.com)
+    , you could pick [https://yourserver.com/auth/dexcom](https://yourserver.com/auth/dexcom)
+     and make sure any request to it, e.g. [https://yourserver.com/auth/dexcom?foo=bar](https://yourserver.com/auth/dexcom?foo=bar)
+     is redirected to [https://api.tryterra.co/v2/auth/dexcom/oauth2?foo=bar](https://api.tryterra.co/v2/auth/dexcom/oauth2?foo=bar)
+    
+4.  set that redirect URL in the app created in step 2
+5.  share credentials (client ID & secret) from step 2 with us
+6.  authenticate a test account through Terra (same way as with every other provider)
+7.  apply for production access to Dexcom through the "apply for upgrade" button on the app created in step 2
+8.  <img className="block" src="images/files_readme_io/_d41316b_image.png" alt="" />
+
