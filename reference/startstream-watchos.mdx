@@ -1,0 +1,14 @@
+---
+title: "startStream (WatchOS)"
+description: "Starts observing for different data types and stream it to iOS companion app"
+---
+```swift
+func startStream(forDataTypes dTypes: Set<ReadTypes>, completion: @escaping(Bool, TerraWatchOSError?) -> Void)
+
+```
+
+`dTypes: Set<ReadTypes` -> A set of all the types to start observing for  
+`completion: @escaping(Bool, TerraWatchOSError?) -> Void` -> A completion signifying if the stream has started successfully or not
+
+
+
