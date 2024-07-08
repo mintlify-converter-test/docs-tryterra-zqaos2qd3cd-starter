@@ -1,0 +1,170 @@
+---
+title: "Planned Workouts"
+---
+## PlannedWorkout
+
+```text
+{
+      "steps": Array<PlannedWorkoutStep||PlannedWorkoutRepeatStep>,
+      "metadata": {
+      	"id": String,
+        "estimated_if": Number,
+        "provider": String,
+        "estimated_distance_meters": Number,
+        "estimated_elevation_gain_meters": Number,
+        "estimated_energy_kj": Number,
+        "estimated_speed_meters_per_second": Number,
+        "planned_date": ISO-Date-String,
+        "created_date": ISO-Date-String,
+        "estimated_tss": Number,
+        "type": WorkoutTypeNumber,
+        "name": String,
+        "description": String,
+        "pool_length_meters": Number,
+        "estimated_calories": Number,
+        "estimated_duration_seconds": Number
+      }
+}
+
+```
+
+The Workout Types follow the same numbering as the Activity Types that can be found in [https://docs.tryterra.co/reference/enums#activitytype](/reference/enums#activitytype)
+
+## PlannedWorkoutStep
+
+```text
+{
+	"description": String,
+	"order": Number,
+  "intensity": Number,
+  "durations": Array<PlannedWorkoutStepDuration>
+  "type": 0,
+  "targets": Array<PlannedWorkoutStepTarget>,
+  "stroke_type": Number, //for Swimming Workouts
+  "equipement_type": Number, //for Swimming Workouts
+  "exercice_category" : Number, //for Strength and Cardio workouts
+  "exercice_name": String, //for Strength and Cardio workouts
+  "weight_kg": Number, //for Strength workouts
+}
+
+```
+
+| Step Intensity Name | Step Intensity Number Value |
+| --- | --- |
+| REST | 0   |
+| WARMUP | 1   |
+| COOLDOWN | 2   |
+| RECOVERY | 3   |
+| INTERVAL | 4   |
+| ACTIVE | 5   |
+
+## PlannedWorkoutRepeatStep
+
+```text
+{
+ "description": String,
+ "order": Number,
+ "intensity": Number,
+ "durations": Array<PlannedWorkoutStepDuration>
+ "type": 1,
+ "targets": Array<PlannedWorkoutStepTarget>,
+ "steps" : Array<PlannedWorkoutStep>
+}
+
+```
+
+## PlannedWorkoutStepTarget
+
+| Step Target Type | Model |
+| --- | --- |
+| SPEED | {  "target\_type": 0,  "speed\_meters\_per\_second": Number  } |
+| HEART\_RATE | {  "target\_type": 1,  "hr\_bpm\_high": Number,  "hr\_bpm\_low": Number  } |
+| OPEN | {  "target\_type": 2,  } |
+| CADENCE | {  "target\_type": 3,  "cadence": Number,  "cadence\_high": Number,  "cadence\_low" : Number  } |
+| POWER | {  "target\_type": 4,  "power\_watt\_high": Number,  "power\_watt\_low": Number,  "power\_watt": Number  } |
+| SWIM\_STROKE | {  "target\_type": 8,  "swim\_strokes": Number  } |
+| PACE | {  "target\_type": 11,  "speed\_meters\_per\_second": Number  } |
+| HEART\_RATE\_THRESHOLD\_PERCENTAGE | {  "target\_type": 12,  "hr\_percentage": Number,  "hr\_percentage\_low": Number,  "hr\_percentage\_high": Number,  } |
+| HEART\_RATE\_MAX\_PERCENTAGE | {  "target\_type": 13,  "hr\_percentage": Number,  "hr\_percentage\_low": Number,  "hr\_percentage\_high": Number,  } |
+| SPEED\_PERCENTAGE | {  "target\_type": 14,  "speed\_percentage": Number,  "speed\_percentage\_low": Number,  "speed\_percentage\_high": Number,  } |
+| POWER\_PERCENTAGE | {  "target\_type": 15,  "power\_percentage": Number,  "power\_percentage\_low": Number,  "power\_percentage\_high": Number,  } |
+| REPETITION | {  "target\_type": 16,  "repetitions": Number  } |
+
+## PlannedWorkoutStepDuration
+
+| Step Duration Type | Model |
+| --- | --- |
+| TIME | {  "duration\_type": 0,  "seconds": Number  } |
+| DISTANCE\_METERS | {  "duration\_type": 1,  "distance\_meters": Number  } |
+| HR\_LESS\_THAN | {  "duration\_type": 2,  "hr\_below\_bpm": Number  } |
+| HR\_GREATER\_THAN | {  "duration\_type": 3,  "hr\_above\_bpm": Number  } |
+| CALORIES | {  "duration\_type": 4,  "calories": 2.0  } |
+| OPEN | {  "duration\_type": 5,  } |
+| POWER\_LESS\_THAN | {  "duration\_type": 6,  "power\_below\_watts": Number  } |
+| POWER\_GREATER\_THAN | {  "duration\_type": 7,  "power\_above\_watts": Number  } |
+| REPS | {  "duration\_type": 9,  "reps": Number  } |
+| FIXED\_REST | {  "duration\_type": 10,  "rest\_seconds": Number  } |
+| STEPS | {  "duration\_type": 12,  "steps": Number  } |
+
+## Enums
+
+| Stroke Type | Value |
+| --- | --- |
+| BACKSTROKE | 0   |
+| BREASTSTROKE | 1   |
+| DRILL | 2   |
+| BUTTERFLY | 3   |
+| FREESTYLE | 4   |
+| MIXED | 5   |
+| IM  | 6   |
+
+| Equipement Type | Value |
+| --- | --- |
+| NONE | 0   |
+| SWIM\_FINS | 1   |
+| SWIM\_KICKBOARD | 2   |
+| SWIM\_PADDLES | 3   |
+| SWIM\_PULL\_BUOY | 4   |
+| SWIM\_SNORKEL | 5   |
+
+| Exercice Type | Value |
+| --- | --- |
+| UNKNOWN | 0   |
+| BENCH\_PRESS | 1   |
+| CALF\_RAISE | 2   |
+| CARDIO | 3   |
+| CARRY | 4   |
+| CHOP | 5   |
+| CORE | 6   |
+| CRUNCH | 7   |
+| CURL | 8   |
+| DEADLIFT | 9   |
+| FLYE | 10  |
+| HIP\_RAISE | 11  |
+| HIP\_STABILITY | 12  |
+| HIP\_SWING | 13  |
+| HYPEREXTENSION | 14  |
+| LATERAL\_RAISE | 15  |
+| LEG\_CURL | 16  |
+| LEG\_RAISE | 17  |
+| LUNGE | 18  |
+| OLYMPIC\_LIFT | 19  |
+| PLANK | 20  |
+| PLYO | 21  |
+| PULL\_UP | 22  |
+| PUSH\_UP | 23  |
+| ROW | 24  |
+| SHOULDER\_PRESS | 25  |
+| SHOULDER\_STABILITY | 26  |
+| SHRUG | 27  |
+| SIT\_UP | 28  |
+| SQUAT | 29  |
+| TOTAL\_BODY | 30  |
+| TRICEPS\_EXTENSION | 31  |
+| WARM\_UP | 32  |
+| RUN | 33  |
+| BIKE | 34  |
+| CARDIO\_SENSORS | 35  |
+
+
+
