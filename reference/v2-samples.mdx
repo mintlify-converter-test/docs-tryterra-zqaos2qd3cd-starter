@@ -1,0 +1,497 @@
+---
+title: "V2: Samples"
+description: "Sample models"
+---
+## MenstruationFlowSample
+
+```json
+{
+  "timestamp": String,
+  "flow": MenstruationFlow
+}
+
+```
+
+## DailyPatternSample (BETA - subject to change)
+
+```json
+{
+  "time_from_midnight": int,
+  "percentile_5": Number,
+  "percentile_25": Number,
+  "percentile_50": Number,
+  "percentile_75": Number,
+  "percentile_95": Number
+}
+
+```
+
+## ECGReading
+
+```json
+{
+  "start_timestamp": String,
+  "avg_hr_bpm": Number,
+  "afib_classification": AFibFlag,
+  "raw_signal": Array<RawECGSample>
+}
+
+```
+
+## GlucoseDataSample
+
+```schema
+{
+  	"timestamp": String,
+  	"blood_glucose_mg_per_dL": Number,
+    "glucose_level_flag": Number,
+    "trend_arrow": Number,
+}
+
+```
+
+## HeartRateDataSample
+
+```schema
+{
+  	"timestamp": String,
+    "bpm": Number,
+  	"timer_duration_seconds": Number,
+	  "context": HeartRateContext
+}
+
+```
+
+## LapSample
+
+```schema
+{
+  	"start_time": String,
+    "end_time": String,
+    "distance_meters": Number,
+    "calories": Number,
+    "total_strokes": Number,
+    "stroke_type": StrokeType,
+    "avg_speed_meters_per_second": Number
+}
+
+```
+
+## HeartRateVariabilityDataSampleRMSSD
+
+```schema
+{
+  	"timestamp": String,
+    "hrv_rmssd": Number
+}
+
+```
+
+## HeartRateVariabilityDataSampleSDNN
+
+```schema
+{
+  	"timestamp": String,
+    "hrv_sdnn": Number
+}
+
+```
+
+## HeartRateZoneData
+
+```json
+{
+  "zone": HeartRateZone,
+  "start_percentage": Number,
+  "end_percentage": Number,
+  "name": String,
+  "duration_seconds": Number
+}
+
+```
+
+## FloorsClimbedSample
+
+```json
+{
+  	"timestamp": String,
+    "floors_climbed": Number,
+    "timer_duration_seconds": Number
+}
+
+```
+
+## CalorieSample
+
+```schema
+{
+  	"timestamp": String,
+    "calories": Number,
+    "timer_duration_seconds": Number
+}
+
+```
+
+## DistanceSample
+
+```schema
+{
+  	"timestamp": String,
+    "distance_meters": Number,
+    "timer_duration_seconds": Number
+}
+
+```
+
+## StepSample
+
+```schema
+{
+  	"timestamp": String,
+    "steps": Number,
+    "timer_duration_seconds": Number
+}
+
+```
+
+## ElevationSample
+
+```schema
+{
+  	"timestamp": String,
+    "elev_meters": Number,
+    "timer_duration_seconds": Number
+}
+
+```
+
+## PositionSample
+
+```schema
+{
+  	"timestamp": String,
+    "coords_lat_lng_deg": [Number, Number],
+    "timer_duration_seconds": Number
+}
+
+```
+
+## PowerSample
+
+```schema
+{
+  	"timestamp": String,
+    "watts": Number,
+    "timer_duration_seconds": Number
+}
+
+```
+
+## SpeedSample
+
+```schema
+{
+  	"timestamp": String,
+    "speed_meters_per_second": Number,
+    "timer_duration_seconds": Number
+}
+
+```
+
+## CadenceSample
+
+```schema
+{
+  	"timestamp": String,
+    "cadence_rpm": Number,
+    "timer_duration_seconds": Number
+}
+
+```
+
+## ActivityLevelSample
+
+```schema
+{
+  	"timestamp": String,
+    "level": ActivityLevel
+}
+
+```
+
+## METSample
+
+```schema
+{
+  	"timestamp": String,
+    "level": Number
+}
+
+```
+
+## TSSSample
+
+```schema
+{
+  	"planned": Number,
+    "actual": Number,
+    "method": String,
+    "intensity_factor_planned": Number,
+    "intensity_factor_actual": Number,
+    "normalized_power_watts": Number
+}
+
+```
+
+## SleepHypnogramSample
+
+```schema
+{
+  	"timestamp": String,
+    "level": SleepLevel
+}
+
+```
+
+## OxygenSaturationSample
+
+```schema
+{
+  	"timestamp": String,
+    "percentage": Number
+}
+
+```
+
+## BreathSample
+
+```schema
+{
+  	"timestamp": String,
+    "breaths_per_min": Number
+}
+
+```
+
+## RawECGSample
+
+```json
+{
+  "potential_uV": Number,
+  "timestamp: String
+}
+
+```
+
+## SnoringSample
+
+```schema
+{
+  	"timestamp": String,
+    "duration_seconds": Number
+}
+
+```
+
+## StressSample
+
+```schema
+{
+  	"timestamp": String,
+    "level": Number
+}
+
+```
+
+## BloodPressureSample
+
+```schema
+{
+  	"timestamp": String,
+    "diastolic_bp": Number,
+    "systolic_bp": Number
+}
+
+```
+
+## MeasurementDataSample
+
+```schema
+{
+  	"measurement_time": String,
+    "BMI": Number,
+    "BMR": Number,
+    "RMR": Number,
+    "estimated_fitness_age": Number,
+    "skin_fold_mm": Number,
+    "bodyfat_percentage": Number,
+    "weight_kg": Number,
+    "height_cm": Number,
+    "bone_mass_g": Number,
+    "muscle_mass_g": Number,
+    "lean_mass_g": Number,
+    "water_percentage": Number,
+    "insulin_units": Number,
+    "insulin_type": String,
+    "urine_color": String,
+  	"user_notes": String
+}
+
+```
+
+## TemperatureSample
+
+```schema
+{
+  	"timestamp": String,
+    "temperature_celsius": Number
+}
+
+```
+
+## OtherDeviceData
+
+```schema
+{
+  	"name": String,
+    "manufacturer": String,
+    "serial_number": String,
+    "software_version": String,
+    "hardware_version": String,
+	  "last_upload_date": String,
+		"data_provided": Array<DeviceDataType>
+}
+
+```
+
+## HydrationlevelSample
+
+```schema
+{
+  	"timestamp": String,
+    "hydration_level": Number
+}
+
+```
+
+## HydrationMeasurementSample
+
+```schema
+{
+  	"timestamp": String,
+    "hydration_kg": Number
+}
+
+```
+
+## Vo2MaxSample
+
+```schema
+{
+  	"timestamp": String,
+    "vo2max_ml_per_min_per_kg": Number
+}
+
+```
+
+## PulseVelocitySample
+
+```schema
+{
+  	"timestamp": String,
+    "pulse_wave_velocity_meters_per_second": Number
+}
+
+```
+
+## AFibClassificationSample
+
+```schema
+{
+  	"timestamp": String,
+    "afib_classification": AfibFlag
+}
+
+```
+
+## Meal
+
+```schema
+{
+  	"name": String,
+    "id": String,
+    "timestamp": String,
+    "type": Number,
+    "quantity": {
+      	"unit": NutritionUnits,
+        "amount": Number
+    },
+    "macros": {
+        "calories": Number,
+        "protein_g": Number,
+        "carbohydrates_g": Number,
+        "fat_g": Number,
+        "sugar_g": Number,
+        "cholesterol_mg": Number,
+        "fiber_g": Number,
+        "sodium_mg": Number,
+        "alcohol_g": Number
+    },
+    "micros": {
+        "selenium_mg": Number,
+        "niacin_mg": Number,
+        "magnesium_mg": Number,
+        "copper_mg": Number,
+        "vitamin_B12_mg": Number,
+        "vitamin_B6_mg": Number,
+        "vitamin_C_mg": Number,
+        "zinc_mg": Number,
+        "vitamin_E_mg": Number,
+        "manganese_mg": Number,
+        "vitamin_D_mg": Number,
+        "iodine_mg": Number,
+        "chloride_mg": Number,
+        "folate_mg": Number,
+        "calcium_mg": Number,
+        "molybdenum_mg": Number,
+        "vitamin_A_mg": Number,
+        "riboflavin_mg": Number,
+        "folic_acid_mg": Number,
+        "iron_mg": Number,
+        "thiamin_mg": Number,
+        "pantothenic_acid_mg": Number,
+        "caffeine_mg": Number,
+        "vitamin_K_mg": Number,
+        "chromium_mg": Number,
+        "potassium_mg": Number,
+        "biotin_mg": Number,
+        "phosphorus_mg": Number
+    }
+}
+
+```
+
+## TagEntry
+
+```json
+{
+  "timestamp": String,
+  "tag_name": String,
+  "notes": String
+}
+
+```
+
+## RRInterval
+
+```json
+{
+  "timestamp": String,
+  "rr_interval_ms": Number,
+  "hr_bpm": Number
+}
+
+```
+
+
+
