@@ -1,0 +1,14 @@
+---
+title: "startExercise (WatchOS)"
+description: "Starts an exercise (HKWorkout) and stream to iOS Companion"
+---
+```swift
+func startExercise(forType workoutType: WorkoutTypes, completion: @escaping(Bool, TerraWatchOSError?) -> Void))
+
+```
+
+*   `workoutType: WorkoutTypes` -> The workout type Enum to start exercise for
+*   `@escaping(Bool, TerraWatchOSError?) -> Void)` -> Completion function signifying when the exercise started correctly or not
+
+
+
