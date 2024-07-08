@@ -1,0 +1,87 @@
+---
+title: "Data Models"
+---
+Getting Started  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_getting_started.png" alt="" />
+
+Setting up  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_install_on_backend.png" alt="" />
+
+Authenticate Users  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_authenticate_users.png" alt="" />
+
+Getting Data  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_receive_data.png" alt="" />
+
+Parsing Data  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_understand_our_data.png" alt="" />
+
+API Settings  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_customise_terra.png" alt="" />
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_manage_integrations.png" alt="" />  
+  
+Mobile Setup
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_api_data_models.png" alt="" />  
+  
+API
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_widget.png" alt="" />  
+  
+Widget
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_historical_data.png" alt="" />  
+  
+Request
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_new_data.png" alt="" />  
+  
+Receive
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_event_types.png" alt="" />  
+  
+Events
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_api_data_models.png" alt="" />  
+  
+Data Models
+
+## Overview
+
+Our data models are at the core of what makes Terra easy to use; no matter which of our providers you want to connect to, you can expect the same formats and units.
+
+There are eight fundamental data models:
+
+*   [TerraUser](/reference/v2#terrauser)
+     - a Terra User object, equivalent to one wearable connection
+*   [Activity](/reference/v2#activity-1)
+     - workouts performed during a given time period
+*   [Athlete](/reference/v2#athlete)
+     - user identifying information (first name, last name, email etc.)
+*   [Body](/reference/v2#body)
+     - body metrics of the user for a given time period
+*   [Daily](/reference/v2#daily)
+     - summary of the user's daily activity metrics
+*   [Menstruation](/reference/v2#menstruation)
+     - the user's menstruation data for a given time period
+*   [Nutrition](/reference/v2#nutrition)
+     - nutrition data such as micronutrients, macronutrients, and foods consumed
+*   [Sleep](/reference/v2#sleep)
+     - data recorded pertinent to a sleep session for the user
+
+For all data models other than `TerraUser` and `Athlete`, one instance of a data model holds aggregate data over a specific time period (defined by a `start-time` and `end-time`). The individual datapoints collected over the time period is also available in the form of an array of [`Samples`](/reference/v2#samples)
+ .
+
+Data which takes non-numeric, discrete values (e.g. `ActivityType`, `StrokeType`) are modelled as [`Enums`](/reference/enums)
+.
+
+For more in-depth explanations and examples, please refer to the [Data Models](/reference/v2)
+ section.
+
