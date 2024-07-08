@@ -1,0 +1,238 @@
+---
+title: "React Native"
+---
+## SDK Installation
+
+If you have a react native application, you can use the terra-react NPM to access SDK integrations.
+
+## Simple Integration Steps
+
+### Installation
+
+Start off by installing the terra-react package:
+
+```npm
+npm install terra-react
+
+``````npm
+yarn install terra-react
+
+```
+
+Then you can import the package in your code as such:
+
+```typescript
+import {initTerra, initConnection, Connections, getUserId, <other functions>} from 'terra-react'
+
+```
+
+> ## 📘Pod setup
+> 
+> For iOS, when updating to a newer version, you might also have to set up pods! In the iOS folder directly, run: `pod install` or `pod update`
+
+## Apple Health Integration Setup for iOS
+
+If you want to connect to Apple Health, additional steps are required.
+
+1.  Using XCode, open the `.xcodeproj` project for the app. This is typically found at `ios/<YOUR PROJECT NAME>.xcodeproj` from the root directory of your project.
+2.  **Add Privacy Keys:**  
+    Go to main app folder > Click on the icon below TARGETS on the sidebar > click on `Info` on menu bar > go to Custom iOS Target Properties > hover over any key and click `+` button > add `Privacy - Health Share Usage Description` and `Privacy - Health Records Usage Description` and set values for each > add key array `Permitted background task scheduler identifiers` and add item `co.tryterra.data.post.request`
+3.  Add HealthKit as a Capability to your project. Enable the `Clinical Health Records` and `Background Delivery` options. See [the Apple Developer Docs](https://developer.apple.com/documentation/xcode/adding-capabilities-to-your-app)
+     for a detailed walkthrough.
+
+> ## 📘Background Delivery for iOS
+> 
+> Enabling Background Delivery for your app will allow it to send new data to your server backend through Terra even when it is not running in the foreground.
+> 
+> To enable Background Delivery for your app:
+> 
+> *   Enable Background Delivery in HealthKit Entitlements
+> *   Add Background Modes as a Capability to your project and enable Background Fetch and Background Processing
+> *   Add the `Permitted background task scheduler identifiers` key to your `info.plist` with one item:
+>     *   `co.tryterra.data.post.request`
+> *   Run`setUpBackgroundDelivery` in your AppDelegate's `didFinishLaunchingWithOptions` function:
+> 
+> ```appdelegate.mm
+> #import "AppDelegate.h"
+> 
+> #import <React/RCTBundleURLProvider.h>
+> #import <TerraiOS/TerraiOS-Swift.h>
+> 
+> @implementation AppDelegate
+> 
+> - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+> {
+>   self.moduleName = @"AwesomeProject";
+>   // You can add your custom initial props in the dictionary below.
+>   // They will be passed down to the ViewController used by React Native.
+>   self.initialProps = @{};
+>   [Terra setUpBackgroundDelivery];
+>   return [super application:application didFinishLaunchingWithOptions:launchOptions];
+> }
+> 
+> ```
+
+## Samsung/Google Fit Integration Setup for Android
+
+### Health Connect Setup
+
+1.  The SDK requires [Health Connect](https://play.google.com/store/apps/details?id=com.google.android.apps.healthdata&hl=en_GB&gl=US)
+     to function. Make sure it is installed on your user's devices.
+2.  In the Health Connect app, give all permissions between the app you wish to read from and Health Connect.
+3.  Navigate to your project's `AndroidManifest.xml` file. It is typically located at `android/app/src/main/AndroidManifest.xml` from the root directory of your project.
+4.  In your `AndroidManifest.xml` include the following under the Activity you wish to display to the user when user wants to see your app's privacy policy:
+
+```xml
+<intent-filter>
+    <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
+</intent-filter>
+<intent-filter>
+  <action android:name="android.intent.action.VIEW_PERMISSION_USAGE"/>
+  <category android:name="android.intent.category.HEALTH_PERMISSIONS"/>
+</intent-filter>
+
+```
+
+5.  In your `AndroidManifest.xml` include the following to the Activity you wish to request permissions for Health Connect from:
+
+```xml
+ <meta-data
+     android:name="health_permissions"
+     android:resource="@array/health_permissions" />
+
+```
+
+6.  For example, you could add them to the `MainActivity` activity so both will run when the user launches your app:
+
+```androidmanifest.xml
+<activity
+	android:name=".MainActivity"
+    android:exported="true"
+    android:label="@string/app_name"
+    android:theme="@style/Theme.<YOUR_APP_NAME>">
+    	<intent-filter>
+        	<action android:name="android.intent.action.MAIN" />
+        	<category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+  
+        <intent-filter>
+        	<action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
+        </intent-filter>
+			  <intent-filter>
+          <action android:name="android.intent.action.VIEW_PERMISSION_USAGE"/>
+          <category android:name="android.intent.category.HEALTH_PERMISSIONS"/>
+        </intent-filter>
+        <meta-data
+        	android:name="health_permissions"
+            android:resource="@array/health_permissions" />
+</activity>
+
+```
+
+> ## 🚧Going LIVE
+> 
+> Before going LIVE (release), you will need to apply for permissions to access the Health Connect API with Google. Use this [application form](https://docs.google.com/forms/d/1LFjbq1MOCZySpP5eIVkoyzXTanpcGTYQH26lKcrQUJo/viewform?edit_requested=true)
+> .
+> 
+> In the form, you will need to specify which data types you intend to read from Health Connect.
+> 
+> For each permission which you are _not_ using, please add the following lines to your AndroidManifest.xml
+> 
+> `<uses-permission android:name="android.permission.health.READ_HEART_RATE" tools:node="remove"/>`
+
+## Initialise Terra
+
+The next step is to initialise Terra on the device. This allows the SDK to connect to the Terra service and handle any necessary setups on the device while the app is running. The following function should be called before usage of the SDK once when the app opens up
+
+```typescript
+function initTerra(
+  devID: string,
+  referenceId: string,
+): Promise<SuccessMessage>
+
+```
+
+| Parameter | Description |
+| --- | --- |
+| devId | Your terra developer ID. You can find it in your terra dashboard (see [Customize API settings](/docs/customize-api-settings)) |
+| referenceId | An identifier that allows you to map the terra user id to one of your users |
+
+Where `SuccessMessage` is:
+
+```typescript
+export type SuccessMessage = {
+  success: Boolean;
+  error: String | null;
+};
+
+```
+
+### Connect an integration
+
+> ## 🚧Currently only Libre 1, Pro/H and Libre 2 (UK) are supported!
+> 
+> Libre 2 US and Libre14Days US are not supported currently
+
+After initialising Terra, you can initialise a device connection. This function needs to be called once only per device.
+
+```typescript
+function initConnection(
+  connection: Connections,
+  token: string,
+  schedulerOn: boolean,
+  customPermissions: CustomPermissions[] = [],
+  startIntent: String | null = null
+): Promise<SuccessMessage>
+
+```
+
+| Parameter | Description |
+| --- | --- |
+| connection | Terra integration connection type. Supports `Connections.APPLE_HEALTH`, `Connections.FREESTYLE_LIBRE`, `Connections.GOOGLE`, `Connections.SAMSUNG` |
+| token | Single-use authentication token generated from [Generate Authentication Token](/reference/generate-authentication-token). This ensures that terra credentials are not sitting on the client-side. \*_It is advised you securely generate the token from a backend._ |
+| schedulerOn | Wether to use or not the terra scheduler to automatically fetch data to webhook. |
+| customPermissions (optional) | A more granular set to control which sub-scopes the application would like to access (using `HKObjectType` types). Default value is empty. |
+| startIntent (optional) | This is meant for Freestylelibre users who are planning to implement the "Background scanning" for sensors in Android. This is essentially a string pathway to the Activity you wish to display to the user when they scan an a Freestylelibre tag. For more information please see `initConnection` from [TerraAndroid](/reference/terraandroid-1) |
+
+Once everything is set with `schedulerOn`, the SDK will send data to your server automatically without needing you to do anything else!
+
+### Test Authentication
+
+To ensure a specific connection is still valid, use the `checkAuth()` method.
+
+```typescript
+function checkAuth(connection: Connections, devId: string): Promise<Object>
+// Object takes the form {success: Boolean;}
+
+```
+
+In order to check the connection is still valid, you can use the [`checkAuth()`](/reference/checkauth)
+ method. You should occasionally use this method to check the connection (only implemented for iOS)
+
+### Getting Data
+
+If you have initialised your connection to a provider with `schedulerOn` as `true`, you will automatically receive new data from the provider at your webhook when it becomes available. For more information, checkout the [Receiving Data](/docs/receiving-webhooks)
+ guide.
+
+To manually get historical data, you can use a getter function. See the [React Native SDK reference](/reference/reference-react-native-sdk)
+ for the full list of possible functions.
+
+```typescript
+function getNutrition(
+  connection: Connections,
+  startDate: Date,
+  endDate: Date,
+  toWebhook: Boolean = true
+): Promise<DataMessage>
+    
+export type DataMessage = {
+  success: Boolean;
+  data: Object;
+  error: String | null;
+};
+
+```
+
+The `data` field of the `DataMessage` will be an object in the form of one of the [V2 data models](/reference/v2)
+, depending on what data the request was made for.
+
