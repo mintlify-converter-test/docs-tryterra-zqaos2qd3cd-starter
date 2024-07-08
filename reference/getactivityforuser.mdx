@@ -1,0 +1,18 @@
+---
+title: "getActivityForUser"
+---
+```java
+Future<TerraApiResponse> getActivityForUser(PartialUser user, Instant startTime, @Nullable Instant endTime)
+
+```
+
+Asynchronously makes a request to the /activity endpoint to fetch the activity data for the given user.  
+Parameters:  
+user - the user to fetch the activity data for  
+startTime - the start time to fetch data since  
+endTime - then end time to fetch data before  
+Returns:  
+future that will contain the API response upon completion
+
+
+
