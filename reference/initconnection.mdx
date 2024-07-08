@@ -1,0 +1,24 @@
+---
+title: "initConnection"
+description: "Method to initialise a connection for APPLE HEALTH or FREESTYLELIBRE"
+---
+**Instance method of TerraManager**
+
+```swift
+initConnection(type: Connections, 
+               token: String, 
+               customReadTypes: Set<CustomPermissions>, 
+               schedulerOn: Bool, 
+               completion: @escaping (Bool, TerraError?) -> Void))
+
+```
+
+*   `type: Connections` ➡ An ENUM from the Connections class signifying the connection you wish to initiate for.
+*   `token: String` ➡ A token used for authentication. Generate one here: [https://docs.tryterra.co/reference/generate-authentication-token](/reference/generate-authentication-token)
+    
+*   (Optional) `customReadTypes: Set<CustomPermissions>` ➡ This is defaulted as an empty `Set`. If you want to make a more granular permissions request, you may send us a set of `CustomPermissions`: An enum provided so you do not need to interact with HealthKit.
+*   `schedulerOn: Bool` ➡ A boolean dictating if you wish turn on background delivery. Defaults to true. Please see **Background Delivery** section for setup.
+*   `completion: @escaping (Bool, TerraError?) -> Void` ➡ A callback with a boolean dictating if the initialisation succeeds.
+
+
+
