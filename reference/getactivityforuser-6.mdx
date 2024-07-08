@@ -1,0 +1,19 @@
+---
+title: "userFromId"
+---
+```java
+userFromId(String userId)
+
+```
+
+Create a new temporary PartialUser object, without making an API call, that can be passed in to the user parameter of the data request methods of this class.  
+This allows you to fetch data without having to make an extra unnecessary API request to the /userInfo endpoint.  
+Parameters:  
+userId - the ID of the user to be created  
+Returns:  
+the created PartialUser object  
+Throws:  
+NullPointerException - if the userId passed is null
+
+
+
