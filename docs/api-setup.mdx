@@ -1,0 +1,138 @@
+---
+title: "1. Setting up"
+---
+Getting Started  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_getting_started.png" alt="" />
+
+Setting up  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_install_on_backend.png" alt="" />
+
+Authenticate Users  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_authenticate_users.png" alt="" />
+
+Getting Data  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_receive_data.png" alt="" />
+
+Parsing Data  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_understand_our_data.png" alt="" />
+
+API Settings  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_customise_terra.png" alt="" />
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_manage_integrations.png" alt="" />  
+  
+Mobile Setup
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_api_data_models.png" alt="" />  
+  
+API
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_widget.png" alt="" />  
+  
+Widget
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_historical_data.png" alt="" />  
+  
+Request
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_new_data.png" alt="" />  
+  
+Receive
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_event_types.png" alt="" />  
+  
+Events
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_api_data_models.png" alt="" />  
+  
+Data Models
+
+## Your Terra credentials
+
+Head to the [Terra dashboard](https://dashboard.tryterra.co)
+. Under **Connections**, you will find your API Key and Dev ID in the bottom right corner. They are used in virtually every interaction with the API - **keep them safe!**
+
+<img className="block" src="images/files_readme_io/_88cadbf_image.png" alt="" />
+
+## Choose your language
+
+You can interact with the API using one of the following options:
+
+Python JavaScript Java Ruby HTTP Requests Postman
+
+## Installation
+
+Install the Python Client using pip:
+
+```shell
+pip install terra-python
+
+```
+
+## Initialise the Terra Object
+
+You can now import the `Terra` class and initialise an instance using your developer credentials.
+
+```python
+# Importing the API and instantiating the client using your keys
+from terra.base_client import Terra
+
+API_KEY = "<Your API Key>"
+DEV_ID = "<Your Dev Id>"
+SECRET = "<Your Signing secret>"
+
+
+terra = Terra(API_KEY, DEV_ID, SECRET)
+
+```
+
+You will now be able access Terra's API endpoints through the `Terra` object.
+
+## Listing Providers and Users
+
+To start off, let's view the most up-to-date list of all data providers through Terra. Use the `list_providers`method on `terra` to get an API response, and optionally parse it into a `ProvidersResponse` object.
+
+```python
+parsed_api_response = terra.list_providers().get_parsed_response()
+print(parsed_api_response)
+
+```
+
+You should see the following output:
+
+```
+ProvidersResponse(
+  status='success', 
+  providers=['BIOSTRAP', 'CARDIOMOOD', 'CONCEPT2', 'COROS', 'CRONOMETER', 'DEXCOM', 'EATTHISMUCH', 'EIGHT', 'FATSECRET', 'FINALSURGE', 'FITBIT', 'FREESTYLELIBRE', 'GARMIN', 'GOOGLE', 'HAMMERHEAD', 'HUAWEI', 'IFIT', 'INBODY', 'KOMOOT', 'LIVEROWING', 'LEZYNE', 'MOXY', 'NUTRACHECK', 'OMRON', 'OMRONUS', 'OURA', 'PELOTON', 'POLAR', 'PUL', 'RENPHO', 'RIDEWITHGPS', 'ROUVY', 'SUUNTO', 'TECHNOGYM', 'TEMPO', 'TRIDOT', 'TREDICT', 'TRAININGPEAKS', 'TRAINASONE', 'TRAINERROAD', 'UNDERARMOUR', 'VIRTUAGYM', 'WAHOO', 'WEAROS', 'WHOOP', 'WITHINGS', 'XOSS', 'ZWIFT', 'XERT', 'BRYTONSPORT', 'TODAYSPLAN', 'WGER', 'VELOHERO', 'CYCLINGANALYTICS', 'NOLIO', 'TRAINXHALE', 'KETOMOJOUS', 'KETOMOJOEU', 'STRAVA', 'CLUE', 'HEALTHGAUGE', 'MACROSFIRST'], 
+  sdk_providers=['GOOGLEFIT', 'FREESTYLELIBRESDK', 'APPLE', 'SAMSUNG', 'REALTIME']
+)
+
+```
+
+Similarly, to view a list of users that you have currently authenticated through Terra, use the `list_users` method.
+
+```python
+parsed_api_response = terra.list_users().get_parsed_response()
+print(parsed_api_response)
+
+```
+
+If you haven't authenticated any users yet, you should receive an empty list in your `SubscribedUsers` object:
+
+```
+SubscribedUsers(users=[])
+
+```
+
+For detailed documentation on any of the functions used, checkout the [Python Client Reference](/reference/reference-python-client)
+.
+
+In the [next step](authenticate-users)
+, let's get some users authenticated!
+
