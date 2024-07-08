@@ -1,0 +1,27 @@
+---
+title: "initConnection"
+---
+```dart
+static Future<SuccessMessage?> initConnection(
+      Connection connection,
+      String token,
+      bool schedulerOn,
+      List<CustomPermission> customPermissions)
+
+```
+
+Initialise a device connection. This function needs to be called once only.
+
+*   `Connection connection` ➡ An ENUM from the Connections class signifying the connection you wish to initiate for.
+*   `String token` ➡ A token used for authentication. Generate one here: [https://docs.tryterra.co/reference/generate-authentication-token](/reference/generate-authentication-token)
+    
+*   `List<CustomPermissions> customPermissions` ➡ This is defaulted as an empty `Set`. If you want to make a more granular permissions request, you may send us a set of `CustomPermissions`
+*   `bool schedulerOn` ➡ A boolean dictating if you wish turn on background delivery. Defaults to true. Please see **Background Delivery** section for setup. On iOS, follow [iOS](/docs/unified-api-manage-integrations-ios)
+    .
+
+**returns**
+
+*   `Future<SuccessMessage>`
+
+
+
