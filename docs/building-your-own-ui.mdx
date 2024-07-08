@@ -1,0 +1,215 @@
+---
+title: "Building your own UI"
+---
+# Example flow: React Component with TailwindCSS for "Connect" Button
+
+To create a React component styled with TailwindCSS that implements a "Connect" button functionality like in the [Terra Widget](/docs/authenticate-widget)
+, follow these steps.
+
+This button, upon being clicked, will call an API endpoint on your backend (in this case, this will be `/auth/fitbit` for demonstration purposes) and redirect the user to the Fitbit login page. The example assumes you have React and TailwindCSS set up in your project.
+
+## Create the React Component
+
+```javascript
+// ConnectButton.js
+import React from 'react';
+
+const ConnectButton = () => {
+  const handleConnect = async () => {
+    try {
+      // Assuming your backend is set up to receive an auth token from the user and validate it
+      // Implement rate limiting on the backend to avoid abuse
+      const response = await fetch('/auth/fitbit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer SOME_TOKEN'
+        },
+        body: JSON.stringify(credentials),
+      });
+
+      const data = await response.json();
+
+      if (data.status === 'success' && data.auth_url) {
+        window.location.href = data.auth_url; // Redirect the user
+      } else {
+        console.error('Authentication failed');
+      }
+    } catch (error) {
+      console.error('Error connecting to Fitbit:', error);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleConnect}
+      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+    >
+      Connect Fitbit Account
+    </button>
+  );
+};
+
+export default ConnectButton;
+
+
+```
+
+This component sends the necessary credentials to your `/auth/fitbit` endpoint and redirects the user based on the response. Make sure to ensure the logic for passing in **SOME\_TOKEN** exists on your client side, and that the token is securely generated & handled thereafter
+
+## Backend: /auth/fitbit Endpoint
+
+The `/auth/fitbit` endpoint on the backend should perform the following:
+
+1.  Receive the request from the frontend.
+2.  Extract the necessary authentication credentials from the request.
+3.  Make a call to Terra API's [authentication endpoint](/reference/authenticate-user)
+     ([https://api.tryterra.co/v2/auth/authenticateUser?resource=fitbit](https://api.tryterra.co/v2/auth/authenticateUser?resource=fitbit)
+    ) with the dev-id and x-api-key headers for authentication.
+4.  Respond to the frontend with the `auth_url` received from the Terra API (without saving the user\_id at this stage - this is provided only for informational purposes)
+
+Here is a conceptual implementation:
+
+```javascript
+// Assuming you're using Express.js for your backend
+const express = require('express');
+const fetch = require('node-fetch');
+const app = express();
+
+app.use(express.json());
+
+app.post('/auth/fitbit', async (req, res) => {
+
+  try {
+    const response = await fetch('https://api.tryterra.co/v2/auth/authenticateUser?resource=fitbit', {
+      method: 'GET',
+      headers: {
+        'dev-id': YOUR_DEV_ID,
+        'x-api-key': YOUR_API_KEY,
+      },
+    });
+
+    const data = await response.json();
+
+    if (data.status === 'success' && data.auth_url) {
+      res.json({ auth_url: data.auth_url }); // Send only the auth_url to the frontend
+    } else {
+      res.status(400).json({ error: 'Failed to authenticate with Fitbit' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+
+```
+
+This backend handler securely communicates with the Terra API and relays the `auth_url` to the frontend without saving the `user_id`, adhering to the specified flow.
+
+The above could be re
+
+Please ensure you have proper error handling and security measures in place to protect abusing your `/auth/fitbit` endpoint, and manage API rate limiting effectively. This will help prevent malicious users from generating a bunch of fitbit users, and increasing your Terra bill (not that we would complain of course 😉)
+
+# Generalizing the previous example
+
+To generalize the React component and backend endpoint for connecting to any health data provider like Garmin or Oura, or any other [integration supported by Terra](/docs/integrations-2)
+, you can modify the existing code to accept a provider name as a parameter. This allows the same component and endpoint to handle authentication for multiple providers by dynamically adjusting the API call based on the chosen provider.
+
+## Generalizing the React Component
+
+Modify the ConnectButton component to accept a provider prop. This prop will be used to determine which service (Fitbit, Garmin, Oura, etc.) the user intends to connect to.
+
+```javascript
+// ConnectButton.js
+import React from 'react';
+
+const ConnectButton = ({ provider }) => {
+  const handleConnect = async () => {
+    try {
+      // Assuming your backend is set up to receive an auth token from the user and validate it
+      // Implement rate limiting on the backend to avoid abuse
+      const response = await fetch(`/auth/${provider}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer SOME_TOKEN'
+        },
+        body: JSON.stringify(credentials),
+      });
+
+      const data = await response.json();
+
+      if (data.status === 'success' && data.auth_url) {
+        window.location.href = data.auth_url; // Redirect the user
+      } else {
+        console.error('Authentication failed');
+      }
+    } catch (error) {
+      console.error(`Error connecting to ${provider}:`, error);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleConnect}
+      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+    >
+       Connect to {provider.charAt(0).toUpperCase() + provider.slice(1)}
+    </button>
+  );
+};
+
+export default ConnectButton;
+
+
+```
+
+## Generalizing the Backend Endpoint
+
+Modify the backend endpoint to dynamically adjust the API URL and parameters based on the provider specified in the request.
+
+```javascript
+// Assuming you're using Express.js for your backend
+const express = require('express');
+const fetch = require('node-fetch');
+const app = express();
+
+app.use(express.json());
+
+app.post('/auth/:provider', async (req, res) => {
+  const { provider } = req.params; // Get the provider from the URL
+  
+  try {
+    const response = await fetch(`https://api.tryterra.co/v2/auth/authenticateUser?resource=${provider}`, {
+      method: 'GET',
+      headers: {
+        'dev-id': YOUR_DEV_ID,
+        'x-api-key': YOUR_API_KEY,
+      },
+    });
+
+    const data = await response.json();
+
+    if (data.status === 'success' && data.auth_url) {
+      res.json({ auth_url: data.auth_url });
+    } else {
+      res.status(400).json({ error: `Failed to authenticate with ${provider}` });
+    }
+  } catch (error) {
+    res.status(500).json({ error: `Internal server error while connecting to ${provider}` });
+  }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+
+```
+
