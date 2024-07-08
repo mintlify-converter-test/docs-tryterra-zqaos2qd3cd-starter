@@ -1,0 +1,100 @@
+---
+title: "Terra Streaming Protocol"
+---
+## SDK Reference
+
+[iOS\
+\
+### TerraRTiOS](https://docs.tryterra.co/v2.0/reference/reference-stream-heart-rate-ios-sdk)
+[<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_android_2.png" alt="" />\
+\
+### TerraRTAndroid](https://docs.tryterra.co/v2.0/reference/reference-stream-heart-rate-android-sdk)
+
+## Identify Data Schema
+
+| Field Name | Type | Description |
+| --- | --- | --- |
+| token | String | Authentication token generated from the appropriate endpoint. |
+| type | Integer | Connection type. Value from the IdentifyType enum. |
+
+## IdentifyType Enum
+
+| Name | Value |
+| --- | --- |
+| User (Producer) | 0   |
+| Developer (Consumer) | 1   |
+
+## Payload Format
+
+| Field Name | Type | Description |
+| --- | --- | --- |
+| op  | Integer | [Opcode](/reference/terra-streaming-reference#opcodes) for the payload. |
+| d?  | Object | Event data. |
+| uid?\* | String | User ID that the event relates to. |
+| seq?\* | Long | Sequence number of the payload. Used when replaying missed payloads. |
+| t?\* | String | The [Data Type](/reference/terra-streaming-reference#data-types) for the payload. |
+
+**Key:**  
+`? -> Optional field`  
+`* -> Only send with payloads of the DISPATCH opcode`
+
+```example payload
+{
+  "op": 5,
+  "d": {
+    "ts": "2022-05-04T10:26:11.268507+01:00",
+	"val": 95
+	},
+  "uid": "8e864e3a-979a-4d04-b4e9-b6d020f20ba0",
+  "seq": 73,
+  "t": "HEART_RATE"
+}
+
+```
+
+* * *
+
+## Opcodes
+
+| Name | Value | Description | Sent By |
+| --- | --- | --- | --- |
+| HEARTBEAT | 0   | Fired periodically by the client to keep the connection alive. | Client |
+| HEARTBEAT\_ACK | 1   | Sent by the server to acknowledge that a heartbeat has been received. | Server |
+| HELLO | 2   | Sent by the server immediately after connecting. Contains the heartbeat interval for the client to use. | Server |
+| IDENTIFY | 3   | Sent by the client to complete the handshake with the server. Contains authentication details. | Client |
+| READY | 4   | Sent by the server once the handshake has been completed. The client will be able to receive/send payloads immediately after this is received. | Server |
+| DISPATCH | 5   | An event dispatched by the server. Contains details about the event, as well as the data payload for the event. | Server |
+| SUBMIT | 6   | Sent by the client to notify the server of new data which will then be routed to the correct consumer appropriately. | Client (producer only) |
+| REPLAY | 7   | Request a replay of payloads after the given lower bound, and optionally before a given upper bound. | Client (consumer only) |
+
+* * *
+
+## Data Types
+
+| Name | Description |
+| --- | --- |
+| HEART\_RATE | `val` is the BPM of each reading |
+| STEPS | `val` the amount of accumulated steps |
+| DISTANCE | `val` the accumulated distance in meters |
+| FLOORS\_CLIMBED | `val` the accumulated floors climbed |
+| STEPS\_CADENCE | `val` the amount of steps per second taken by the user |
+| SPEED | `val` the speed in meter per second of the user |
+| ACCELERATION | `d` the acceleration data of the device.  \- `d[0]` -> acceleration in x direction  \- `d[1]` -> acceleration in y direction  \- `d[2]` -> acceleration in z direction |
+| GYROSCOPE | `d` the rotation rate af the device.  \- `d[0]` -> rotation in x direction  \- `d[1]` -> rotation in y direction  \- `d[2]` -> rotation in z direction |
+
+* * *
+
+## Close Codes
+
+| Code | Reason |
+| --- | --- |
+| 1001 | Server is shutting down |
+| 1007 | Invalid or unrecognised JSON data was provided |
+| 4000 | IDENTIFY payload expected but was not received |
+| 4001 | Improper token was passed for IDENTIFY |
+| 4002 | Duplicate connection opened |
+| 4003 | Multiple IDENTIFY payloads received |
+| 4004 | Unrecognised opcode was received |
+
+
+
