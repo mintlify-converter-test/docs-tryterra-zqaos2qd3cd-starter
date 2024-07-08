@@ -1,0 +1,29 @@
+---
+title: "initConnection"
+---
+```typescript
+function initConnection(
+  connection: Connections,
+  token: string,
+  schedulerOn: boolean,
+  customPermissions: CustomPermissions[] = [],
+  startIntent: String | null = null
+): Promise<SuccessMessage>
+
+```
+
+Initialise a device connection. This function needs to be called once only.
+
+*   `connection: Connections` ➡ An ENUM from the Connections class signifying the connection you wish to initiate for.
+*   `token: string` ➡ A token used for authentication. Generate one here: [https://docs.tryterra.co/reference/generate-authentication-token](/reference/generate-authentication-token)
+    
+*   (Optional) `customPermissions: Set<CustomPermissions>` ➡ This is defaulted as an empty `Set`. If you want to make a more granular permissions request, you may send us a set of `CustomPermissions`
+*   `startIntent: String?` ➡ The path to the activity you wish to display when the user scans a freestylelibre from the background (i.e "co.tryterra.terra.example.MainActivity") **Only valid for Android**
+*   `schedulerOn: Bool` ➡ A boolean dictating if you wish turn on background delivery. Defaults to true. Please see **Background Delivery** section for setup.
+
+**returns**
+
+*   `Promise<SuccessMessage>`
+
+
+
