@@ -1,0 +1,168 @@
+---
+title: "Quickstart"
+description: "Use Terra in just 5 minutes!"
+---
+At the end of this guide you will authenticate a user and setup a webhook to receive new data when it becomes available from that user's wearable. The steps are:
+
+1.  Obtain developer credentials from the dashboard
+2.  Authenticate a user using the Terra Connect Widget
+3.  Setup a webhook endpoint where you can receive data
+4.  Configure Terra to send data to the endpoint
+5.  Receive data at the endpoint!
+
+## 1) Obtain dev-id and API Key
+
+Head to the [Terra dashboard](https://dashboard.tryterra.co)
+. Under **Connections**, you will find your API Key and Dev ID in the bottom right corner in the _API Credentials_ Popup. They are used in virtually every interaction with the API - **keep them safe!**
+
+<img className="block" src="images/files_readme_io/_88cadbf_image.png" alt="" />
+
+## 2) Generate Terra Connect Widget session
+
+The Terra Connect Widget is a convenient way to authenticate a user.
+
+<img className="block" src="images/files_readme_io/_e51ec9e_image.png" alt="The Terra Connect Widget" />
+
+The Terra Connect Widget
+
+Generate a URL to a widget session by calling the [generateWidgetSession](/reference/generate-widget-session)
+ endpoint.
+
+```curl
+curl --request POST \
+     --url https://api.tryterra.co/v2/auth/generateWidgetSession \
+     --header 'accept: application/json' \
+     --header 'content-type: application/json' \
+     --header 'dev-id: <YOUR DEV ID>' \
+     --header 'x-api-key: <YOUR API KEY>' \
+     --data '
+{
+  "providers": "GARMIN,WITHINGS,FITBIT,GOOGLE,OURA,WAHOO,PELOTON,ZWIFT,TRAININGPEAKS,FREESTYLELIBRE,DEXCOM,COROS,HUAWEI,OMRON,RENPHO,POLAR,SUUNTO,EIGHT,APPLE,CONCEPT2,WHOOP,IFIT,TEMPO,CRONOMETER,FATSECRET,NUTRACHECK,UNDERARMOUR",
+  "language": "en"
+}
+'
+
+```
+
+## 3) Setup a Webhook
+
+Terra automatically sends new data to your webhook when it becomes available from your users' wearables.
+
+For testing purposes, the easiest way to set up a webhook endpoint is using an online provider (for example [webhook.site](https://webhook.site)
+).
+
+Alternatively, you can setup also POST endpoint on your backend server:
+
+```python
+import logging
+import flask
+from flask import request
+from terra.base_client import Terra
+
+logging.basicConfig(level=logging.INFO)
+_LOGGER = logging.getLogger("app")
+
+terra = Terra(api_key='API-KEY', dev_id='DEV-ID', secret="SIGNING-SECRET")
+
+app = flask.Flask(__name__)
+
+@app.route("/consumeTerraWebhook", methods=["POST"])
+def consume_terra_webhook() -> flask.Response:
+    # body_str = str(request.get_data(), 'utf-8')
+    body = request.get_json()
+    _LOGGER.info(
+        "Received webhook for user %s of type %s",
+        body.get("user", {}).get("user_id"),
+        body["type"])
+    verified = terra.check_terra_signature(request.get_data().decode("utf-8"), request.headers['terra-signature'])
+    if verified:
+      return flask.Response(status=200)
+    else:
+      return flask.Response(status=403)
+    
+    
+if __name__ == "__main__":
+    app.run(host="localhost", port=8080)
+
+``````python
+const express = require("express");
+const bodyParser = require("body-parser");
+const { default: Terra } = require("terra-api");
+
+
+const terra = new Terra("API-KEY", "DEV-ID", "SIGNING-SECRET");
+
+
+const app = express();
+var options = {
+  inflate: true,
+  limit: "4000kb",
+  type: "application/json",
+};
+
+
+app.use(bodyParser.raw(options));
+
+
+app.post("/consumeTerraWebhook", function (req, res) {
+  res.sendStatus(200);
+  const data = JSON.parse(req.body);
+  console.log(JSON.stringify(data));
+  try {
+    const verified = terra.checkTerraSignature(req.headers['terra-signature'], req.body);
+  } catch(err) {
+    const verified = false;
+  };
+});
+
+
+const port = 3000;
+app.listen(port);
+console.log("Server started on port " + port);
+
+``````python
+// See https://github.com/tryterra/sample-webhook-endpoint-java
+
+```
+
+You can then expose your server to the internet with a tool such as [ngrok](https://ngrok.com/)
+ and start receiving payloads. If you are using ngrok, running
+
+`ngrok http {PORT_NUMBER}`
+
+will expose your server to the internet and return its URL.
+
+## 3) Configure Webhook
+
+After setting up a webhook endpoint URL, head to [Terra dashboard](https://dashboard.tryterra.co/terraapi/customise)
+.
+
+Add _Webhook_ as a destination under **Connections > Destinations > Add Destinations > Webhook**
+
+<img className="block" src="images/files_readme_io/_7fa882b_Screenshot_2023_12_05_at_10.34.56.png" alt="" />
+
+Under the **Host** field, add your webhook URL and click **Apply**.
+
+<img className="block" src="images/files_readme_io/_d52ed9a_Screenshot_2023_12_05_at_10.38.30.png" alt="" />
+
+Once you've added _Webhook_ as a destination. Terra will now send all webhook messages to the **Host** url inputted.
+
+You can also find your webhook secret which will be sent with every payload, so you can verify that you are getting data from us. You can find it under **Webhook >> Edit >> Signing secret**.
+
+## 4) Test the Webhook
+
+You should have now successfully set up a webhook endpoint. You will now receive new data at your webhook when it becomes available.
+
+If you do not have a physical wearable on hand to test, you can also simulate webhook updates from the **Data Generator**. From the dashboard, head to **Tools > Generate** and press the **Generate test data** button and then **Send to Webhook**. This generates some random data and sends it to your webhook.
+
+<img className="block" src="images/files_readme_io/_cae6d1d_Screenshot_2023_12_05_at_10.11.42.png" alt="" />
+
+## 5) Next Steps
+
+Congratulations! You have now experienced the core functionalities of Terra's Unified API.
+
+*   If any of the above steps were unclear, checkout [the detailed guides](/docs/api-setup)
+    
+*   To connect a mobile provider (such as Apple Health, Google Fit, etc.) you will need to use a mobile SDK. Checkout [the mobile setup guides](/docs/mobile-setup)
+    
+
