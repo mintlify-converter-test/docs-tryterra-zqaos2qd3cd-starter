@@ -1,0 +1,19 @@
+---
+title: "get_user_info"
+---
+```python
+Terra.get_user_info(
+	self,
+	user: terra.models.user.User
+)
+
+```
+
+Retrieve information on a given User, including is\_authenticated status, indicating if the user has successfully completed auth flow, or has yet to do so Note: Also updates information on user object passed as an argument
+
+Args: user (models.user.User): User to retrieve information for
+
+Returns: models.api\_responses.TerraApiResponse: API response object containing UserInfo parsed response object if no error has occured
+
+
+
