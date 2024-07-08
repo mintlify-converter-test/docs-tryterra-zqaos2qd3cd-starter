@@ -1,0 +1,221 @@
+---
+title: "iOS SDK"
+---
+# class TerraManager
+
+An object that manages getting data from Apple Health and reading Freestylelibre Sensors
+
+# class TerraClient
+
+An object that allows you to communicate to Terra REST API.
+
+# Connections Enum
+
+```swift
+public enum Connections{    
+    case FREESTYLE_LIBRE
+    case APPLE_HEALTH   
+}
+
+```
+
+# TerraError Enum
+
+```swift
+public enum TerraError: Int, Error{
+    case HealthKitUnavailable = 0
+    case ServiceUnavailable = 1
+    case Unauthenticated = 2
+    case InvalidUserID = 3
+    case InvalidDevID = 4
+    case Forbidden = 5
+    case BadRequest = 6
+    case UnknownOpcode = 7
+    case UnexpectedError = 8
+    case NFCError = 9
+    case SensorExpired = 10
+    case SensorReadingFailed = 11
+    case NoInternet = 12
+    case UserLimitsReached = 13
+    case IncorrectDevId = 14
+    case InvalidToken = 15
+    case HealthKitAuthorizationError = 16
+    case UnsupportedResource = 17
+}
+
+```
+
+# DataTypes Enum
+
+```swift
+public enum DataTypes: String{
+    case STEPS                      = "STEPS"
+    case HEART_RATE                 = "HEART_RATE"
+    case HEART_RATE_VARIABILITY     = "HEART_RATE_VARIABILITY"
+    case CALORIES                   = "CALORIES"
+    case DISTANCE                   = "DISTANCE"
+}
+
+```
+
+# CustomPermissions Enum
+
+```swift
+public enum CustomPermissions: String{
+    case WORKOUT_TYPE = "WORKOUT_TYPE"
+    case ACTIVITY_SUMMARY = "ACTIVITY_SUMMARY"
+    case LOCATION = "LOCATION"
+    case CALORIES = "CALORIES"
+    case STEPS = "STEPS"
+    case HEART_RATE = "HEART_RATE"
+    case HEART_RATE_VARIABILITY = "HEART_RATE_VARIABILITY"
+    case VO2MAX = "VO2MAX"
+    case HEIGHT = "HEIGHT"
+    case ACTIVE_DURATIONS = "ACTIVE_DURATIONS"
+    case WEIGHT = "WEIGHT"
+    case FLIGHTS_CLIMBED = "FLIGHTS_CLIMBED"
+    case BMI = "BMI"
+    case BODY_FAT = "BODY_FAT"
+    case EXERCISE_DISTANCE = "EXERCISE_DISTANCE"
+    case GENDER = "GENDER"
+    case DATE_OF_BIRTH = "DATE_OF_BIRTH"
+    case BASAL_ENERGY_BURNED = "BASAL_ENERGY_BURNED"
+    case SWIMMING_SUMMARY = "SWIMMING_SUMMARY"
+    case RESTING_HEART_RATE = "RESTING_HEART_RATE"
+    case BLOOD_PRESSURE = "BLOOD_PRESSURE"
+    case BLOOD_GLUCOSE = "BLOOD_GLUCOSE"
+    case BODY_TEMPERATURE = "BODY_TEMPERATURE"
+    case MINDFULNESS = "MINDFULNESS"
+    case LEAN_BODY_MASS = "LEAN_BODY_MASS"
+    case OXYGEN_SATURATION = "OXYGEN_SATURATION"
+    case SLEEP_ANALYSIS = "SLEEP_ANALYSIS"
+    case RESPIRATORY_RATE = "RESPIRATORY_RATE"
+    case NUTRITION_SODIUM = "NUTRITION_SODIUM"
+    case NUTRITION_PROTEIN = "NUTRITION_PROTEIN"
+    case NUTRITION_CARBOHYDRATES = "NUTRITION_CARBOHYDRATES"
+    case NUTRITION_FIBRE = "NUTRITION_FIBRE"
+    case NUTRITION_FAT_TOTAL = "NUTRITION_FAT_TOTAL"
+    case NUTRITION_SUGAR = "NUTRITION_SUGAR"
+    case NUTRITION_VITAMIN_C = "NUTRITION_VITAMIN_C"
+    case NUTRITION_VITAMIN_A = "NUTRITION_VITAMIN_A"
+    case NUTRITION_CALORIES = "NUTRITION_CALORIES"
+    case NUTRITION_WATER = "NUTRITION_WATER"
+    case NUTRITION_CHOLESTEROL = "NUTRITION_CHOLESTEROL"
+    case MENSTRUATION = "MENSTRUATION"
+}
+
+```
+
+# Resource Enum
+
+```swift
+public enum Resource: String{
+    case BIOSTRAP = "biostrap"
+    case CARDIOMOOD = "cardiomood"
+    case CONCEPT2    = "concept2"
+    case COROS   = "coros"
+    case CRONOMETER = "cronometer"
+    case DEXCOM = "dexcom"
+    case EATTHISMUCH = "eatthismuch"
+    case EIGHTSLEEP  = "eight"
+    case FATSECRET   = "fatsecret"
+    case FINALSURGE = "finalsurge"
+    case FITBIT  = "fitbit"
+    case FREESTYLELIBRE  = "freestylelibre"
+    case GARMIN  = "garmin"
+    case GOOGLE  = "google"
+    case HAMMERHEAD = "hammerhead"
+    case HUAWEI = "huawei"
+    case IFIT    = "ifit"
+    case INBODY = "inbody"
+    case KOMOOT = "komoot"
+    case NUTRACHECK  = "nutracheck"
+    case OMRON   = "omron"
+    case OMRONUS = "omronus"
+    case OURA    = "oura"
+    case PELOTON     = "peloton"
+    case POLAR   = "polar"
+    case PUL     = "pul"
+    case RENPHO = "renpho"
+    case RIDEWITHGPS = "ridewithgps"
+    case ROUVY = "rouvy"
+    case SUUNTO  = "suunto"
+    case TEMPO   = "tempo"
+    case TECHNOGYM = "technogym"
+    case TRIDOT = "tridot"
+    case TRAINERROAD = "trainerroad"
+    case TRAININGPEAKS   = "trainingpeaks"
+    case UNDERARMOUR     = "underarmour"
+    case VIRTUAGYM = "virtuagym"
+    case WAHOO   = "wahoo"
+    case WHOOP = "whoop"
+    case WITHINGS    = "withings"
+    case XERT = "xert"
+    case XOSS = "xoss"
+    case ZWIFT   = "zwift"
+    case BRYTONSPORT = "brytonsport"
+    case TODAYSPLAN = "todaysplan"
+    case WGER = "wger"
+    case VELOHERO = "velohero"
+    case CYCLINGANALYTICS = "cyclinganalytics"
+    case NOLIO = "nolio"
+    case TRAINXHALE = "trainxhale"
+    case KETOMOJOUS = "ketomojous"
+    case KETOMOJOEU = "ketomojoeu"
+    case STRAVA = "strava"
+}
+
+```
+
+# AuthenticateUser Payload
+
+```swift
+public struct AuthenticateUserPayload: Codable{
+    public var status: String?;
+    public var auth_url: String?;
+    public var user_id: String?;
+    public var message: String?;
+}
+
+```
+
+# DeauthenticateUser Payload
+
+```swift
+public struct DeauthenticateUserPayload: Codable{
+    public var status: String?;
+    public var message: String?;
+}
+
+```
+
+# FSLSensorDetails
+
+```swift
+public struct FSLSensorDetails: Codable{
+    public var sensor_state: String
+    public var status: String
+    public var serial_number: String = String()
+    public var data: TerraGlucoseData = TerraGlucoseData()
+    public var device_data: TerraDeviceData = TerraDeviceData()
+}
+
+```
+
+`sensor_state` can be one of the following:
+
+```
+NOT_STARTED
+STARTING
+READY
+FAILURE
+SHUTDOWN
+
+```
+
+# TerraDataModels
+
+All data models are corresponding (including names) to the official [V2 Models](/docs/v2)
+
+
+
