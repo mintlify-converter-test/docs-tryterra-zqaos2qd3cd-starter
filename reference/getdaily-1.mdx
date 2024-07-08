@@ -1,0 +1,31 @@
+---
+title: "getDaily"
+description: "Getter function to retrieve daily data from different connections"
+---
+```kotlin
+fun getDaily(type: Connections, 
+             startDate: Date, 
+             endDate: Date, 
+             toWebhook: Boolean = true, 
+             completion: (Boolean, TerraDailyDataPayload?, TerraError?) -> Unit = {_, _, _ ->})
+  
+  fun getDaily(type: Connections, 
+               startDate: Long, 
+               endDate: Long, 
+               toWebhook: Boolean = true, 
+               completion: (Boolean, TerraDailyDataPayload?, TerraError?) -> Unit = {_, _, _ ->}){
+
+```
+
+*   `type: Connections` ➡ The Connection to get data from
+*   `startDate: Date` or `startDate: Long` ➡ The beginning of the request in either Date or Unix Timestamp
+*   `endDate: Date` or `endDate: Long` ➡ The end of the request in either Date or Unix Timestamp
+*   `toWebhook: Bool` ➡ Whether or not to send data to your webhook
+*   \`completion: (Bool, TerraDailyDataPayload?, TerraError?) -> Void ➡
+
+**Bool** -> If the request was successful or not. If not, a TerraError instance will also be called  
+**TerraDailyDataPayload?** -> A payload for each data type. If `toWebhook` is set to true, this returns a class with a property `reference` referring to the payload reference sent to your webhook. If `toWebhook` is set to false, then this returns the entire Terra normalised payload.  
+**TerraError?** -> Returned if any error occurred while retrieving data
+
+
+
