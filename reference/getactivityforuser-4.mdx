@@ -1,0 +1,18 @@
+---
+title: "getNutritionForUser"
+---
+```java
+getNutritionForUser(PartialUser user, Instant startTime, @Nullable Instant endTime)
+
+```
+
+Asynchronously makes a request to the /nutrition endpoint to fetch the nutrition data for the given user.  
+Parameters:  
+user - the user to fetch the nutrition data for  
+startTime - the start time to fetch data since  
+endTime - then end time to fetch data before  
+Returns:  
+future that will contain the API response upon completion
+
+
+
