@@ -1,0 +1,33 @@
+---
+title: "Java Client"
+---
+Source code: [https://github.com/tryterra/terra-client-java](https://github.com/tryterra/terra-client-java)
+
+# class TerraClientV2
+
+An object that manages getting data, verifying signatures and authenticating users
+
+## Initialisation
+
+```java
+TerraClientV2 client = TerraClientFactory.getClientV2(String xApiKey, String devId);
+
+```
+
+## Methods
+
+| Method Name | Returns | Explanation |
+| --- | --- | --- |
+| getActivityForUser​ | Future<TerraApiResponse\> | returns an api response that when parsed contains activity data |
+| getAthleteForUser | Future<TerraApiResponse\> | returns an api response that when parsed contains athlete data |
+| getBodyForUser​ | Future<TerraApiResponse> | returns an api response that when parsed contains body data |
+| getDailyForUser​ | Future<TerraApiResponse\> | returns an api response that when parsed contains daily data |
+| getMenstruationForUser​ | Future<TerraApiResponse\> | returns an api response that when parsed contains menstruation data |
+| getNutritionForUser​ | Future<TerraApiResponse\> | returns an api response that when parsed contains nutrition data |
+| getSleepForUser​ | Future<TerraApiResponse\> | returns an api response that when parsed contains sleep data |
+| getUser | Future<? extends TerraApiResponse<? extends User>> | returns an api response that when parsed contains user data |
+| userFromId​ | PartialUser | returns a User object from user\_id |
+| getAllUsers | Future<? extends TerraApiResponse<? extends User>> | returns an api response that when parsed contains a list of all users |
+
+
+
