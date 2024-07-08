@@ -1,0 +1,24 @@
+---
+title: "generate_widget_session"
+---
+```python
+Terra.generate_widget_session(
+	self,
+	providers: List[str],
+	auth_success_redirect_url: Optional[str] = None,
+	auth_failure_redirect_url: Optional[str] = None,
+	language: Optional[str] = None,
+	reference_id: Optional[str] = None,
+	**kwargs: Any
+)
+
+```
+
+Generates a widget session used to allow an end user to authenticate through the API. Users should be redirected to the given URL in order to complete authentication
+
+Args: providers (List\[str\]): Providers to display on widget wearable selection screen, by leaving it empty it will use all default providers auth\_success\_redirect\_url (Optional\[str\]): URL to redirect to upon successful authentication auth\_failure\_redirect\_url (Optional\[str\]): URL to redirect to upon unsuccessful authentication language (Optional\[str\]): Language to display widget in reference\_id (Optional\[str\]): ID of a user in your app, which will be returned at the end of a successful auth \*\*kwargs: Optional additional arguments to be passed in to the body of the request
+
+Returns: models.api\_responses.TerraApiResponse: API response object containing WidgetSession parsed response object if no error has occured
+
+
+
