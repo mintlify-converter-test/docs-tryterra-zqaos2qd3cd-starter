@@ -1,0 +1,171 @@
+---
+title: "Integrations"
+---
+## Web-API Based Integrations
+
+Terra supports web-based integrations with the following providers:
+
+| Integration | Enum Value |
+| --- | --- |
+| Aktiia | AKTIIA |
+| Biostrap | BIOSTRAP |
+| Bryton Sport (Beta) | BRYTONSPORT |
+| Cardiomood (Beta) | CARDIOMOOD |
+| Clue app | CLUE |
+| Concept2 | CONCEPT2 |
+| Coros | COROS |
+| Cronometer | CRONOMETER |
+| Cycling Analytics | CYCLINGANALYTICS |
+| Decathlon | DECATHLON |
+| EatThisMuch (Beta) | EATTHISMUCH |
+| Eight Sleep | EIGHTSLEEP |
+| FatSecret | FATSECRET |
+| FinalSurge (Beta) | FINALSURGE |
+| Fitbit | FITBIT |
+| Freestyle Libre | FREESTYLELIBRE |
+| Garmin | GARMIN |
+| Google Fit | GOOGLE |
+| Hammerhead Karoo (Beta) | HAMMERHEAD |
+| Health Gauge (Beta) | HEALTHGAUGE |
+| Huawei\* | HUAWEI\* |
+| iFit (Beta) | IFIT |
+| InBody (Beta)\* | INBODY\* |
+| Ketomojo (EU) | KETOMOJOEU |
+| Ketomojo (US) | KETOMOJOUS |
+| Komoot (Beta) | KOMOOT |
+| Lezyne (Beta) | LEZYNE |
+| Liverowing (Beta) | LIVEROWING |
+| MacrosFirst | MACROSFIRST |
+| Moxy Monitor (Beta) | MOXY |
+| Nolio | NOLIO |
+| Nutracheck | NUTRACHECK |
+| Omron (EU) | OMRON |
+| Omron (US) | OMRONUS |
+| Oura | OURA |
+| Peloton | PELOTON |
+| Polar | POLAR |
+| PŪL\* | PUL\* |
+| Renpho (Deprecated) | RENPHO (Deprecated) |
+| RideWithGPS | RIDEWITHGPS |
+| Rouvy | ROUVY |
+| Somnofy (Alpha)\* | SOMNOFY\* |
+| Strava\* | STRAVA\* |
+| Suunto | SUUNTO |
+| Technogym (Beta) | TECHNOGYM |
+| Tempo Fit | TEMPO |
+| Today's Plan | TODAYSPLAN |
+| Train Xhale (Beta) | TRAINXHALE |
+| TrainAsOne (Beta) | TRAINASONE |
+| TrainerRoad (Beta) | TRAINERROAD |
+| TrainingPeaks | TRAININGPEAKS |
+| Tredict | TREDICT |
+| Tridot (Beta) | TRIDOT |
+| Underarmour | UNDERARMOUR |
+| Velo Hero (Beta) | VELOHERO |
+| Virtuagym\* | VIRTUAGYM\* |
+| Wahoo | WAHOO |
+| WHOOP\* | WHOOP\* |
+| Withings | WITHINGS |
+| wger | WGER |
+| XOSS (Beta) | XOSS |
+| Xert (Beta) | XERT |
+| Zwift | ZWIFT |
+
+**N.B "\*" denotes integrations that require partnership to be made by the client directly in order to comply with their privacy policy**
+
+## SDK-based Integrations
+
+| Integration | Platforms |
+| --- | --- |
+| Samsung Health | Android, React Native |
+| Apple Health | iOS, React Native |
+| Freestyle Libre (1, 2, and PRO sensors) | iOS, Android, React Native |
+| Google Fit | Android, React Native |
+
+If you wish to start using our SDKs, please check out  
+[TerraiOS](/docs/unified-api-manage-integrations-ios)
+ and [Terra Android](/docs/unified-api-manage-integrations-android)
+
+## Websocket-based Integrations
+
+| Integrations | Platform |
+| --- | --- |
+| Bluetooth Low Energy (devices such as heart rate chest straps, and Xiaomi Bands are currently included here) | Android, iOS |
+| WearOS | Android |
+| Watch OS | iOS |
+| ANT+ Devices | Android |
+| Sensors Data (Including GYROSCOPE and ACCELERATION) | Android, iOS |
+
+If you wish to start using our WebSocket connections, please checkout [Using the Websocket API](/docs/using-the-websocket-api)
+ guide.
+
+In addition, you will need to use our SDKs for the connections of the devices listed above:
+
+*   [Android](/docs/stream-heart-rate-android-sdk)
+    
+*   [iOS](/docs/stream-heart-rate-ios-sdk)
+    
+*   [Flutter](/docs/flutter-sdk)
+    
+
+## Available Data
+
+The full list of what data is available with each provider can be found at this page:
+
+[Wearable Data](https://tryterra.co/wearabledata)
+
+# Detailed information on available integrations
+
+## Integrations with special processes
+
+### Google Fit (SDK), Samsung Health: Health Connect (HC)-based integrations
+
+Currently the integrations mentioned above go through the newly developed Health Connect platform, which is an on-device storage system developed by Google. This platform however is still in its infancy, and comes with a number of issues.
+
+> ## 🚧Health connect known issues
+> 
+> We have seen numerous cases of apps not being able to sync into Health Connect due to bugs in the HC platform itself. This could be, for example, Samsung Health not being able to send steps into HC.
+> 
+> We've also seen cases where HC data simply could not be accessed, for no apparent reason, leading to limited or no syncing of data possible.
+
+For the reasons mentioned above, we _highly_ recommend using the Google Fit integration through the API instead (resource name/enum `GOOGLE`).
+
+### Samsung Health - Direct connection route
+
+As privileged partners of Samsung thanks to their investment in Terra, we have been granted access to their privileged SDK for accessing Samsung Health directly, without using Health Connect as an intermediary.
+
+This route is much preferred to the Health Connect route due to the reasons discussed above. For access to this route, please get in touch with us through our support channels.
+
+### Integrations requiring partnerships directly with the provider
+
+Some of our integration partners require us to have our customers establish direct partnerships with them.
+
+## Integrations subject to changes by data provider
+
+Some of the integrations provided are developed on agreements subject to be updated by the integration providers. their APIs can be modified without notifying Terra, which could cause disruption in the service beyond our control.
+
+Those integrations are:
+
+*   FreestyleLibre
+*   Aktiia
+*   Bryton Sport
+*   Clue app
+*   EatThisMuch
+*   FatSecret
+*   FinalSurge
+*   Hammerhead Karoo
+*   Lezyne
+*   Liverowing
+*   RideWithGPS
+*   Rouvy
+*   Somnofy
+*   Technogym
+*   Tempo Fit
+*   Train Xhale
+*   TrainAsOne
+*   TrainerRoad
+*   Tridot
+*   Velo Hero
+
+
+
