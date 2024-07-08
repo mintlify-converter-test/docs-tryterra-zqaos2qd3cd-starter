@@ -1,0 +1,21 @@
+---
+title: "startDeviceScan"
+---
+```kotlin
+fun startDeviceScan(
+  type: Connections, 
+  useCache: Boolean = false, 
+  showWidgetIfCacheNotFound: Boolean = true, 
+  callback: (Boolean) -> Unit = {_ -> }
+)
+
+```
+
+This will pull a widget up to allow the user to scan and connect to a device.
+
+*   type - the \[Connections\] type you are trying to connect to
+*   useCache - if you wish to use any devices connected before (will take the first one discovered). Default to false
+*   callback - a function that is called with a boolean after the connection is established. The boolean depicts if the connection is successful or not
+
+
+
