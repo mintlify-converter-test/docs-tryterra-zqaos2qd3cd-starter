@@ -1,0 +1,191 @@
+---
+title: "Signing"
+---
+## Whitelisting IPs
+
+As a first step for security you may choose to whitelist IPs from which Terra will send webhooks. This would correspond to the following IP addresses:
+
+*   18.133.218.210
+*   18.169.82.189
+*   18.132.162.19
+*   18.130.218.186
+*   13.43.183.154
+*   3.11.208.36
+*   35.214.201.105
+*   35.214.230.71
+*   35.214.252.53
+
+  
+
+Please note that these are subject to change down the line, and should not be relied on as the only method of securing your Webhook URL. In the case of any changes, this will be communicated in advance to everyone with a notice period to adapt to the new IPs
+
+## Overview
+
+Terra will include a header - `terra-signature` - to all requests POSTed to your webhook URL, and to all responses returned from the service. The header will contain a hash value (hexidecimal encoded) unique to the request and to your developer ID.
+
+This allows you to verify that the events were sent by Terra and not by a third party.
+
+The signature secret (Terra Secret) is provided to you along with your developer ID on the Terra Dashboard and can be reset at any time. You can find your signing secret under **Dashboard > Connections > Destinations > Webhook > Edit** under the field **Signing secret**.
+
+> ## 👍Signature Verification Helper Function
+> 
+> Some SDKs now come with helper functions that you can use to verify a message payload!
+> 
+> ```python
+> // request is an requests.Response() object  
+> body: str = request.get_data().decode('utf-8')
+> header: str = request.headers['terra-signature']
+> Terra.check_terra_signature(body, header)
+> 
+> ``````python
+> terra.checkTerraSignature(req.headers['terra-signature'], req.rawBody))
+> 
+> ```
+> 
+> Check the SDK reference to see if the function has been implemented for your platform. We are working hard to implement it for all our SDKs.
+
+When building your own hash to verify the signature, make sure that you create a hexadecimal hash digest, other encodings such as base64 will produce erroneous results.
+
+## Step 1 - Parse the Header
+
+The `terra-signature` header will be in the following format:
+
+```terra-signature
+t=<timestamp>,v1=<hash>
+
+```
+
+To extract each value, you can split the header string on the `,` (comma) character and then split the created strings on `=` (equals sign) and take the second part which will contain the values from the header.
+
+## Step 2 - Prepare Message String
+
+The string to be hashed (message string) is created by concatenating the timestamp and the raw request payload with the `.` (full stop) character.
+
+> ## ❗️Watch Out!
+> 
+> You **must** ensure that you use the **raw** request payload **before** it has been parsed from JSON format otherwise when you dump the parsed object to a string it may not be in the correct format.
+
+## Step 3 - Compute Expected Signature
+
+You should then compute a HMAC using the message string created previously and the SHA-256 hashing algorithm. You should use your signing secret as the key and the message string as the message.
+
+## Step 4 - Compare the Signatures
+
+Compare the signature in the header to the expected signature. For an equality match, compute the difference between the current timestamp and the received timestamp, then decide if the difference is within your tolerance.
+
+Note that due to Terra performing webhook retries if your server does not accept a payload, the difference between the current timestamp and the timestamp specified in the request header may be very large - you should determine whether or not this matters to you.
+
+## Examples
+
+If you would like to see an example added for a specific language/framework please contact us at [dev@tryterra.co](mailto:dev@tryterra.co)
+.
+
+```python (flask)
+import hashlib
+import hmac
+import flask
+from flask import request
+
+app = flask.Flask(__name__)  # Initialize Flask app
+SECRET = "YOUR_TERRA_SECRET".encode("utf-8")
+
+@app.route("/consumeWebhook", methods=["POST"])
+def consume_terra_webhook():
+    body = request.get_data().decode('utf-8')
+    signature_header = request.headers["terra-signature"]  # Corrected variable name
+    
+    # Splitting and parsing the signature header
+    t, sig = (pair.split("=")[-1] for pair in signature_header.split(","))
+    
+    # Computing the HMAC signature
+    computed_signature = hmac.new(
+        SECRET, 
+        msg=f"{t}.{body}".encode("utf-8"),
+        digestmod=hashlib.sha256
+    ).hexdigest()
+    
+    # Checking if the provided signature matches the computed one
+    if sig != computed_signature:  # Corrected variable names for comparison
+        return flask.Response(status=401)
+    
+    # Signature was validated
+    return flask.Response(status=200)
+
+if __name__ == "__main__":
+    app.run(debug=True)  # Run the app in debug mode
+    
+
+``````python (flask)
+@RestController
+public class TerraWebhookController {
+  private static final HexFormat HEX = HexFormat.of();
+  private static final String SECRET = "YOUR_SECRET_KEY";
+  
+  @PostMapping("/consumeTerraWebhook")
+  public ResponseEntity<?> consumeTerraWebhook(
+    @RequestBody String payload, @RequestHeader("terra-signature") String terraSignature
+  ) {
+    String[] parts = terraSignature.split(",");
+    String timestamp = parts[0].substring(2);
+    String signature = parts[1].substring(3);
+    
+    SecretKeySpec secret = new SecretKeySpec(SECRET.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+    
+    Mac digest;
+    try {
+      digest = Mac.getInstance("HmacSHA256");
+      digest.init(secret);
+    } catch (NoSuchAlgorithmException | InvalidKeyException e) {
+      return new TerraWebhookResponse("error");
+    }
+    
+    digest.update(timestamp.getBytes(StandardCharsets.UTF_8));  
+    digest.update(".".getBytes(StandardCharsets.UTF_8));
+    digest.update(payload.getBytes(StandardCharsets.UTF_8));
+
+    String encodedSignature = HEX.formatHex(digest.doFinal());
+    if (!signature.equals(encodedSignature)) {   
+        return ResponseEntity.status(401).build();     
+    }       
+    return ResponseEntity.ok().build();   
+    }
+ }
+
+``````python (flask)
+const crypto = require("crypto");
+// terraSignature from headers
+// secret from dashboard
+// payload is the req.body raw string
+function verifySignature(terraSignature, payload, secret) {
+    const s = terraSignature.split(",");
+    const t = s[0].split("=")[1];
+    const v1 = s[1].split("=")[1];
+    var hmac = crypto
+        .createHmac("sha256", secret)
+        .update(t + "." + payload)
+        .digest("hex");
+    return hmac === v1;
+}
+
+const payload = '{"user": {"provider": "TEMPO", "last_webhook_update": null, "user_id": "6dca2b70-c028-42f1-bf18-14474607340c"}, "type": "activity", "data": [{"power_data": {"max_watts": 30.15489683644471, "avg_watts": 25.029001299966765, "power_samples": [{"watts": 31.570639669854252, "timestamp": "2022-03-21T07:45:47.404021+00:00", "timer_duration_seconds": 0}, {"watts": 49.521872663270564, "timestamp": "2022-03-21T07:56:47.404021+00:00", "timer_duration_seconds": 11}, {"watts": 59.91660943401078, "timestamp": "2022-03-21T08:07:47.404021+00:00", "timer_duration_seconds": 22}, {"watts": 15.74394429544796, "timestamp": "2022-03-21T08:18:47.404021+00:00", "timer_duration_seconds": 33}, {"watts": 40.129059383698134, "timestamp": "2022-03-21T08:29:47.404021+00:00", "timer_duration_seconds": 44}]}, "device_data": {"name": null, "serial_number": null, "activation_timestamp": null, "manufacturer": null, "software_version": null, "hardware_version": null, "other_devices": []}, "polyline_map_data": {"summary_polyline": null}, "energy_data": {"energy_kilojoules": null, "energy_planned_kilojoules": null}, "active_durations_data": {"activity_levels_samples": [{"activity_level": 3, "timestamp": "2022-03-21T07:45:47.404021+00:00"}, {"activity_level": 1, "timestamp": "2022-03-21T07:56:47.404021+00:00"}, {"activity_level": 5, "timestamp": "2022-03-21T08:07:47.404021+00:00"}, {"activity_level": 4, "timestamp": "2022-03-21T08:18:47.404021+00:00"}, {"activity_level": 3, "timestamp": "2022-03-21T08:29:47.404021+00:00"}], "vigorous_intensity_seconds": 2930.5394136854634, "inactivity_seconds": 2082.3340560721526, "low_intensity_seconds": 343.34227067114347, "num_continuous_inactive_periods": null, "moderate_intensity_seconds": 3113.324410786543, "rest_seconds": 2543.9016848574306, "activity_seconds": 1135.896454860647}, "TSS_data": {"samples": []}, "movement_data": {"max_pace_minutes_per_kilometre": null, "normalized_speed_metres_per_second": 2.9139556399885844, "cadence_samples": [], "avg_speed_metres_per_second": 12.683611338909904, "speed_samples": [], "avg_cadence": 52.20731627221516, "max_torque_newton_metres": 10.351917948413472, "max_cadence": 57.448571339065126, "max_speed_metres_per_second": 1.7888892058920929, "avg_pace_minutes_per_kilometre": null, "max_velocity_metres_per_second": 5.302880736621802, "avg_velocity_metres_per_second": 10.500997820656906, "avg_torque_newton_metres": 9.074087870551914}, "calories_data": {"net_intake_calories": 199.9825804951148, "net_activity_calories": 552.4189320529961, "total_burned_calories": 979.0905476197471, "BMR_calories": 1085.7307147510805}, "distance_data": {"detailed": {"distance_samples": [{"distance_metres": 0, "timestamp": "2022-03-21T07:45:47.404021+00:00", "timer_duration_seconds": 0}, {"distance_metres": 48.44061070556159, "timestamp": "2022-03-21T07:56:47.404021+00:00", "timer_duration_seconds": 11}, {"distance_metres": 78.2259374754136, "timestamp": "2022-03-21T08:07:47.404021+00:00", "timer_duration_seconds": 22}, {"distance_metres": 119.51155863861513, "timestamp": "2022-03-21T08:18:47.404021+00:00", "timer_duration_seconds": 33}, {"distance_metres": 144.03462492501959, "timestamp": "2022-03-21T08:29:47.404021+00:00", "timer_duration_seconds": 44}], "elevation_samples": []}, "summary": {"elevation": {"gain_planned_metres": null, "loss_actual_metres": null, "max_metres": 51.199192831461566, "min_metres": 29.67829060263131, "avg_metres": null, "gain_actual_metres": null}, "floors_climbed": null, "swimming": {"num_laps": 17, "pool_length_metres": null, "num_strokes": 252}, "steps": 12568, "distance_metres": 157.564708414663}}, "heart_rate_data": {"detailed": {"hrv_samples": [{"timestamp": "2022-03-21T07:45:47.404021+00:00", "hrv": 58}, {"timestamp": "2022-03-21T07:56:47.404021+00:00", "hrv": 66}, {"timestamp": "2022-03-21T08:07:47.404021+00:00", "hrv": 77}, {"timestamp": "2022-03-21T08:18:47.404021+00:00", "hrv": 43}, {"timestamp": "2022-03-21T08:29:47.404021+00:00", "hrv": 47}], "hr_samples": [{"bpm": 83, "timestamp": "2022-03-21T07:45:47.404021+00:00"}, {"bpm": 90, "timestamp": "2022-03-21T07:56:47.404021+00:00"}, {"bpm": 112, "timestamp": "2022-03-21T08:07:47.404021+00:00"}, {"bpm": 163, "timestamp": "2022-03-21T08:18:47.404021+00:00"}, {"bpm": 118, "timestamp": "2022-03-21T08:29:47.404021+00:00"}]}, "summary": {"max_hr": 144.89178910773677, "user_hr_max": 189, "resting_hr": 50.08058645758455, "min_hr": 67.07892442446678, "avg_hr_variability": 91.05290331260525, "avg_hr": 111.37120129241694}}, "metadata": {"name": null, "type": 8, "start_time": "2022-03-21T07:45:47.404021+00:00", "city": null, "state": null, "summary_id": "204421706369", "end_time": "2022-03-21T08:37:47.404021+00:00", "country": null, "upload_type": 0}, "oxygen_data": {"saturation_percentage": 63.94556590561501, "saturation_samples": [], "vo2_samples": [], "max_volume_ml_per_min_per_kg_day": null}, "work_data": {"work_in_kilojoules": null}, "position_data": {"start_pos_lat_lng": [52.61831913642271, 0.46745174277930757], "end_pos_lat_lng": [52.18417888719253, 1.39516967016118], "centre_pos_lat_lng": [], "position_samples": []}, "lap_data": {"laps": []}, "strain_data": {"strain_level": 5.487215959367661}, "MET_data": {"samples": [{"timestamp": "2022-03-21T07:45:47.404021+00:00", "level": 8.417435109789558}, {"timestamp": "2022-03-21T07:56:47.404021+00:00", "level": 4.471069974577138}, {"timestamp": "2022-03-21T08:07:47.404021+00:00", "level": 5.417952686395167}, {"timestamp": "2022-03-21T08:18:47.404021+00:00", "level": 7.050821963487477}, {"timestamp": "2022-03-21T08:29:47.404021+00:00", "level": 13.042276135672802}], "num_moderate_intensity_minutes": 16.163975388739132, "num_low_intensity_minutes": 4.7087465216761055, "num_high_intensity_minutes": 23.433119468097434, "num_inactive_minutes": 17.014989028308108, "avg_level": 13.111347112097553}}]}'
+const terraSignature = "t=1647859187,v1=0620ec14ff0aa058f9fdc1f11df17d40ea5a4583c93986ec71c6e8c7c9fb00cb"
+const secret = "fa7f9a24c0f83a2266eb67d4c550bfe2045a4878d5fe6247"
+
+console.log(verifySignature(terraSignature, payload, secret))
+// prints out "true"
+
+```
+
+```json
+{
+  "user": TerraUser,
+  "reference": String,
+  "message": "Large request is being sent",
+  "expected_payloads": Number,
+  "type": "large_request_sending",
+},
+
+```
+
+
+
