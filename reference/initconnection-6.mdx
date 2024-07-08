@@ -1,0 +1,17 @@
+---
+title: "initConnection"
+description: "Initialises a user with the Terra backend"
+---
+**Instance method of TerraRT**
+
+```swift
+func initConnection(token: String, completion: @escaping (Bool) -> Void = {(success) -> Void in})
+
+```
+
+*   `token`: String -> An authentication token generated from [the Mobile SDK Token endpoint](/reference/generate-authentication-token)
+     .
+*   `completion`: (Bool) -> Void -> A completion function that is called when the initialisation is complete.
+
+
+
