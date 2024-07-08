@@ -1,0 +1,176 @@
+---
+title: "TerraClient"
+description: "Class to retrieve data from Terra REST API"
+---
+This class allows you to retrieve data from [Terra's REST API](https://readme.io/project/tryterra/v2.0/refs/without-client-http-requests)
+.
+
+**Usage of this class requires an X-API-Key request to the backend which may be unsafe. Use at your own risk!**
+
+**Initialisation**
+
+```kotlin
+class TerraClient(
+    private val userId: String,
+    private val xAPIKey: String,
+    private val devId: String)
+
+```
+
+`userId: String` ➡ The user\_id you wish to query for  
+`devId: String` ➡ Dev-id given to you upon sign up with terra on [Developer Dashboard](/docs/developer-dashboard)
+  
+`xAPIKey: String` ➡ XAPIKey given to you upon sign up with terra on [Developer Dashboard](/docs/developer-dashboard)
+
+**Instance Methods**  
+[Authentication - API](/page/authentication-api)
+
+```kotlin
+fun authenticateUser(resource: Resource, 
+                     completion: (AuthenticateUser?) -> Void)
+
+```
+
+`resource: Resource` ➡ The resource you wish to authenticate a user for  
+`completion: @escaping (AuthenticateUser?) -> Void` ➡ A completion function returning the data returned from the request.
+
+[Deauthenticate User](/reference/deauthenticate-user)
+
+```kotlin
+fun deauthenticateUser()
+
+```
+
+[Get Athlete Data](/reference/get-athlete-data)
+
+```kotlin
+fun getAthlete(toWebhook: Boolean = true,
+			         callback: (TerraAthleteDataPayload?) -> Unit)
+
+```
+
+`toWebhook: Bool` ➡ Determines if the data is sent to your webhook or returned here.  
+`completion: @escaping (TerraAthleteDataPayloadModel) -> Void` ➡ A completion function returning the data returned from the request.
+
+[Get Activity Data](/reference/get-activity-data)
+
+```kotlin
+fun getActivity(startDate: Date,
+                endDate: Date, 
+                toWebhook: Boolean = true, 
+                callback: (TerraActivityDataPayload?) -> Unit)
+  
+  fun getActivity(startDate: Long,
+                  endDate: Long, 
+                  toWebhook: Boolean = true, 
+                  callback: (TerraActivityDataPayload?) -> Unit)
+
+```
+
+`startDate: Date` or `startDate: Long` ➡ The beginning time of the request  
+`endDate: Date` or `endDate: Long` ➡ The end time of the request  
+`toWebhook: Bool` ➡ Determines if the data is sent to your webhook or returned here.  
+`completion: @escaping (TerraActivityDataPayload?) -> Void` ➡ A completion function returning the data returned from the request.
+
+[Get Daily Data](/reference/get-daily-data)
+
+```kotlin
+fun getDaily(startDate: Date,
+             endDate: Date, 
+             toWebhook: Boolean = true, 
+             callback: (TerraDailyDataPayload?) -> Unit)
+  
+fun getDaily(startDate: Long, 
+             endDate: Long, 
+             oWebhook: Boolean = true, 
+             callback: (TerraDailyDataPayload?) -> Unit)
+
+```
+
+`startDate: Date` or `startDate: Long` ➡ The beginning time of the request  
+`endDate: Date` or `endDate: Long` ➡ The end time of the request  
+`toWebhook: Bool` ➡ Determines if the data is sent to your webhook or returned here.  
+`completion: @escaping (TerraDailyDataPayload?) -> Void` ➡ A completion function returning the data returned from the request.
+
+[Get Body Data](/reference/get-body-data)
+
+```kotlin
+fun getBody(startDate: Date, 
+            endDate: Date, 
+            toWebhook: Boolean = true, 
+            callback: (TerraBodyDataPayload?) -> Unit)
+  
+fun getBody(startDate: Long, 
+            endDate: Long, 
+            toWebhook: Boolean = true, 
+            callback: (TerraBodyDataPayload?) -> Unit)
+
+```
+
+`startDate: Date` or `startDate: Long` ➡ The beginning time of the request  
+`endDate: Date` or `endDate: Long` ➡ The end time of the request  
+`toWebhook: Bool` ➡ Determines if the data is sent to your webhook or returned here.  
+`completion: @escaping (TerraBodyDataPayload?) -> Void` ➡ A completion function returning the data returned from the request.
+
+[Get Sleep Data](/reference/get-sleep-data)
+
+```kotlin
+fun getSleep(startDate: Date, 
+             endDate: Date, 
+             toWebhook: Boolean = true, 
+             callback: (TerraSleepDataPayload?) -> Unit)
+  
+fun getSleep(startDate: Long, 
+             endDate: Long, 
+             toWebhook: Boolean = true, 
+             callback: (TerraSleepDataPayload?) -> Unit)
+
+```
+
+`startDate: Date` or `startDate: Long` ➡ The beginning time of the request  
+`endDate: Date` or `endDate: Long` ➡ The end time of the request  
+`toWebhook: Bool` ➡ Determines if the data is sent to your webhook or returned here.  
+`completion: @escaping (TerraSleepDataPayload?) -> Void` ➡ A completion function returning the data returned from the request.
+
+[Get Menstruation Data](/reference/get-menstruation-data)
+
+```kotlin
+fun getMenstruation(startDate: Date, 
+                    endDate: Date, 
+                    toWebhook: Boolean = true, 
+                    callback: (TerraMenstruationDataPayload?) -> Unit)
+  
+fun getMenstruation(startDate: Long,
+                    endDate: Long, 
+                    toWebhook: Boolean = true, 
+                    callback: (TerraMenstruationDataPayload?) -> Unit)
+
+```
+
+`startDate: Date` or `startDate: Long` ➡ The beginning time of the request  
+`endDate: Date` or `endDate: Long` ➡ The end time of the request  
+`toWebhook: Bool` ➡ Determines if the data is sent to your webhook or returned here.  
+`completion: @escaping (TerraMenstruationDataPayload?) -> Void` ➡ A completion function returning the data returned from the request.
+
+[Get Nutrition Data](/reference/get-nutrition-data)
+
+```kotlin
+fun getNutrition(startDate: Date, 
+                 endDate: Date, 
+                 toWebhook: Boolean = true, 
+                 callback: (TerraNutritionDataPayload?) -> Unit)
+  
+fun getNutrition(startDate: Long,
+                 endDate: Long, 
+                 toWebhook: Boolean = true, 
+                 callback: (TerraNutritionDataPayload?) -> Unit)
+
+```
+
+`startDate: Date` or `startDate: Long` ➡ The beginning time of the request  
+`endDate: Date` or `endDate: Long` ➡ The end time of the request  
+`toWebhook: Bool` ➡ Determines if the data is sent to your webhook or returned here.  
+`completion: @escaping (TerraNutritionDataPayload?) -> Void` ➡ A completion function returning the data returned from the request.
+
+
+
