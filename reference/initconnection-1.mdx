@@ -1,0 +1,25 @@
+---
+title: "initConnection"
+---
+```kotlin
+fun initConnection(connection: Connections, 
+                   token: String, 
+                   context: Context, 
+                   customPermissions: Set<CustomPermissions> = setOf(), 
+                   schedulerOn: Boolean = true, 
+                   startIntent: String? = null, 
+                   completion: (Boolean, TerraError?) -> Unit = { _, _ -> })
+
+```
+
+*   `type: Connections` ➡ An ENUM from the Connections class signifying the connection you wish to initiate for.
+*   `token: String` ➡ A token used for authentication. Generate one here: [https://docs.tryterra.co/reference/generate-authentication-token](/reference/generate-authentication-token)
+    
+*   (Optional) `customReadTypes: Set<CustomPermissions>` ➡ This is defaulted as an empty `Set`. If you want to make a more granular permissions request, you may send us a set of `CustomPermissions`
+*   `context: Context` ➡ The context from the activity you are instantiating from
+*   `schedulerOn: Bool` ➡ A boolean dictating if you wish turn on the schduler. Defaults to true.
+*   `startIntent: String?` ➡ The path to the activity you wish to display when the user scans a freestylelibre from the background (i.e "co.tryterra.terra.example.MainActivity")
+*   `completion: @escaping (Bool, TerraError?) -> Void` ➡ A callback with a boolean dictating if the initialisation succeeds.
+
+
+
