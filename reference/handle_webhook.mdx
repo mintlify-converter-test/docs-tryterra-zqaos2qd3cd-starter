@@ -1,0 +1,19 @@
+---
+title: "handle_webhook"
+---
+```python
+Terra.handle_webhook(
+	payload: str,
+	terra_signature_header: str
+)
+
+```
+
+Function to Parse web hooks from Terra
+
+Args: payload (str): The body from API response as a string terra\_signature\_header (str): The terra\_signature header from API response as a string
+
+Returns: models.api\_responses.TerraApiResponse: API response object containing ProvidersResponse parsed response object if no error has occurred
+
+
+
