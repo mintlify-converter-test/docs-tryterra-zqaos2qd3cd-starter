@@ -1,0 +1,25 @@
+---
+title: "getActivity"
+description: "Retrieve activity data for a given connection and date range"
+---
+```typescript
+function getActivity(
+  connection: Connections,
+  startDate: Date,
+  endDate: Date,
+  toWebhook: Boolean = true
+): Promise<DataMessage>
+
+```
+
+*   `connection: Connections` ➡ An ENUM from the Connections class signifying the connection you wish to initiate for.
+*   `startDate: Date` ➡ The beginning of the request in either Date or Unix Timestamp
+*   `endDate: Date` or `endDate: Long` ➡ The end of the request in either Date or Unix Timestamp
+*   `toWebhook: Bool` ➡ Whether or not to send data to your webhook. If false, `DataMessage` on the returned `Promise` will contain the data in the `data` field.
+
+**returns**
+
+*   `Promise<DataMessage>`
+
+
+
