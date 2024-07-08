@@ -1,0 +1,77 @@
+---
+title: "Ruby client"
+---
+> ## 🚧Work In Progress
+> 
+> The information in this page is up-to-date and accurate, but it will soon be standardised to fit the style of the rest of the documentation. If you have any feedback about the documentation or require support, please contact us on Discord or send an email to [bryan@tryterra.co](mailto:bryan@tryterra.co)
+
+## Terra Ruby Client Library
+
+This is the official Terra Ruby client library. It is provided to you so that you can get integrated with Terra faster!
+
+This package includes:
+
+*   Authentication endpoints
+*   De-Authentication endpoints
+*   Data getters (Daily, Sleep, Body, etc.)
+*   Basic Information (List of providers, information of the user, etc.)
+*   Webhook parsing
+
+## Installation
+
+The installation is easily done in one line:
+
+```ruby
+gem install tryterra-client
+
+```
+
+You may now import the library as:
+
+```ruby
+require 'Terra'
+
+```
+
+## Usage
+
+Start off by creating a `Terra` client with your `dev-id` and `X-API-Key`:
+
+```ruby
+begin
+    terra = TerraAPI::Terra.new(YOUR_DEV_ID, YOUR_API_KEY)
+rescue TerraError => e
+    # Handle errors here
+end
+
+```
+
+Using the `Terra` client, you can access all of the instance methods.
+
+### Authentication Endpoints:
+
+*   `generate_widget_session( reference_id:string, providers:array_of_string, language:string, auth_success_redirect_url:string, auth_failure_redirect_url:string )`
+
+### De-Authentication Endpoints:
+
+*   `deauthUser(user_id:string)`
+
+### Data Getters:
+
+*   `get_activity( user_id:string, start_date:date, end_date:date_optional, to_webhook:boolean_optional )`
+*   `get_daily( user_id:string, start_date:date, end_date:date_optional, to_webhook:boolean_optional )`
+*   `get_body( user_id:string, start_date:date, end_date:date_optional, to_webhook:boolean_optional )`
+*   `get_sleep( user_id:string, start_date:date, end_date:date_optional, to_webhook:boolean_optional )`
+*   `get_menstruation( user_id:string, start_date:date, end_date:date_optional, to_webhook:boolean_optional )`
+*   `get_atheletes(user_id:string, to_webhook:boolean_optional)`
+
+### Basic Information:
+
+*   `get_providers`
+*   `get_subscribers`
+*   `get_user(user_id:string)`
+
+### Webhook parsing:
+
+*   `parse_webhook(payload:object, type:string, user_id:string_optional)`
+
