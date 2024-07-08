@@ -1,0 +1,17 @@
+---
+title: "getUser"
+---
+```java
+getUser(String userId)
+
+```
+
+Makes a request to the /userInfo endpoint to fetch the details for the user with the given ID. This User object can then subsequently be used to fetch data through the other available methods.  
+Note that the fetched user will both be available through TerraApiResponse.getUser(), and will also be the single item in the TerraApiResponse.getParsedData() list.  
+Parameters:  
+userId - ID of the user to get information for  
+Returns:  
+future that will contain the fetched User object upon completion
+
+
+
