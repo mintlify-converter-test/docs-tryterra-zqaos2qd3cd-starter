@@ -1,0 +1,38 @@
+---
+title: "JavaScript Client"
+---
+Source code: [https://github.com/tryterra/terra-client-js](https://github.com/tryterra/terra-client-js)
+
+# class Terra
+
+An object that manages getting data, verifying signatures and authenticating users
+
+## Initialisation
+
+```javascript
+const { default: Terra } = require("terra-api");
+
+const terra = new Terra(devId: string, apiKey: string, secret: string);
+
+```
+
+## Methods
+
+| Method Name | Returns | Explanation |
+| --- | --- | --- |
+| getActivity | Promise | returns an api response that when parsed contains activity data |
+| getAthlete | Promise | returns an api response that when parsed contains athlete data |
+| getBody | Promise | returns an api response that when parsed contains body data |
+| getDaily | Promise | returns an api response that when parsed contains daily data |
+| getMenstruation | Promise | returns an api response that when parsed contains menstruation data |
+| getNutrition | Promise | returns an api response that when parsed contains nutrition data |
+| getSleep | Promise | returns an api response that when parsed contains sleep data |
+| getProviders | Promise | returns an api response that when parsed contains one list for web providers and another for sdk providers |
+| getUsers | Promise | returns an api response that when parsed contains a list of all users |
+| checkTerraSignature | Bool | returns whether the body was sent from Terra |
+| deauthUser | Promise | returns an api response object that when parsed returns a |
+| generateWidgetSession | Promise | returns an api response that when parsed contains details about an authentication session with one of the inputted providers |
+| getUsers | Promise | returns an api response that when parsed contains user data |
+
+
+
