@@ -1,0 +1,329 @@
+---
+title: "Event Types"
+---
+## Summary
+
+View all event types that you may receive from your webhook. Below the tables is a detailed look at what is included in each event type.
+
+| Type | Explanation |
+| --- | --- |
+| auth | Occurs when a user attempts to authenticate |
+| deauth | Occurs when a user deauthenticates through the Terra |
+| user\_reauth | Occurs when a user successfully authenticates for a second time, with the same account. You will receive a successful `auth` and a `user_reauth` payload |
+| access\_revoked | Occurs when a user revokes Terra's access from the provider's end |
+| connection\_error | Occurs when a request to a provider returns an HTTP response of 401, 403 or 412 |
+| google\_no\_datasource | Occurs when a Google Fit user doesn't have a data source linked to their account. All data requests for the user will be empty unless they link a data source |
+| processing | Occurs when data is being fetched asynchronously from the provider. The data will be sent through automatically via webhook, and you can also safely request for it after the time in the `retry_after_seconds` field. |
+| large\_request\_sending | Occurs when more than one month of data has been requested and all data has been successfully submitted |
+| rate\_limit\_hit | Occurs when an asynchronous request has failed due to rate limiting and is going to be retried. |
+| large\_request\_processing | Occurs when more a request for over one month of data has been submitted to Terra. Data will be sent in chunks with the same reference field after this request. Each chunk will be at most 10 objects in the `data` field or 10 MB in size, whichever limit gets hit first |
+| activity, athlete, body, daily, menstruation, nutrition, sleep | Occurs throughout the day as users use their wearables. `activity` updates when new activity is completed |
+| healthcheck | Healthcheck webhook sent periodically to verify your webhook is functional, as well as to inform you of recent trends in payloads sent to you |
+
+Below, we have documented how we recommend responding to event types and what format to expect.
+
+## Misc
+
+### healthcheck \[BETA\]
+
+This will periodically be sent to your webhook to inform you of the recent trends in payload volume.
+
+Note that this format is subject to change, and is still undergoing testing and validation
+
+```healthcheck
+{
+  "type": "healthcheck",
+  "status": String,
+  "creation_timestamp": String,
+  "trend_percentage": Number,
+  "sent_webhooks_last_hour": Number
+}
+
+```
+
+## Authentication
+
+```next chunk scheduled
+{
+	"type": "rate_limit_hit",
+  "user": TerraUser,  
+  "start_date": Date,  
+  "end_date": Date,
+  "retrying_at": String,
+  "message": "Rate limit reached whilst processing async query"
+}
+
+```
+
+### auth
+
+If successful, you should add the user to your database. You can use `widget_session_id` to link back to the user who you submitted the widget link to.
+
+```success
+{
+  "type": "auth",
+  "user": TerraUser,
+  "status": "success",
+  "reference_id": String,
+  "widget_session_id": String
+}
+
+``````success
+{
+  "type": "auth",
+  "user": TerraUser,
+  "status": "error",
+  "message": "User failed to authenticate and has been deleted",
+  "reason": String,
+  "reference_id": String,
+  "widget_session_id": String
+}
+
+```
+
+### deauth
+
+Remove the user from your database.
+
+```deauth
+{
+  "type": "deauth",
+  "user": TerraUser,
+  "status": "success",
+  "message": "User has deauthenticated"
+}
+
+```
+
+### user\_reauth
+
+Remove old\_user from your database and replace old\_user with new\_user for all records tied to them.
+
+```user_reauth
+{
+  "type": "user_reauth",
+  "new_user": TerraUser,
+  "old_user": TerraUser,
+  "status": "warning",
+  "message": "User has reauthenticated and old ID has been deleted"
+}
+
+```
+
+### access\_revoked
+
+Remove the user from your database and remove all their records.
+
+```access_revoked
+{
+  "type": "access_revoked",
+  "user": TerraUser,
+  "status": "warning",
+  "message": "User revoked access"
+}
+
+```
+
+### connection\_error
+
+We submit this event type when a provider no longer allows access to a user's data. Deauthenticate the user and request that the user reauthenticates.
+
+```connection_error
+{
+  "type": "connection_error",
+  "user": TerraUser,
+  "status": "warning",
+  "message": "User connection degraded"
+}
+
+```
+
+### google\_no\_datasource
+
+Add the user to your database but inform them that they do not have any health datasources.
+
+```google_no_datasource
+{
+  "type": "google_no_datasource",
+  "user": TerraUser,
+  "status": "warning",
+  "message": "User has no datasources available"
+}
+
+```
+
+```sleep
+{
+  "data": Sleep,
+  "user": TerraUser,
+  "type": "sleep",
+  "version": String
+}
+
+```
+
+## Data requests
+
+### processing
+
+Occurs when data needs to be fetched asynchronously from the data provider. Terra will make the necessary requests to fetch this data, and it will be sent through automatically via webhook. You can also safely request for it after the time in the `retry_after_seconds` field. Note that the data may be available sooner than the time noted as well. The `retry_after_seconds` gives an upper bound to it to make sure that you can receive this data after this time.
+
+```json
+{
+	"type": "processing",
+  "status": "success",
+  "message": "Request is processing, try again later",
+  "user": TerraUser,
+  "retry_after_seconds": Number,
+}
+
+```
+
+### large\_request\_processing
+
+Occurs when a large request (>1 month of data) has been submitted to the rest API, and chunks of data will be sent following this webhook, capped at the least of 10MB each or 10 objects each within the list of `data`  
+The `reference` field will be included as a `terra-reference` header in every data payload following this hook
+
+```json
+{
+	"type": "large_request_processing",
+  "status": "processing",
+  "message": "Large request is processing",
+  "user": TerraUser,
+  "reference": String
+}
+
+```
+
+### large\_request\_sending
+
+Occurs when a large request (>1 month of data) has been submitted to the rest API, and chunks of data are sent following this webhook  
+The `reference` field will be included as a `terra-reference` header in every data payload following this hook
+
+```json
+{
+  "user": TerraUser,
+  "reference": String,
+  "message": "Large request is being sent",
+  "expected_payloads": Number,
+  "type": "large_request_sending",
+},
+
+```
+
+### rate limit during async
+
+If rate limits are reached during an asynchronous request, we reschedule the request.
+
+```next chunk scheduled
+{
+  "user": TerraUser,  
+  "start_date": Date,  
+  "end_date": Date,
+  "retrying_at": String,
+  "message": "Rate limit reached whilst processing async query",
+  "type": "rate_limit_hit",
+}
+
+```
+
+### activity
+
+Parse the data using the Data Models page and update your user with the new data.
+
+```activity
+{
+  "data": [Activity],
+  "user": TerraUser,
+  "type": "activity",
+  "version": String
+}
+
+```
+
+### athlete
+
+Parse the data using the Data Models page and update your user with the new data.
+
+```athlete
+{
+  "athlete": Athlete,
+  "user": TerraUser,
+  "type": "athlete",
+  "version": String
+}
+
+```
+
+### body
+
+Parse the data using the Data Models page and update your user with the new data.
+
+```body
+{
+  "data": [Body],
+  "user": TerraUser,
+  "type": "body",
+  "version": String
+}
+
+```
+
+### daily
+
+Parse the data using the Data Models page and update your user with the new data.
+
+```daily
+{
+  "data": [Daily],
+  "user": TerraUser,
+  "type": "daily",
+  "version": String
+}
+
+```
+
+### menstruation
+
+Parse the data using the Data Models page and update your user with the new data.
+
+```json
+{
+  "data": [Menstruation],
+  "user": TerraUser,
+  "type": "activity",
+  "version": String
+}
+
+```
+
+### nutrition
+
+Parse the data using the Data Models page and update your user with the new data.
+
+```nutrition
+{
+  "data": [Nutrition],
+  "user": TerraUser,
+  "type": "nutrition",
+  "version": String
+}
+
+```
+
+### sleep
+
+Parse the data using the Data Models page and update your user with the new data.
+
+```sleep
+{
+  "data": [Sleep],
+  "user": TerraUser,
+  "type": "sleep",
+  "version": String
+}
+
+```
+
+
+
