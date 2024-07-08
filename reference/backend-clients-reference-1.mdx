@@ -1,0 +1,90 @@
+---
+title: "Mobile SDK Reference"
+---
+> ## 🚧Important Information
+> 
+> The primary use of the mobile SDKs is to allow you to access data from providers who do not have a Web API (e.g. Apple, Samsung). See [the integrations page](/reference/integrations-1#sdk-based-integrations)
+>  for the full list.
+> 
+> If you do not need to access these integrations, there is **no reason** to use these SDKs!
+> 
+> If you need to access Terra API, it is more secure to do so from your server backend and send the desired data to your mobile frontend.
+
+## Overview
+
+Some data providers don't provide data through a web API, and restrict data access to on-device apps.
+
+See [Integrations](/docs/integrations)
+ for a full list of SDK-based integrations.
+
+This means that users cannot agree to share through the widget. Instead, the user has to agree to share data for e.g. Apple Health or Samsung Health on their device directly.
+
+This requires your product to call the corresponding on-device SDK for the data provider (e.g. calling Apple Health and ask for data sharing).
+
+* * *
+
+## Functions of the SDKs
+
+The SDKs offer three separate functionalities:
+
+*   Fetch data from providers who restrict access to on-device apps
+*   Make calls to the Terra web API
+
+* * *
+
+## Data from on-device providers
+
+Upon successful authentication through completion of a widget session, you will receive the Terra userID and the provider in the customisable redirect URL (this can be a deep link). For on-device data access, you will only receive the provider (and a NULL userID), and will have to trigger the corresponding SDK for the provider on the user device to complete the authentication.
+
+For example, for the Apple SDK:
+
+*   Your application opens a widget session for the user
+*   The user selects Apple as a provider
+*   Upon completion, you will receive `provider=APPLE` from Terra
+*   You make my application call the Terra Apple SDK
+*   The user gets asked by Apple Health to allow data sharing with Terra
+*   Each SDK provides native support as well as framework support (e.g. React Native) where possible
+
+* * *
+
+## Authentication
+
+> ## ❗️In-app API key
+> 
+> Exposing the key in your app is a huge security concern as if your X-API-Key is leaked, a malicious third party could use it to get every user's data under your dev-id!  
+> Having the API key in your app and making calls to the API from the client side should strictly only be used for testing
+
+Authentication on SDKs are done using tokens. You should generate one from your backend and pass this to your application upon initialising a new connection. This makes it so that your X-API-Keys are not exposed in your App.
+
+These tokens are one time use and they expire if not used within an allocated amount of time. Currently this is set to 3 minutes.
+
+Start by generating your first authentication token: [Generate Authentication Token](/reference/generate-authentication-token)
+
+* * *
+
+iOS
+
+### TerraiOS
+
+[Full Reference](https://docs.tryterra.co/v2.0/reference/reference-ios-sdk)
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_android_2.png" alt="" />
+
+### TerraAndroid
+
+[Full Reference](https://docs.tryterra.co/v2.0/reference/reference-android-sdk)
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_rn_2.png" alt="" />
+
+### React Native
+
+[Full Reference](https://docs.tryterra.co/v2.0/reference/reference-react-native-sdk)
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_flutter_2.png" alt="" />
+
+### Flutter
+
+[Full Reference](https://docs.tryterra.co/v2.0/reference/reference-flutter-sdk)
+
+
+
