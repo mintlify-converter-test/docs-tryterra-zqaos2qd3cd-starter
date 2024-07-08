@@ -1,0 +1,75 @@
+---
+title: "Android Realtime SDK"
+---
+# class Terra
+
+An object that manages getting data, verifying signatures and authenticating users
+
+## Initialisation
+
+```kotlin
+TerraRT(
+    devId: String,
+    context: Context,
+    referenceId: String?,
+    completion: (Boolean) -> Unit,
+)
+
+```
+
+## Methods
+
+| Method Name | Returns | Explanation |
+| --- | --- | --- |
+| initConnection | null | initialises the connection between the device and Terra |
+| startDeviceScan | null | will pull a widget up to allow the user to scan and connect to a device. |
+| startRealtime | null | starts sending realtime data |
+| stopRealtime | null | stops sending realtime data |
+| disconnect | null | disconnects device and Terra |
+
+# Connections Enum
+
+```kotlin
+enum class Connections {
+    BLE,
+    WEAR_OS,
+    ANDROID,
+    ANT,
+    ALL_DEVICES
+}
+
+```
+
+BLE – includes Garmin HR Broadcasts, Polar, Wahoo, XIAOMI Bands and more  
+Wear OS - with Terra WearOS RT SDK  
+ANT - includes Garmin HR Broadcasts, and ANT+ Supported fitness equipments!  
+Android - device sensors like acceleration, location, gyroscope, etc.  
+ALL\_DEVICES - includes all BLE and ANT+ devices (v0.3.1 onwards only)
+
+# DataTypes
+
+```kotlin
+enum class DataTypes {
+    HEART_RATE,
+    ECG,
+    STEPS,
+    HRV,
+    CALORIES,
+    LOCATION,
+    DISTANCE,
+    ACTIVITY,
+    ACCELERATION,
+    GYROSCOPE,
+    FLOORS_CLIMBED,
+    STEPS_CADENCE,
+    SPEED,
+    POWER,
+    BIKE_CADENCE,
+    MET,
+    RR_INTERVAL;
+}
+
+```
+
+
+
