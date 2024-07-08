@@ -1,0 +1,25 @@
+---
+title: "startBluetoothScan"
+description: "Starts a bluetooth scan session"
+---
+**Instance method of TerraRT**
+
+```swift
+func startBluetoothScan(type: Connections, 
+                        bluetoothLowEnergyFromCache: Bool = false,  
+                        callback: @escaping (Bool) -> Void = {_ in}) -> TerraBLEWidget?
+
+func startBluetoothScan(type: Connections, deviceCallback: @escaping (Device) -> Void)
+
+```
+
+*   `type`: Connections -> An Enum signifying the connection to make.
+*   `callback`: @escaping (Bool) -> Void -> A callback that will be called with `true` if the connection is successful and `false` if the connection is unsuccessful.
+*   `deviceCallback`: (Device) -> Void -> A callback that calls with a `Device` object containing the device's name and identifier. You can use this to display the devices in your view (**If provided, all scanned devices will be returned here instead**)
+
+**returns**
+
+*   `TerraBLEWidget?`
+
+
+
