@@ -1,0 +1,45 @@
+---
+title: "Reference"
+---
+## What are Webhooks?
+
+Webhooks are automated messages sent from apps when something happens. They have a message—or payload—and are sent to a unique URL—essentially the app's phone number or address. Webhooks are almost always faster than polling, and require less work on your end.
+
+Terra uses webhooks to notify you whenever new data is made available for any of your users. New data, such as activity, sleep, etc will be normalised and sent to your webhook URL at which point you can process it however you see fit.
+
+When making HTTP requests for historical data, by default the request will be sent into our queue for asynchronous processing, and the results will be forwarded to your webhook URL once processing has been completed. Note that you can also receive data in the HTTP response by passing the query parameter `to_webhook=false` however this is liable to timeout for larger queries.
+
+## Getting Started with Webhooks
+
+Creating a webhook endpoint follows exactly the same process as creating any other page on your website. It is an HTTPS secured endpoint on your server with a distinct URL. For testing, you may use HTTP but for production please make sure that your endpoint is correctly secured.
+
+The endpoint you create must be configured to accept `POST` requests. Note that webhook requests will time out after 30 seconds, so you should ensure that you finish processing the data before the end of the time limit, or you should process the request asynchronously and return a response immediately.
+
+You can configure your webhook URL at any time through the settings page of the Terra Dashboard.
+
+## Retries
+
+Terra implements retry logic to prevent you from missing payloads when your server may have inadvertently returned an error response. Retries are processed on an exponential backoff schedule and will expire after approximately a day if none of the retried requests were successful.
+
+Requests will be retried if you server returns a non 2xx response code, or if the request times out (takes longer than 30 seconds).
+
+Note that all retries are completely encapsulated so changes to settings through the Terra Dashboard will not be applied to the retry attempts.
+
+## Configure Payloads
+
+You can configure the data types we send to your webhook in your dashboard **Connections > Configure** from where you can select which data types to include. You can also opt to receive samples within your payload.
+
+<img className="block" src="images/files_readme_io/_765281f_image.png" alt="" />
+
+## Verifying Webhook Message
+
+You should verify that each webhook message you receive was actually sent by Terra. See the [Signing](/reference/signing)
+ section to find out how.
+
+## Event Types
+
+[This page](/reference/events)
+ documents all the possible events that you may receive from.
+
+
+
