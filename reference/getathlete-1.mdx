@@ -1,0 +1,21 @@
+---
+title: "getAthlete"
+description: "Retrieve athlete data for a given connection"
+---
+```typescript
+function getAthlete(
+  connection: Connections,
+  toWebhook: Boolean = true
+): Promise<DataMessage>
+
+```
+
+*   `connection: Connections` ➡ An ENUM from the Connections class signifying the connection you wish to initiate for.
+*   `toWebhook: Bool` ➡ Whether or not to send data to your webhook. If false, `DataMessage` on the returned `Promise` will contain the data in the `data` field.
+
+**returns**
+
+*   `Promise<DataMessage>`
+
+
+
