@@ -1,0 +1,85 @@
+---
+title: "Self-debugging"
+---
+Some users may inquire about missing data, and you may not be sure what's going on.
+
+Here are a few things to do in order to understand where the issue lies
+
+## User logged in with the wrong account
+
+#### (This happens more often than you'd think)
+
+Some users may have logged in with the wrong account. In order to verify the account that they're using matches with the Terra user ID that they've generated, you may follow the following procedure for the integrations below.
+
+### Getting the account's user ID on the provider's end
+
+Terra always a `user_id` for each connection. To get the user ID that the provider (e.g. Garmin, Fitbit etc) uses, you can use the [athlete](/reference/get-athlete-data)
+ endpoint in order to retrieve that, which will be under the field `provider_user_id`. Once you have obtained that, follow the guidelines below for each provider.
+
+### FreestyleLibre
+
+For FreestyleLibre, a user's profile URL takes the form [https://www.libreview.com/patient/{provider\_user\_id}/profile](https://www.libreview.com/patient/%7Bprovider_user_id%7D/profile)
+.
+
+<img className="block" src="images/files_readme_io/_754f37c_image.png" alt="" />
+
+If we have connected your users to your own Libreview practice, you may simply substitute `provider_user_id` with the one retrieved from the [athlete](/reference/get-athlete-data)
+ endpoint and visit the link above. You'll then be able to see the user's account email, name, and data present on their account, by clicking on the "Glucose History" tab.
+
+Often enough, users will have logged into an account with little data, really old data, or no data at all by mistake, without realizing it. You can then share a screenshot of that view with your user in order to help them log into the correct account instead.
+
+### Fitbit
+
+Launch your Fitbit app (make sure you're using the latest Fitbit app version), click your Fitbit avatar in the top left corner, then click your Fitbit display name to view your profile. Then Click "Personal" and go to the next page, your Fitbit User ID is located at the bottom.
+
+<img className="block" src="images/files_readme_io/_369b62f_image.png" alt="" />
+
+Check to make sure your user's Fitbit user ID matches the one retrieved by the [athlete](/reference/get-athlete-data)
+ endpoint
+
+### MyFitnessPal
+
+Using the `provider_user_id` obtained above, navigate to [https://www.myfitnesspal.com/food/diary/{provider\_user\_id}](https://www.myfitnesspal.com/food/diary/%7Bprovider_user_id%7D)
+ .
+
+#### Invalid username
+
+Seeing a page like this:
+
+<img className="block" src="images/files_readme_io/_b2e0cc6_image.png" alt="" />
+
+indicates that the username entered by the end user is invalid. In the case above, the user accidentally entered **their email** instead of **their username**. Have them log in once more, following the "how-to" guide presented in the login screen
+
+#### Disabled diary sharing
+
+The page below:
+
+<img className="block" src="images/files_readme_io/_9e78b18_image.png" alt="" />
+
+Indicates the user failed to enable diary sharing/disabled it since they authenticated through Terra. In order to remediate this, have the user re-enable diary sharing with the same password used during initial authentication, or have them re-authenticate after having enabled diary sharing as per the "how-to" guide in the login screen
+
+## "My data isn't showing up"
+
+In those cases the first step is always to ensure that the data is showing up in the partner app (e.g. Garmin Connect, Fitbit, etc..).
+
+Next would be to check if the data is correctly synchronized with the partner cloud, by using their web portal.
+
+### Garmin
+
+Ensure that the data is showing up in [the Garmin connect web dashboard](https://connect.garmin.com/modern/)
+. If not, then pull down from the top in the Garmin connect mobile app, and hit the circle arrow until everything refreshes. If the data shows up in the web dashboard for Garmin Connect, but not through the API after 1-2 minutes, please contact support.
+
+<img className="block" src="images/files_readme_io/_3efde45_ezgif.com_optimize.gif" alt="" />
+
+### Google Fit
+
+Go inside the Google Fit app, and ensure that your data is up to date on the display. Thereafter, pull down from the top of the screen to synchronize with the cloud. Please note that even after that, there can be some delay for Google to make the data available through their API. You should be able to see that data after at most 30-60 minutes in most cases.
+
+<img className="block" src="images/files_readme_io/_28c7b76_RPReplay_Final1719407216_ezgif.com_optimize.gif" alt="" />
+
+#### iOS-specific
+
+Ensure background app refresh is turned on for Google Fit
+
+<img className="block" src="images/files_readme_io/_27bfad6_RPReplay_Final1719410146_ezgif.com_optimize.gif" alt="" />
+
