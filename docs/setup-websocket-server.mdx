@@ -1,0 +1,289 @@
+---
+title: "Setting up - Node.js"
+---
+In this guide we will setup a simple consumer connection with the Terra WebSockets service. From a consumer connection, you will be able to read data from any wearables which are currently streaming to Terra through a producer connection.
+
+For information on how to set up a wearable to start streaming data to the Terra WebSockets service through a producer connection, see [Setting up a WebSocket Producer](/docs/connect-stream)
+.
+
+For deeper detail about the WebSockets streaming protocol, checkout our [How-Tos: Using WebSockets](https://blog.tryterra.co/how-tos-using-websockets-d43e8ecf760e)
+ blog post.
+
+## Installation
+
+> ## 📘
+> 
+> This guide will set up the WebSocket consumer in Node.js, however the same ideas can be easily applied to any other framework which has a WebSockets library available. Contact us at [bryan@tryterra.co](mailto:bryan@tryterra.co)
+>  if you wish to see examples written in other programming languages.
+
+Install the `ws` library.
+
+```npm
+npm install ws
+
+```
+
+You can now import it into your code:
+
+```javascript
+const WebSocket = require("ws")
+
+```
+
+## Initialise Connection
+
+First, you will need to generate a "streaming developer (consumer) connection token" through the [ws.tryterra.co/auth/developer](/reference/generate-developer-token)
+ API endpoint.
+
+Let us declare a function `initWS()` to perform all necessary steps to initialise a WebSocket connection. Any following code snippets in this guide should be written within this function.
+
+```javascript
+const WebSocket = require("ws")
+const WS_CONNECTION = "wss://ws.tryterra.co/connect";
+
+function initWS(token) {
+		// following code goes here
+  	// ...
+}
+
+initWS(token)
+
+```
+
+Initiating a connection to the Terra WebSockets service is as simple as:
+
+```javascript
+const socket = new WebSocket(WS_CONNECTION)
+
+```
+
+We then need to implement `EventListeners` on the `socket` object to handle the possible events that could happen to our connection.
+
+*   `open` triggers when the connection first forms. Right now we simply print `Connection Established`.
+*   `close` triggers when the connection closes. There's usually a reason why it closed, which we can print.
+*   `error` triggers when the crashes due to error. There's usually an error code, which we can print.
+
+```javascript
+socket.addEventListener('open', function (event) {
+  	console.log("Connection Established");
+})
+
+socket.addEventListener('close', function (event) {
+  	console.log('close');
+  	console.log(event.reason);
+})
+
+socket.addEventListener('error', function (event) {
+    console.log('error');
+    console.log(event);
+})
+
+```
+
+## Verify and Maintain the Connection
+
+**The Terra Streaming Protocol - necessary background info**
+
+After opening a WebSocket connection to the Terra, we can now send and receive messages to the Terra WebSockets service. According to the [Terra Streaming Protocol](/docs/using-the-websocket-api)
+, before we can start receiving data from users, we first need to
+
+*   verify the WebSocket connection with a Streaming Developer Token
+*   maintain a heartbeat signal to keep the WebSocket connection alive
+
+All messages passed through a WebSocket connection with Terra must conform to a JSON schema defined by the Terra Streaming Protocol. In the protocol, all messages must have an "op" integer field which determines what type of message it is, followed by any number of optional fields specific to the message type.
+
+```json
+{
+  "op": int,
+  ...
+}
+
+```
+
+**Implementation**
+
+The `message` event triggers when any data is received at the WebSocket connection. The following code sets up an event listener for the `message` event and performs different functionality based on the specific message received. The `msg` variable (line 18) contains the parsed message received from Terra.
+
+```javascript
+var expectingHeartBeatAck = false
+
+function heartBeat(){   
+    if(!expectingHeartBeatAck){
+        var heartBeatPayload = JSON.stringify({
+          "op": 0
+        })
+        socket.send(heartBeatPayload)
+        console.log("↑  " + heartBeatPayload)
+        expectingHeartBeatAck = true
+    }
+    else socket.close()
+}
+
+socket.addEventListener('message', function (event) {
+    console.log("↓  " + event.data);
+    var msg = JSON.parse(event.data)
+    if (msg["op"] == 2){
+        heartBeat()
+        setInterval(heartBeat, message["d"]["heartbeat_interval"])
+        var payload = JSON.stringify(
+            {
+              "op": 3,
+              "d": {
+                "token": token,
+                "type": 1  //0  for user, 1 for developer
+              }
+            }
+        )
+        socket.send(payload)
+    }
+    if (msg["op"] == 1){
+      	expectingHeartBeatAck = false
+    }
+})
+
+```
+
+After opening a connection to Terra, the protocol dictates that we will immediately receive a `Opcode 2` "HELLO" message from Terra in the form of:
+
+```json
+{
+  "op": 2,
+  "d": {
+    "heartbeat_interval": 40000
+  }
+}
+```
+
+This tells you to send a `Opcode 0` "HEARTBEAT" message to Terra every 40 seconds, to signify that you still wish to keep the connection alive.
+
+After sending a "HEARTBEAT" to Terra, we also expect to receive an `Opcode 1` "HEARTBEAT\_ACK", meaning that Terra knows you are still connected and will not close your connection. If we do not receive an acknowledgement within 40 seconds of sending a heartbeat, then we can assume the connection is dead. We can close the connection and open a new one. The `heartBeat()`function implements this logic.
+
+Before Terra will send us any user data, we also need to authenticate the connection by sending an `Opcode 3` "IDENTIFY" message to Terra, which includes a valid a "Streaming Developer Token".
+
+```json
+{	
+ "op": 3, 
+ "d": {
+      "token": token, 
+     	"type": 1 // 0 for producer, 1 for consumer
+    }
+}
+
+```
+
+Any other messages we receive (such as those including user data) are simply printed, so we will see them in the console.
+
+## Testing the Code
+
+Your final code should now look like this:
+
+```javascript
+const WebSocket = require("ws")
+const fetch = require("node-fetch-commonjs")
+
+const WS_CONNECTION = "wss://ws.tryterra.co/connect"
+
+async function getToken() {
+    const url = 'https://ws.tryterra.co/auth/developer'
+    const options = {
+        method: 'POST',
+        headers: {
+            accept: 'application/json',
+            'dev-id': 'DEV_ID',
+            'x-api-key': 'API_KEY',
+        }
+    }
+
+    try {
+        let tokenResp = await fetch(url, options)
+        return (await tokenResp.json())["token"]
+    }catch (e) {
+        console.error(e)
+    }
+    return ""
+}
+
+function initWS(token) {
+    const socket = new WebSocket(WS_CONNECTION)
+
+    socket.addEventListener('open', () =>
+        console.log("Connection Established")
+    )
+
+    socket.addEventListener('close', event => {
+        console.log('close')
+        console.log(event.reason)
+    })
+
+    socket.addEventListener('error', event => {
+        console.log('error')
+        console.log(event)
+    })
+
+    var expectingHeartBeatAck = false
+
+    function heartBeat() {
+        if (expectingHeartBeatAck) socket.close()
+        const heartBeatPayload = JSON.stringify({ "op": 0 })
+        socket.send(heartBeatPayload)
+        console.log("↑  " + heartBeatPayload)
+        expectingHeartBeatAck = true
+    }
+
+    socket.addEventListener('message', function (event) {
+        console.log("↓  " + event.data);
+        const msg = JSON.parse(event.data)
+        if (msg.op == 2){
+            heartBeat()
+            const interval = msg.d.heartbeat_interval
+            setInterval(heartBeat, interval)
+            var payload = JSON.stringify({
+                "op": 3,
+                "d": {
+                    "token": token,
+                    "type": 1  //0  for user, 1 for developer
+                }
+            })
+            socket.send(payload)
+        }
+        if (msg.op == 1) {
+            expectingHeartBeatAck = false
+        }
+    })
+}
+
+getToken().then(token => initWS(token))
+
+
+```
+
+If you have already setup wearables to stream data to Terra, running the code should give you an output similar to the following:
+
+```
+Connection Established
+↓  {"op":2,"d":{"heartbeat_interval":40000}}
+↑  {"op":0}
+↑  {"op":3,"d":{"token":"dGVzdGluZ0VsbGlvdHQ.MU1fASa1nR9EpQWQx67xIN7veTFKFwudaB4HbN4kw9A","type":1}}
+↓  {"op":1}
+↓  {"op":4}
+↑  {"op":0}
+↓  {"op":1}
+↓  {"op":5,"d":{"ts":"2022-06-01T14:47:08.055Z","val":86.0},"uid":"100b370c-d2be-42a2-b757-01fc85c41031","seq":12254,"t":"HEART_RATE"}
+↓  {"op":5,"d":{"ts":"2022-06-01T14:47:08.701Z","val":87.0},"uid":"100b370c-d2be-42a2-b757-01fc85c41031","seq":12255,"t":"HEART_RATE"}
+↓  {"op":5,"d":{"ts":"2022-06-01T14:47:09.698Z","val":86.0},"uid":"100b370c-d2be-42a2-b757-01fc85c41031","seq":12256,"t":"HEART_RATE"}
+↓  {"op":5,"d":{"ts":"2022-06-01T14:47:11.041Z","val":86.0},"uid":"100b370c-d2be-42a2-b757-01fc85c41031","seq":12257,"t":"HEART_RATE"}
+↓  {"op":5,"d":{"ts":"2022-06-01T14:47:12.049Z","val":86.0},"uid":"100b370c-d2be-42a2-b757-01fc85c41031","seq":12258,"t":"HEART_RATE"}
+
+```
+
+We can break the messages down:
+
+*   An initial `Hello` from the server with `Opcode 2` followed by the script sending an `Opcode 3` with the verification payload. The server then sends back an `Opcode 4` meaning "Ready"
+*   The `Opcode 0` and `Opcode 1` to and from the server is simply the "heart beating"
+*   Then there are many `Opcode 5` messages that contain data for a user with uid and their "HEART\_RATE" values
+
+If you don't have any active wearables streaming to Terra, you will still be able to see the heartbeat messages (`Opcode 0`and`Opcode 1`), but you won't see any `Opcode 5` messages. To learn how to stream data to Terra, checkout [Setting up a WebSocket Producer](/docs/connect-stream)
+.
+
+Congratulations! You have now set up a WebSocket consumer connection.
+
