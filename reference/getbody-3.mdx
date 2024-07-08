@@ -1,0 +1,30 @@
+---
+title: "getNutrition"
+---
+```javascript
+getNutrition: ((params: { endDate?: Date; startDate: Date; toWebhook?: boolean; userId: string }) 
+  => Promise<TerraDataResponse<Nutrition>>)
+
+```
+
+Gets Nutrition data for current user
+
+Returns:  
+A promise of type Nutrition Data
+
+Parameters:  
+userId: string
+
+startDate: Date  
+Start date for the date range limit
+
+Optional endDate: Date  
+End dat for the date range limit
+
+Optional toWebhook: boolean  
+True for sending data to webhook and false for sending data in response body
+
+Returns Promise<TerraDataResponse\>
+
+
+
