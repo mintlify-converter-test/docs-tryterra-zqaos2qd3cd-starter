@@ -1,0 +1,199 @@
+---
+title: "Android SDK"
+---
+# class TerraManager
+
+An object that manages getting data from Health Connect and reading Freestylelibre Sensors
+
+# class TerraClient
+
+An object that allows you to communicate to Terra REST API.
+
+# Connections Enum
+
+```kotlin
+enum class Connections(private val resource: String){
+    SAMSUNG("SAMSUNG"),
+    GOOGLE_FIT("GOOGLEFIT"),
+    FREESTYLE_LIBRE("FREESTYLELIBRESDK");
+}
+
+```
+
+# TerraErrors
+
+```kotlin
+class UnSupportedResource(message: String)
+class InvalidAuthToken(message: String)
+class UserLimitExceeded(message: String)
+class Unauthorised(message: String)
+class NoInternet(message: String)
+class UnexpectedError(message: String)
+class HealthConnectUnavailable(message: String)
+class TerraInvalidRequest(message: String)
+class TerraClassNotInitiated(message: String)
+class NotAuthenticated(message: String)
+
+```
+
+# DataTypes Enum
+
+```kotlin
+enum class DataTypes {
+    STEPS,
+    HEART_RATE,
+    CALORIES,
+    DISTANCE;
+}
+
+```
+
+# CustomPermissions Enum
+
+```kotlin
+enum class CustomPermissions {
+    WORKOUT_TYPE,
+    ACTIVITY_SUMMARY,
+    LOCATION,
+    CALORIES,
+    STEPS,
+    HEART_RATE,
+    HEART_RATE_VARIABILITY,
+    VO2MAX,
+    HEIGHT,
+    ACTIVE_DURATIONS,
+    WEIGHT,
+    FLIGHTS_CLIMBED,
+    BMI,
+    BODY_FAT,
+    EXERCISE_DISTANCE,
+    GENDER,
+    DATE_OF_BIRTH,
+    BASAL_ENERGY_BURNED,
+    SWIMMING_SUMMARY,
+    RESTING_HEART_RATE,
+    BLOOD_PRESSURE,
+    BLOOD_GLUCOSE,
+    BODY_TEMPERATURE,
+    MINDFULNESS,
+    LEAN_BODY_MASS,
+    OXYGEN_SATURATION,
+    SLEEP_ANALYSIS,
+    RESPIRATORY_RATE,
+    NUTRITION_SODIUM,
+    NUTRITION_PROTEIN,
+    NUTRITION_CARBOHYDRATES,
+    NUTRITION_FIBRE,
+    NUTRITION_FAT_TOTAL,
+    NUTRITION_SUGAR,
+    NUTRITION_VITAMIN_C,
+    NUTRITION_VITAMIN_A,
+    NUTRITION_CALORIES,
+    NUTRITION_WATER,
+    NUTRITION_CHOLESTEROL;
+}
+
+```
+
+# Resource Enum
+
+```kotlin
+enum class Resource(val resource: String) {
+    BIOSTRAP("biostrap"),
+    CARDIOMOOD("cardiomood"),
+    CONCEPT2("concept2"),
+    COROS("coros"),
+    CRONOMETER("cronometer"),
+    DEXCOM("dexcom"),
+    EATTHISMUCH("eatthismuch"),
+    EIGHTSLEEP("eight"),
+    FATSECRET("fatsecret"),
+    FINALSURGE("finalsurge"),
+    FITBIT("fitbit"),
+    FREESTYLELIBRE("freestylelibre"),
+    GARMIN("garmin"),
+    GOOGLE("google"),
+    HAMMERHEAD("hammerhead"),
+    HUAWEI("huawei"),
+    IFIT("ifit"),
+    INBODY("inbody"),
+    KOMOOT("komoot"),
+    NUTRACHECK("nutracheck"),
+    OMRON("omron"),
+    OMRONUS("omronus"),
+    OURA("oura"),
+    PELOTON("peloton"),
+    POLAR("polar"),
+    PUL("pul"),
+    RENPHO("renpho"),
+    RIDEWITHGPS("ridewithgps"),
+    ROUVY("rouvy"),
+    SUUNTO("suunto"),
+    TEMPO("tempo"),
+    TECHNOGYM("technogym"),
+    TRIDOT("tridot"),
+    TRAINERROAD("trainerroad"),
+    TRAININGPEAKS("trainingpeaks"),
+    UNDERARMOUR("underarmour"),
+    VIRTUAGYM("virtuagym"),
+    WAHOO("wahoo"),
+    WHOOP("whoop"),
+    WITHINGS("withings"),
+    XERT("xert"),
+    XOSS("xoss"),
+    ZWIFT("zwift"),
+    BRYTONSPORT("brytonsport"),
+    TODAYSPLAN("todaysplan"),
+    WGER("wger"),
+    VELOHERO("velohero"),
+    CYCLINGANALYTICS("cyclinganalytics"),
+    NOLIO("nolio"),
+    TRAINXHALE("trainxhale"),
+    KETOMOJOUS("ketomojous"),
+    KETOMOJOEU("ketomojoeu"),
+    STRAVA("strava");
+}
+
+```
+
+# AuthenticateUser Payload
+
+```kotlin
+data class AuthenticateUser(
+    var status: String,
+    var auth_url: String,
+    var user_id: String,
+)
+
+```
+
+# FSLSensorDetails
+
+```kotlin
+data class FSLSensorDetails(
+    val sensor_state: String,
+    val status: String,
+    var serial_number: String,
+    var data: TerraGlucoseData,
+    var device_data: TerraDeviceData,
+}
+
+```
+
+`sensor_state` can be one of the following:
+
+```
+NOT_STARTED
+STARTING
+READY
+FAILURE
+SHUTDOWN
+
+```
+
+# TerraDataModels
+
+All data models are corresponding (including names) to the official [V2 Models](/docs/v2)
+
+
+
