@@ -1,0 +1,116 @@
+---
+title: "Manual connection via the API"
+---
+Getting Started  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_getting_started.png" alt="" />
+
+Setting up  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_install_on_backend.png" alt="" />
+
+Authenticate Users  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_authenticate_users.png" alt="" />
+
+Getting Data  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_receive_data.png" alt="" />
+
+Parsing Data  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_understand_our_data.png" alt="" />
+
+API Settings  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_customise_terra.png" alt="" />
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_manage_integrations.png" alt="" />  
+  
+Mobile Setup
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_api_data_models.png" alt="" />  
+  
+API
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_widget.png" alt="" />  
+  
+Widget
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_historical_data.png" alt="" />  
+  
+Request
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_new_data.png" alt="" />  
+  
+Receive
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_event_types.png" alt="" />  
+  
+Events
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_api_data_models.png" alt="" />  
+  
+Data Models
+
+### 1\. Creating a session
+
+To connect one specific wearable, you can generate a connection URL to its platform using the [Authenticate User](/reference/authenticate-user)
+ endpoint, or using a provided client:
+
+```python
+auth_resp = terra.generate_authentication_url(
+  reference_id="USER ID IN YOUR APP",
+	resource="FITBIT",
+	auth_success_redirect_url="https://success.url",
+  auth_failure_redirect_url="https://failure.url",
+).get_parsed_response()
+
+print(auth_resp)
+
+```
+
+`resource` is the provider your user wants to connect.
+
+The following are optional parameters:
+
+`reference_id` is how you store the user in your app (useful when one user connects multiple wearables to Terra)  
+`auth_success_redirect_url` is where the user is redirected upon a successful authentication  
+`auth_failure_redirect_url` is where the user is redirected upon a failure in the authentication
+
+**Note:** ensure that the redirect URLs are accessible by HTTPS (they must have `https://` appended in front).
+
+You should receive an API response with a URL to the login session.
+
+```
+{
+  "status": "success",
+  "user_id": "ae538288-42a8-4fd5-8bf4-33902c3bc458",
+  "auth_url": "https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=23BBG9&scope=activity+sleep+oxygen_saturation+settings+location+cardio_fitness+respiratory_rate+weight+heartrate+nutrition+profile+electrocardiogram+temperature&state=Qo882bdoTlZ6bE34PmCJDV8L67Wo4g"
+}
+
+```
+
+### 2\. Displaying the session
+
+For a webapp, you can simply open a new tab with the login page URL and redirect the user to that screen.
+
+For mobile we severely discourage using a webview to display the screen. You will face issues with certain providers, as webviews hide the URL from the users. To avoid this, use an in-app browser, which displays the URL at all times to the user.
+
+<img className="block" src="images/files_readme_io/_f8b5a2d_image.png" alt="Generate the URL to a connection page using the auth/authenticateUser endpoint" />
+
+Generate the URL to a connection page using the auth/authenticateUser endpoint
+
+### 3\. Confirming a user authentication
+
+Once authentication has been completed, your users will be redirected to the `auth_success_redirect_url` you passed in, or to a default Terra Connect success URL. You are encouraged to provide a [deep link](https://developer.apple.com/ios/universal-links/)
+ in order to redirect users back into your app. Setting `auth_success_redirect_url` as a deep link or a web endpoint on your backend will allow you to be notified when a user successfully authenticates.
+
+The connection's `user_id`, `resource`, and `reference_id` will be appended as query parameters as such:
+
+`https://success.url/?user_id=wow_a_new_user&reference_id=fun_identifier&resource=FITBIT`
+
+`user_id` identifies the wearable that was just authenticated. One user on your app (which can be identified by`reference_id`) may be associated with multiple `user_id` s if they connect multiple wearables.
+
+You will also receive a webhook message when a user successfully authenticates. Webhooks will be explained in-depth in the next section.
+
