@@ -1,0 +1,239 @@
+---
+title: "Using the Terra Connect widget"
+---
+Getting Started  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_getting_started.png" alt="" />
+
+Setting up  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_install_on_backend.png" alt="" />
+
+Authenticate Users  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_authenticate_users.png" alt="" />
+
+Getting Data  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_receive_data.png" alt="" />
+
+Parsing Data  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_understand_our_data.png" alt="" />
+
+API Settings  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_customise_terra.png" alt="" />
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_manage_integrations.png" alt="" />  
+  
+Mobile Setup
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_api_data_models.png" alt="" />  
+  
+API
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_widget.png" alt="" />  
+  
+Widget
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_historical_data.png" alt="" />  
+  
+Request
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_new_data.png" alt="" />  
+  
+Receive
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_event_types.png" alt="" />  
+  
+Events
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_api_data_models.png" alt="" />  
+  
+Data Models
+
+The connection widget is the client-side component that your users will interact with in order to link their wearable companion apps to Terra and allow you to access their data via the Terra API. It renders a selection of wearables from which the user selects their device:
+
+<img className="block" src="images/files_readme_io/_e51ec9e_image.png" alt="The Terra Connect Widget" />
+
+The Terra Connect Widget
+
+## Terra UI
+
+You may also wish to use our Terra-esque UI to initiate a widget session on your platform. _Currently, this is only possible on react platforms._ To install, copy the command below and paste it into your terminal at the same directory level as your dependencies file.
+
+```bash
+npm i @tryterra/terra-ui
+
+```
+
+## Connection flow
+
+1.  Call /auth/generateWidgetSession to create a session\_id and pass the url containing it to your app's client.
+    
+2.  Use the session URL to open Terra Connect for your user.
+    
+3.  Receive a webhook on your app's server for a successful user authentication
+    
+4.  Store the user\_id field and map it to one of your users with the help of the reference\_id, then start receiving & requesting data for your user!
+    
+
+<img className="block" src="images/terradashboard_s3_eu_west_2_amazonaws_com/_tc_flow.png" alt="" />
+
+### 1\. Creating a session
+
+You can create a widget session by calling the [generateWidgetSession](/reference/generatewidgetsession)
+ or using a provided client:
+
+```python
+widget_response = terra.generate_widget_session(
+    reference_id="USER ID IN YOUR APP",
+    providers=["CRONOMETER", "OURA"],
+    auth_success_redirect_url="https://success.url",
+    auth_failure_redirect_url="https://failure.url",
+    language="en"
+).get_parsed_response()
+
+print(widget_response)
+
+``````python
+terra
+    .generateWidgetSession({
+      referenceID: userid,
+      providers: ["CRONOMETER", "OURA"],
+      authSuccessRedirectUrl: "success.com",
+      authFailureRedirectUrl: "failure.com",
+  		language: 'en'
+    })
+    .then((s) => {
+      console.log(s);
+    });
+
+```
+
+`providers` is a list of providers you wish to display on the widget.
+
+The following parameters are optional:
+
+`reference_id` is how you store the user in your app (useful when one user connects multiple wearables to Terra)
+
+`language` is the language the text in the widget will be displayed in  
+`auth_success_redirect_url` is where the user is redirected upon a successful authentication  
+`auth_failure_redirect_url` is where the user is redirected upon a failure in the authentication
+
+**Note:** ensure that the redirect URLs are accessible by HTTPS (they must have `https://` appended in front).
+
+You should receive an API response with a URL to the widget session, which will timeout after 15 minutes if not used.
+
+```
+{
+  "expires_in": 900,
+  "session_id": "0f8bd439-74c4-4e4f-8828-8e07b5fbd7ec",
+  "status": "success",
+  "url": "https://widget.tryterra.co/session/0f8bd439-74c4-4e4f-8828-8e07b5fbd7e"
+}
+
+```
+
+### 2\. Displaying the Widget
+
+For a webapp, you can simply open a new tab with the widget session URL and redirect the user to that screen.
+
+For mobile we severely discourage using a webview to display the widget. You will face issues with certain providers, as webviews hide the URL from the users. To avoid this, use an in-app browser, which displays the URL at all times to the user.
+
+The following React Native example shows how to display the widget session using the [Expo Web Browser](https://docs.expo.dev/versions/latest/sdk/webbrowser/)
+.
+
+```javascript
+import React, {useEffect, useState} from 'react';
+import {View, Linking, Button} from 'react-native';
+import * as WebBrowser from 'expo-web-browser';
+
+const api_key = 'your_api_key';
+const reference_id = 'your_reference_id';
+
+/// The getWidgetAsync function is an asynchronous function that fetches the widget session URL from the Terra API
+/// and sets the url state using the setUrl function.
+/// It takes an object with an onSuccess callback function as a parameter to set state back to the main component.
+export const getWidgetAsync = async (props: {onSuccess: any}) => {
+  try {
+    const response = await fetch(
+      'https://api.tryterra.co/v2/auth/generateWidgetSession',
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'dev-id': 'testingTerra',
+          'content-type': 'application/json',
+          'x-api-key': api_key,
+        },
+        body: JSON.stringify({
+          reference_id: reference_id,
+          providers:
+            'GARMIN,WITHINGS,FITBIT,GOOGLE,OURA,WAHOO,PELOTON,ZWIFT,TRAININGPEAKS,FREESTYLELIBRE,DEXCOM,COROS,HUAWEI,OMRON,RENPHO,POLAR,SUUNTO,EIGHT,APPLE,CONCEPT2,WHOOP,IFIT,TEMPO,CRONOMETER,FATSECRET,NUTRACHECK,UNDERARMOUR',
+          language: 'en',
+          auth_success_redirect_url: 'terraficapp://request',
+          auth_failure_redirect_url: 'terraficapp://login',
+        }),
+      },
+    );
+    const json = await response.json();
+    props.onSuccess(json.url);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const Widget = () => {
+  const [url, setUrl] = useState('');
+
+  // Close the browser when authentication is completed. Authentication completion can be detected by listening to the incoming link.
+  // The success or fail url is logged into the console.
+  const _handleURL = (event: {url: any}) => {
+    WebBrowser.dismissBrowser();
+    console.log(event.url);
+  };
+  // Open the browser for authentication using the Widget components.
+  const _handlePressButtonAsync = async () => {
+    getWidgetAsync({onSuccess: setUrl});
+    await WebBrowser.openBrowserAsync(url);
+  };
+
+  // set up an url listener and invoke getWidgetAsync when the component is mounted
+  useEffect(() => {
+    Linking.addEventListener('url', _handleURL);
+    getWidgetAsync({onSuccess: setUrl});
+  }, []);
+  return (
+    <View>
+      <Button title="open widget" onPress={_handlePressButtonAsync} />
+    </View>
+  );
+};
+
+
+```
+
+### 3\. Confirming a user authentication
+
+Once authentication has been completed, your users will be redirected to the `auth_success_redirect_url` you passed in, or to a default Terra Connect success URL. You are encouraged to provide a [deep link](https://developer.apple.com/ios/universal-links/)
+ in order to redirect users back into your app. Setting `auth_success_redirect_url` as a deep link or a web endpoint on your backend will allow you to be notified when a user successfully authenticates.
+
+The connection's `user_id`, `resource`, and `reference_id` will be appended as query parameters as such:
+
+`https://success.url/?user_id=wow_a_new_user&reference_id=fun_identifier&resource=FITBIT`
+
+`user_id` identifies the wearable that was just authenticated. One user on your app (which can be identified by`reference_id`) may be associated with multiple `user_id` s if they connect multiple wearables.
+
+You will also receive a webhook message when a user successfully authenticates. Webhooks will be explained in-depth in the next section.
+
+### 4\. Customising the widget (advanced)
+
+You can [customise the look of the widget](/docs/widget-customisation)
+ from your dashboard.
+
+* * *
+
+Now that you have some users connected to Terra, let's find out how to read their data!
+
