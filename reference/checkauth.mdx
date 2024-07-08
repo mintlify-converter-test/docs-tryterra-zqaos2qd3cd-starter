@@ -1,0 +1,22 @@
+---
+title: "checkAuth"
+description: "Allow you to know if the user is authenticated for the specifed connection - only implemented for iOS at the moment"
+---
+```typescript
+function checkAuth(
+	connection: Connections, 
+    devID: string
+): Promise<Object>
+// Object takes the form {success: Boolean}
+
+```
+
+`devId: string` ➡ The dev-id provided to you when signing up with Terra [Developer Dashboard](/docs/developer-dashboard)
+  
+`connection: Connections` ➡ An enum to represent the connection you want to check if the user is already connected for
+
+**returns**  
+`Promise<SuccessMessage>`
+
+
+
