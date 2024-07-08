@@ -1,0 +1,245 @@
+---
+title: "Android"
+---
+This guide will walk you through setting up the Terra SDK in your Android mobile app! The required steps are:
+
+1.  [SDK Installation](/docs/unified-api-manage-integrations-android#installation)
+    
+2.  [Initialise the SDK](unified-api-manage-integrations-android#initialise-the-sdk)
+    
+3.  [Connect to a provider](/docs/unified-api-manage-integrations-android#connecting-to-google-fit-samsung-and-freestyle-libre)
+    
+4.  [Get data from the provider](/docs/unified-api-manage-integrations-android#getting-data)
+    
+
+> ## 🚧Important!
+> 
+> The Terra Android SDK allows you to access data from Samsung Health and GoogleFit. It also allows you to scan data from Freestyle Libre sensors using NFC.
+> 
+> If you do not need to access any of these providers, there is **no need** to use this SDK! If you need to access Terra's web API, it is more secure to do so from your server backend and send the desired data to your mobile frontend.
+
+## Installation
+
+The Android SDK allows you to connect to Health Connect and extract the data to your backend seamlessly.
+
+**Requires Android 28 and above**
+
+### Health Connect Setup
+
+1.  The SDK requires [Health Connect](https://play.google.com/store/apps/details?id=com.google.android.apps.healthdata&hl=en_GB&gl=US)
+     to function. Make sure it is installed on your user's devices.
+2.  In the Health Connect app, give all permissions between the app you wish to read from and Health Connect.
+3.  Navigate to your project's `AndroidManifest.xml` file. It is typically located at `app/src/main/AndroidManifest.xml` from the root directory of your project.
+4.  In your `AndroidManifest.xml` include the following under the Activity you wish to display to the user when user wants to see your app's privacy policy:
+
+```xml
+<intent-filter>
+    <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
+</intent-filter>
+<intent-filter>
+  <action android:name="android.intent.action.VIEW_PERMISSION_USAGE"/>
+  <category android:name="android.intent.category.HEALTH_PERMISSIONS"/>
+</intent-filter>
+
+```
+
+5.  In your `AndroidManifest.xml` include the following to the Activity you wish to request permissions for Health Connect from:
+
+```xml
+ <meta-data
+     android:name="health_permissions"
+     android:resource="@array/health_permissions" />
+
+```
+
+6.  For example, you could add them to the `MainActivity` activity so both will run when the user launches your app:
+
+```androidmanifest.xml
+<activity
+	android:name=".MainActivity"
+    android:exported="true"
+    android:label="@string/app_name"
+    android:theme="@style/Theme.<YOUR_APP_NAME>">
+    	<intent-filter>
+        	<action android:name="android.intent.action.MAIN" />
+        	<category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+  
+        <intent-filter>
+        	<action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
+        </intent-filter>
+  			<intent-filter>
+          <action android:name="android.intent.action.VIEW_PERMISSION_USAGE"/>
+          <category android:name="android.intent.category.HEALTH_PERMISSIONS"/>
+        </intent-filter>
+        <meta-data
+        	android:name="health_permissions"
+            android:resource="@array/health_permissions" />
+</activity>
+
+```
+
+> ## 🚧Going LIVE
+> 
+> Before going LIVE (release), you will need to apply for permissions to access the Health Connect API with Google. Use this [application form](https://docs.google.com/forms/d/1LFjbq1MOCZySpP5eIVkoyzXTanpcGTYQH26lKcrQUJo/viewform?edit_requested=true)
+> .
+> 
+> In the form, you will need to specify which data types you intend to read from Health Connect.
+> 
+> For each permission which you are _not_ using, please add the following lines to your AndroidManifest.xml
+> 
+> `<uses-permission android:name="android.permission.health.READ_HEART_RATE" tools:node="remove"/>`
+
+### SDK Installation
+
+1.  Open your project in Android Studio.
+2.  Navigate to your project's `build.gradle` file located in the root directory of your project.
+3.  Inside the dependencies section of the `build.gradle` file, add the following line of code using the appropriate version number. This will add the TerraAndroid SDK as a dependency to your project. You can find the latest version number on [Maven Central](https://central.sonatype.com/artifact/co.tryterra/terra-android/)
+    .
+
+```
+implementation 'co.tryterra:terra-android:{VERSION_NUMBER}'
+
+```
+
+3.  Sync your project with Gradle by clicking on the "Sync Project with Gradle Files" button in the toolbar. This will download the TerraAndroid SDK and make it available to your project.
+
+That's it! You have now successfully added TerraAndroid to your Android project. You can now start using TerraAndroid's features in your app.
+
+## Initialise the SDK
+
+First, you will need to initialise a `TerraManager` client. You can do so as follows:
+
+```kotlin
+Terra.instance(devId: String, referenceId: String?, context: Context, completion: (TerraManager, TerraError?) -> Unit)
+
+```
+
+*   `devId` is found at Dashboard > API > Customise > Developer ID
+*   `referenceId` is your user's ID within your app
+*   `context` is the Context of your Android Activity
+*   `completion` callback should awaited
+
+For example:
+
+```kotlin
+import co.tryterra.terra.Terra
+
+var terra: TerraManager
+Terra.instance("YOUR DEV ID", "REFERENCE ID", this){manager, error -> 
+	terra = manager 
+}
+
+```
+
+Second, get an auth token by requesting one from the Terra endpoint with your `devId` and `apiKey`, found on the Terra Dashboard.
+
+*   `endpoint`: [https://api.tryterra.co/v2/auth/generateAuthToken](https://api.tryterra.co/v2/auth/generateAuthToken)
+    
+*   Your headers are `dev-id` and `x-api-key`
+
+Here are a few sample requests.
+
+```python
+# this code runs on your backend
+
+import requests
+
+headers = {
+  "dev-id": "DEV-ID",
+  "x-api-key": "API-KEY"
+}
+
+response = requests.post("https://api.tryterra.co/v2/auth/generateAuthToken",
+                         headers=headers)
+
+response.json()
+
+``````python
+// this code runs on your backend
+
+import fetch from 'node-fetch'
+
+const options = {
+  method: 'POST',
+  headers: {
+    'dev-id': 'DEV-ID',
+    'x-api-key': 'API-KEY'
+  }
+};
+
+fetch('https://api.tryterra.co/v2/auth/generateAuthToken', options)
+  .then(response => response.json())
+  .then(response => console.log(response))
+  .catch(err => console.error(err));
+
+```
+
+We can now connect to providers and get data from them.
+
+## Connecting to Google Fit, Samsung and Freestyle Libre
+
+> ## 🚧Currently only Libre 1, Pro/H and Libre 2 (UK) are supported!
+> 
+> Libre 2 US and Libre14Days US are not supported currently.
+
+Third, initiate the connection with: `GOOGLE FIT`, `SAMSUNG` or `FREESTYLELIBRE` using the token from the response above.
+
+```kotlin
+terra.initConnection(connection: Connections, 
+                     token: String, 
+                     context: Context, 
+                     customPermissions: Set<CustomPermissions>, 
+                     schedulerOn: Boolean, 
+                     startIntent: String?, 
+                     callback: (Boolean, TerraError?) -> Unit)
+
+```
+
+*   `Connections` takes `GOOGLE`, `SAMSUNG`, `FREESTYLE_LIBRE` depending on which provider you would like to connect to
+*   `token` is generated and passed to the mobile device from your backend
+*   `context` is the app context for which you call this function from (usually from a class that extends from Activity types)
+*   `customPermissions` Optional (defaults to an empty set) Set. If you want to make a more granular permissions request, you may send us a set of `CustomPermissions`
+*   `startIntent`: Optional (defaults to `null`) String. It signifies the Activity for which you want to start after a FreeStyleLibre Sensor scan is complete. For example if your package name is (in your `AndroidManifest.xml`) is `co.tryterra.terrademo`, and the activity you wish to start after the scan is complete is called `MainActivity`, then you would insert: `co.tryterra.terrademo.MainActivity`. **N.B This functionality only works if your Intent extends from Activity**
+*   `schedulerOn`: defaults the background delivery option to true. This will make Terra send new data from the provider to your webhook automatically
+*   `completion`: callback with a boolean dictating if the connection succeeds
+
+**N.B Running this function automatically brings up permission and login screens! You only need to execute this once per connection**
+
+## Test Authentication
+
+To ensure a connection is still valid, use the `getUserid()` method. This function is synchronous and returns the user\_id right away or null if none exists.You should occasionally use this method to check the connection.
+
+```kotlin
+terra.getUserId(Connections): String?
+
+```
+
+To deauthenticate this user, you will need to call the [deauthenticateUser](/reference/deauthenticate-user)
+ endpoint of the Terra Web API with the `user_id`. It is recommended to do this from your server backend, so as not to store your apiKey on the mobile app.
+
+## Getting Data
+
+You can now access data from the provider you connected to! If you initialised the connection with `schedulerOn` as true, Terra will automatically send new data from the app to your [webhook](/docs/historical-data)
+, when your app is open.
+
+You can also backfill for historical data using one of the many getter functions. You may set `toWebhook` to false if you wish for the callback function to return the data payload.
+
+```kotlin
+    terra.getBody(
+        startDate = Date.from(Instant.ofEpochMilli(startTime)).toInstant().epochSecond,
+        endDate = Date.from(Instant.ofEpochMilli(endTime)).toInstant().epochSecond,
+        toWebhook = false
+    ){bodyData ->
+        // Do something with body data
+        Log.i(TAG, bodyData.toString())
+    }
+
+```
+
+The other data functions would be : `getDaily`, `getActivity`, `getSleep`, `getNutrition`. These functions use the same arguments as the `getBody` function and all of them return a callback with their own data models. The data models are objects that have fields which are exactly the same as we the ones given by our [Data Models](/reference/v2)
+.
+
+Congratulations! You have received the end of this guide. Checkout the [Android SDK reference](/reference/reference-android-sdk)
+ for more details about any of the functions used in this guide.
+
