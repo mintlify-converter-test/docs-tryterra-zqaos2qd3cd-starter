@@ -1,0 +1,177 @@
+---
+title: "TerraClient"
+description: "Class to retrieve data from Terra REST API"
+---
+This class allows you to retrieve data from [Terra's REST API](https://readme.io/project/tryterra/v2.0/refs/without-client-http-requests)
+.
+
+**Usage of this class requires an X-API-Key request to the backend which may be unsafe. Use at your own risk!**
+
+**Initialisation**
+
+```swift
+let terra: TerraClient = TerraClient(userId: String, devId: String, xAPIKey: String)
+
+```
+
+`userId: String` ➡ The user\_id you wish to query for  
+`devId: String` ➡ Dev-id given to you upon sign up with terra on [Developer Dashboard](/docs/developer-dashboard)
+  
+`xAPIKey: String` ➡ XAPIKey given to you upon sign up with terra on [Developer Dashboard](/docs/developer-dashboard)
+
+**Instance Methods**  
+[Authentication - API](/page/authentication-api)
+
+```swift
+func authenticateUser(forResource resource: Resource, 
+                      completion: @escaping (AuthenticateUserPayload) -> Void)
+
+```
+
+`forResource resource: Resource` ➡ The resource you wish to authenticate a user for  
+`completion: @escaping (AuthenticateUserPayload) -> Void` ➡ A completion function returning the data returned from the request.
+
+[Deauthenticate User](/reference/deauthenticate-user)
+
+```swift
+func deauthenticateUser(forUser userId: String, 
+                            completion: @escaping (DeauthenticateUserPayload) -> Void)
+
+```
+
+`forResource resource: Resource` ➡ The resource you wish to authenticate a user for  
+`completion: @escaping (DeauthenticateUserPayload) -> Void` ➡ A completion function returning the data returned from the request.
+
+[Get Activity Data](/reference/get-activity-data)
+
+```swift
+func getActivity(startDate: Date, 
+                 endDate: Date, 
+                 toWebhook: Bool = true, 
+                 completion: @escaping(TerraActivityDataPayloadModel) -> Void)
+
+func getActivity(startDate: TimeInterval
+                 endDate: TimeInterval,
+                 toWebhook: Bool = true, 
+                 completion: @escaping(TerraActivityDataPayloadModel) -> Void)
+
+```
+
+`startDate: Date` or `startDate: TimeInterval` ➡ The beginning time of the request  
+`endDate: Date` or `endDate: TimeInterval` ➡ The end time of the request  
+`toWebhook: Bool` ➡ Determines if the data is sent to your webhook or returned here.  
+`completion: @escaping (TerraActivityDataPayloadModel) -> Void` ➡ A completion function returning the data returned from the request.
+
+[Get Daily Data](/reference/get-daily-data)
+
+```swift
+func getDaily(startDate: Date, 
+                 endDate: Date, 
+                 toWebhook: Bool = true, 
+                 completion: @escaping(TerraDailyDataPayloadModel) -> Void)
+
+func getDaily(startDate: TimeInterval
+                 endDate: TimeInterval,
+                 toWebhook: Bool = true, 
+                 completion: @escaping(TerraDailyDataPayloadModel) -> Void)
+
+```
+
+`startDate: Date` or `startDate: TimeInterval` ➡ The beginning time of the request  
+`endDate: Date` or `endDate: TimeInterval` ➡ The end time of the request  
+`toWebhook: Bool` ➡ Determines if the data is sent to your webhook or returned here.  
+`completion: @escaping (TerraDailyDataPayloadModel) -> Void` ➡ A completion function returning the data returned from the request.
+
+[Get Sleep Data](/reference/get-sleep-data)
+
+```swift
+func getSleep(startDate: Date, 
+                 endDate: Date, 
+                 toWebhook: Bool = true, 
+                 completion: @escaping(TerraSleepDataPayloadModel) -> Void)
+
+func getSleep(startDate: TimeInterval
+                 endDate: TimeInterval,
+                 toWebhook: Bool = true, 
+                 completion: @escaping(TerraSleepDataPayloadModel) -> Void)
+
+```
+
+`startDate: Date` or `startDate: TimeInterval` ➡ The beginning time of the request  
+`endDate: Date` or `endDate: TimeInterval` ➡ The end time of the request  
+`toWebhook: Bool` ➡ Determines if the data is sent to your webhook or returned here.  
+`completion: @escaping (TerraSleepDataPayloadModel) -> Void` ➡ A completion function returning the data returned from the request.
+
+[Get Body Data](/reference/get-body-data)
+
+```swift
+func getBody(startDate: Date, 
+                 endDate: Date, 
+                 toWebhook: Bool = true, 
+                 completion: @escaping(TerraBodyDataPayloadModel) -> Void)
+
+func getBody(startDate: TimeInterval
+                 endDate: TimeInterval,
+                 toWebhook: Bool = true, 
+                 completion: @escaping(TerraBodyDataPayloadModel) -> Void)
+
+```
+
+`startDate: Date` or `startDate: TimeInterval` ➡ The beginning time of the request  
+`endDate: Date` or `endDate: TimeInterval` ➡ The end time of the request  
+`toWebhook: Bool` ➡ Determines if the data is sent to your webhook or returned here.  
+`completion: @escaping (TerraBodyDataPayloadModel) -> Void` ➡ A completion function returning the data returned from the request.
+
+[Get Nutrition Data](/reference/get-nutrition-data)
+
+```swift
+func getNutrition(startDate: Date, 
+                 endDate: Date, 
+                 toWebhook: Bool = true, 
+                 completion: @escaping(TerraNutritionDataPayloadModel) -> Void)
+
+func getNutrition(startDate: TimeInterval
+                 endDate: TimeInterval,
+                 toWebhook: Bool = true, 
+                 completion: @escaping(TerraNutritionDataPayloadModel) -> Void)
+
+```
+
+`startDate: Date` or `startDate: TimeInterval` ➡ The beginning time of the request  
+`endDate: Date` or `endDate: TimeInterval` ➡ The end time of the request  
+`toWebhook: Bool` ➡ Determines if the data is sent to your webhook or returned here.  
+`completion: @escaping (TerraNutritionDataPayloadModel) -> Void` ➡ A completion function returning the data returned from the request.
+
+[Get Menstruation Data](/reference/get-menstruation-data)
+
+```swift
+func getMenstruation(startDate: Date, 
+                 endDate: Date, 
+                 toWebhook: Bool = true, 
+                 completion: @escaping(TerraMenstruationDataPayloadModel) -> Void)
+
+func getMenstruation(startDate: TimeInterval
+                 endDate: TimeInterval,
+                 toWebhook: Bool = true, 
+                 completion: @escaping(TerraMenstruationDataPayloadModel) -> Void)
+
+```
+
+`startDate: Date` or `startDate: TimeInterval` ➡ The beginning time of the request  
+`endDate: Date` or `endDate: TimeInterval` ➡ The end time of the request  
+`toWebhook: Bool` ➡ Determines if the data is sent to your webhook or returned here.  
+`completion: @escaping (TerraMenstruationDataPayloadModel) -> Void` ➡ A completion function returning the data returned from the request.
+
+[Get Athlete Data](/reference/get-athlete-data)
+
+```swift
+func getAthlete(toWebhook: Bool = true, 
+                completion: @escaping(TerraAthleteDataPayloadModel) -> Void)
+
+```
+
+`toWebhook: Bool` ➡ Determines if the data is sent to your webhook or returned here.  
+`completion: @escaping (TerraAthleteDataPayloadModel) -> Void` ➡ A completion function returning the data returned from the request.
+
+
+
