@@ -1,0 +1,19 @@
+---
+title: "getAthlete"
+description: "Request for athlete data for a specific connection"
+---
+```dart
+static Future<DataMessage?> getAthlete(
+      Connection connection, {bool toWebhook = true}) async
+
+```
+
+*   `Connection connection` ➡ An ENUM from the Connections class signifying the connection you wish to initiate for.
+*   (Optional) `bool toWebhook` ➡ Whether or not to send data to your webhook. If false, `DataMessage` on the returned `Future` will contain the data in the `data` field.
+
+**returns**
+
+*   `Future<DataMessage?>`
+
+
+
