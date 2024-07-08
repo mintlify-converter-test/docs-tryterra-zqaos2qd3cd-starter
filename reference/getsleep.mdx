@@ -1,0 +1,32 @@
+---
+title: "getSleep"
+description: "Getter function to retrieve sleep data from Apple Health"
+---
+**Instance method of TerraManager**
+
+```swift
+getSleep(type: Connections, 
+         startDate: Date, 
+         endDate: Date, 
+         toWebhook: Bool, 
+         completion: @escaping (Bool, TerraSleepDataPayloadModel?, TerraError?) -> Void)
+
+getSleep(type: Connections, 
+         startDate: TimeInterval, 
+         endDate: TimeInterval, 
+         toWebhook: Bool, 
+         completion: @escaping (Bool, TerraSleepDataPayloadModel?, TerraError?) -> Void)
+
+```
+
+*   `type: Connections` ➡ The Connection to get data from
+*   `startDate: Date` or `startDate: TimeInterval` ➡ The beginning of the request in either Date or Unix Timestamp
+*   `endDate: Date` or `endDate: TimeInterval` ➡ The end of the request in either Date or Unix Timestamp
+*   `toWebhook: Bool` ➡ Whether or not to send data to your webhook
+*   `completion: (Bool, TerraDailyDataPayloadModel?, TerraError?) -> Void` ➡ A callback function that runs after the request is completed. It has the following parameters:
+    *   `Bool` -> If the request was successful or not. If not, the `TerraError` parameter will be returned
+    *   `TerraDailyDataPayloadModel?` -> A payload for each data type. If `toWebhook` is set to true, this returns a class with a property `reference` referring to the payload reference sent to your webhook. If `toWebhook` is set to false, then this returns the entire Terra normalised payload.
+    *   `TerraError?` -> Returned if any error occurred while retrieving data
+
+
+
