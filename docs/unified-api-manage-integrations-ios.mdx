@@ -1,0 +1,205 @@
+---
+title: "iOS"
+---
+This guide will walk you through setting up the Terra SDK in your iOS mobile app! The required steps are:
+
+1.  [SDK Installation](/docs/unified-api-manage-integrations-ios#sdk-installation)
+    
+2.  [Initialise the SDK](unified-api-manage-integrations-ios#setting-up-the-sdk)
+    
+3.  [Connect to a provider](/docs/unified-api-manage-integrations-ios#connecting-to-apple-health-and-freestyle-libre)
+    
+4.  [Get data from the provider](/docs/unified-api-manage-integrations-ios#getting-data)
+    
+
+> ## 🚧Important!
+> 
+> The Terra iOS SDK allows you to access data from Apple Health, and also scan data from Freestyle Libre sensors using NFC.
+> 
+> If you do not need to access any of these two providers, there is **no need** to use this SDK! If you need to access Terra's web API, it is more secure to do so from your server backend and send the desired data to your mobile frontend.
+
+## SDK Installation
+
+The iOS SDK allows you to seamlessly send data from iOS to your backend or to your app directly! **It supports iOS 13.0+ and is written in Swift 5.7.**
+
+### Add the SDK to your app and configure
+
+1.  Open your project in Xcode.
+2.  **Add the TerraiOS SDK to your Package Dependencies**  
+    Go to the main app folder > click on the icon below `PROJECT` in the sidebar > click on the `Package Dependencies` tab > click on the `+` button at the bottom of the Packages table.
+
+<img className="block" src="images/files_readme_io/_a8d33e4_image.png" alt="" />
+
+In the search bar of the Swift Package Manager popup that appears, search for `https://github.com/tryterra/TerraiOS`. It is recommended to set the `Dependency Rule` to `Up to Next Minor Version`. To find the version of the most recent release, view the [TerraiOS GitHub Repo](https://github.com/tryterra/TerraiOS/releases)
+.
+
+<img className="block" src="images/files_readme_io/_19162f5_image.png" alt="" />
+
+3.  **Add Background Modes and HealthKit Entitlements**  
+    Go to the main app folder > click on the icon below `TARGETS` in the sidebar > click on the `Signing & Capabilities` tab > click on `+ Capability` > search for and add the `HealthKit` capability and enable the `Background Delivery` additional configuration. Also add the capability `Background Modes` and enable the `Background Processing` configuration.
+4.  **Add Privacy Purpose Descriptions**  
+    The SDK uses HealthKit to fetch data from Apple Health, and the user will need to give explicit permission to the app to allow this on the app's first launch. You can customise the message that the user sees when permission is requested. This should describe how you will be using their health data. Go to the main app folder > click on the icon below `TARGETS` in the sidebar > click on the `Info` tab > under `Custom iOS Target Properties` hover over any key and click the `+` button > add the key `Privacy - Health Share Usage Description` and set its value. This must be more than 2 words long.
+5.  **Add Background task identifier**  
+    The SDK uses background tasks to fetch new Apple Health data when the app is not running. In the same `Info` tab as above, add the key `Permitted background task scheduler identifiers` as an array and add the element `co.tryterra.data.post.request`.
+
+## Setting up the SDK
+
+First, initiate the `TerraManager` class within your ContentView file. `devId` is found at Dashboard > API > Customise > Developer ID
+
+*   `referenceId` is your user's ID within your app
+*   `completion` callback should awaited
+
+```contentview
+Terra(devId: String,
+      referenceId: String,
+      completion: @escaping (TerraManager?, TerraError?) -> Void)
+
+```
+
+**You will need to initialise this class every time your app comes up from terminated or stopped state. It sets up all the previous connections that has been initialised.**
+
+For example:
+
+```swift
+import TerraiOS
+
+var terra: TerraManager
+Terra.instance(devId: "YOUR DEV ID", referenceId: "REFERENCE ID"){manager, error in
+	terra = manager 
+}
+
+```
+
+Second, get an auth token by requesting one from the Terra endpoint with your `devId` and `apiKey`, found on the Terra Dashboard. `endpoint`: [https://api.tryterra.co/v2/auth/generateAuthToken](https://api.tryterra.co/v2/auth/generateAuthToken)
+
+*   Your headers are `dev-id` and `x-api-key`. Here are a few sample requests.
+
+```python
+# this code runs on your backend
+
+import requests
+
+headers = {
+  "dev-id": "DEV-ID",
+  "x-api-key": "API-KEY"
+}
+
+response = requests.post("https://api.tryterra.co/v2/auth/generateAuthToken",
+                         headers=headers)
+
+response.json()
+
+``````python
+// this code runs on your backend
+
+import fetch from 'node-fetch'
+
+const options = {
+  method: 'POST',
+  headers: {
+    'dev-id': 'DEV-ID',
+    'x-api-key': 'API-KEY'
+  }
+};
+
+fetch('https://api.tryterra.co/v2/auth/generateAuthToken', options)
+  .then(response => response.json())
+  .then(response => console.log(response))
+  .catch(err => console.error(err));
+
+```
+
+We can now connect to providers and get data from them.
+
+## Connecting to Apple Health and Freestyle Libre
+
+> ## 🚧Currently only Libre 1, Pro/H and Libre 2 (UK) are supported!
+> 
+> Libre 2 US and Libre14Days US are not supported currently.
+
+To initiate the connection with Apple Health or Freestyle Libre, run `initConnection` using an SDK auth token. You can run this function twice to connect with both. `Connections` takes `.APPLE_HEALTH` or `.FREESTYLE_LIBRE` depending on which provider you would like to connect to
+
+*   `token` is generated and passed to the mobile device from your backend
+*   `customPermissions` defaults to an empty set. If you want to make a more granular permissions request, you may send us a set of `CustomPermissions`.
+*   `schedulerOn`: defaults the Background Delivery option to true. This will make Terra send new data from the provider to your webhook automatically
+*   `completion`: callback with a boolean dictating if the connection succeeds
+
+```swift
+terra.initConnection(type: Connections, 
+                     token: String, 
+                     customReadTypes: Set<CustomPermissions>, 
+                     schedulerOn: Bool, 
+                     completion: @escaping (Bool, TerraError?) -> Void))
+
+```
+
+> ## 🚧Webviews & HealthKit permissions screen
+> 
+> HealthKit implements the permissions popup as a webview itself.
+> 
+> If your app is based on a webview, you will thus need to interrupt this webview, call initConnection, then upon completion re-open your own webview.
+
+Finally, add the function `Terra.setUpBackgroundDelivery()` to your AppDelegate's `didFinishLaunchingWithOptions` function. This starts the background delivery health data.
+
+```appdelegate
+import UIKit
+import TerraiOS
+@main
+class AppDelegate: UIResponder, UIApplicationDelegate {
+
+    func application(
+      _ application: UIApplication, 
+      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) -> Bool {
+        Terra.setUpBackgroundDelivery()
+        return true
+    }
+}
+
+```
+
+**For Freestyle Libre**
+
+There are some additional steps needed. Checkout the [Freestyle Libre Guide](/reference/freestyle-libre-guide)
+ for more information.
+
+## Test Authentication
+
+To ensure a connection is still valid, use the `terra.getUserid()` method. This function is synchronous and returns the `user_id` right away or nil if none exists. You should use this method to check occasionally check the connection.
+
+```swift
+terra.getUserId(type: Connections) -> String?
+
+```
+
+To deauthenticate this user, you will need to call the [deauthenticateUser](/reference/deauthenticate-user)
+ endpoint of the Terra Web API with the `user_id`. It is recommended to do this from your server backend, so as not to store your apiKey on the mobile app.
+
+## Getting Data
+
+You can now access data from Apple Health! If you initialised the connection with `schedulerOn` as true, Terra will automatically send new data from the app to your [webhook](/docs/historical-data)
+. This will happen even if the app has been force quit. The rate at which new data is sent to your webhook is controlled by the OS of the mobile device and may vary.
+
+You can also backfill for historical data using one of the many getter functions. You may set `toWebhook` to false if you wish for the callback function to return the data payload.
+
+```swift
+terra.getDaily(type: Connections.APPLE_HEALTH, startDate: startDate, endDate: endDate, toWebhook: false) {
+  succ, payload, err in
+    if succ {
+      if let d = payload {
+        print(d)
+      } else {
+        print("failed to unpack payload")
+      }
+    } else {
+      print("get failed")
+    }
+}
+
+```
+
+The other data functions would be : `getDaily`, `getActivity`, `getSleep`, `getNutrition`. These functions use the same arguments as the `getBody` function and all of them return a callback with their own data models. The data models are objects that have fields which are exactly the same as we the ones given by our [Data Models](/reference/v2)
+
+Congratulations! You have received the end of this guide. Checkout the [iOS SDK reference](/reference/reference-ios-sdk)
+ for more details about any of the functions used in this guide.
+
