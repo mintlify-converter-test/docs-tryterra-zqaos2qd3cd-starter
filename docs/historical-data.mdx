@@ -1,0 +1,122 @@
+---
+title: "Requesting Data (REST API)"
+---
+Getting Started  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_getting_started.png" alt="" />
+
+Setting up  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_install_on_backend.png" alt="" />
+
+Authenticate Users  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_authenticate_users.png" alt="" />
+
+Getting Data  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_receive_data.png" alt="" />
+
+Parsing Data  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_understand_our_data.png" alt="" />
+
+API Settings  
+  
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_customise_terra.png" alt="" />
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_manage_integrations.png" alt="" />  
+  
+Mobile Setup
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_api_data_models.png" alt="" />  
+  
+API
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_widget.png" alt="" />  
+  
+Widget
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_historical_data.png" alt="" />  
+  
+Request
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_new_data.png" alt="" />  
+  
+Receive
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_event_types.png" alt="" />  
+  
+Events
+
+<img className="block" src="images/terradocs_s3_eu_west_2_amazonaws_com/_icons_api_data_models.png" alt="" />  
+  
+Data Models
+
+Once you authenticate a user, you can request a particular data type for a particular time period for that connection. The following endpoints are available to request data:
+
+*   [Activity](/reference/get-activity-data)
+     - event recorded for a specific workout
+*   [Athlete](/reference/get-athlete-data)
+     - user information
+*   [Body](/reference/get-body-data)
+     - data relating to body measurements, such as weight, height, glucose etc...
+*   [Daily](/reference/get-daily-data)
+     - daily summary of a user's total activity such as steps, distance, etc...
+*   [Menstruation](/reference/get-menstruation-data)
+     - log of a user's menstruation data
+*   [Nutrition](/reference/get-nutrition-data)
+     - log of a user's nutrition data, including both individual meals and a daily summary
+*   [Sleep](/reference/get-sleep-data)
+     - events recorded for sleep sessions
+
+The request can be made using the API references linked above or using the provided clients, with the choice of getting the data back in the HTTP response, or getting it on your webhook endpoint.
+
+```python
+# Datetime objects required as input to some API calls
+from datetime import datetime
+
+# Create a user object
+USER_ID = "e036976a-027d-4eb2-8b9f-22ae3afbb382"
+terra_user = terra.from_user_id(USER_ID)
+
+# Get the nutrition data from start date to current time
+nutrition_resp = terra_user.get_nutrition(start_date=datetime.strptime('2023-03-29','%Y-%m-%d'), end_date=datetime.now(), to_webhook = False )
+nutrition_resp_json = nutrition_resp.get_json()
+print(nutrition_resp_json)
+
+``````python
+const USER_ID = "e036976a-027d-4eb2-8b9f-22ae3afbb382"
+
+// Get the nutrition data from start date to current time
+terra
+    .getNutrition({ userId: USER_ID, startDate: new Date("2023-03-29"), endDate: new Date(), toWebhook: false })
+    .then((p) => console.log(p))
+    .catch((e) => console.log(e.status, e.message));
+
+```
+
+## HTTP Request Parameters
+
+Data endpoints support the sending of the returned data to your webhook URL instead of in the response.
+
+To receive the data in the response instead of to your webhook URL, pass an additional query parameter - `to_webhook=false` to the request. If this flag is not passed, you will be sent a payload in the response which adheres to the following schema:
+
+```payload format
+{
+  "message": "Data sent to webhook",
+  "reference": String,
+  "status": "success",
+  "user": TerraUser
+}
+
+```
+
+The `reference` field contains a unique identifier which will also be sent in the webhook request header `terra-reference` and allows you to link the webhook payload back to your HTTP request.
+
+An additional query parameter, `with_samples` is supported to allow the filtering of sample/timeseries data out of the payload returned to you. If set to `false`, no samples will be returned in the payload we send.
+
+This can significantly reduce the amount of data transferred so may be useful to reduce the amount of time that data transfer takes. The `with_samples` parameter is set to true by default if the `Samples` scope is enabled on the dashboard, otherwise it is set to false.
+
+The default value is set as the `Samples` scope setting on your dashboard. You can find this by going to your dashboard **Customise > Setting > Update Scopes & Frequencies > Samples scope.**
+
